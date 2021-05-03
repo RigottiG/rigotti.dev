@@ -7,6 +7,7 @@ slug: 'blog/lets-make-an-api-phoenix-part01'
 tags:
   - elixir
   - phoenix
+  - api
   - english
   - beginner
 ---
