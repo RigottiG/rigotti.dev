@@ -118,7 +118,7 @@ export const Hero = () => {
             <span role="img" aria-label="laptop emoji">
               💻{' '}
             </span>
-            software developer at <a href="http://cwi.com.br/">@cwisoftware</a> & passionate about functional programming
+            software developer and passionate about functional programming
           </p>
         </HeroText>
       </HeroWrapper>
