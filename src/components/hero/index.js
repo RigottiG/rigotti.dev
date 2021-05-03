@@ -52,7 +52,7 @@ const SocialIconsWrapper = styled.footer`
   }
 `;
 
-const Hero = () => {
+export const Hero = () => {
   return (
     <>
       <HeroWrapper>
@@ -125,5 +125,3 @@ const Hero = () => {
     </>
   );
 };
-
-export default Hero;

@@ -1,6 +1,6 @@
-export { default as Layout } from './layout';
-export { default as Hero } from './hero';
-export { default as Now } from './now';
-export { default as Seo } from './Seo';
-export { default as LinkButton } from './link-button';
-export { default as PostInfo } from './post-info';
+export { Layout } from './layout';
+export { Hero } from './hero';
+export { Now } from './now';
+export { Seo } from './seo';
+export { LinkButton } from './link-button';
+export { PostInfo } from './post-info';

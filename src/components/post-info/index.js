@@ -57,7 +57,7 @@ const PostMetaWrapper = styled.div`
   }
 `;
 
-const PostInfo = ({
+export const PostInfo = ({
   post: {
     id,
     timeToRead,
@@ -101,5 +101,3 @@ const PostInfo = ({
     </PostCard>
   );
 };
-
-export default PostInfo;

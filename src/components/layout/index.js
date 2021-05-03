@@ -23,7 +23,7 @@ const Content = styled.main`
   padding: 0rem 1.25rem;
 `;
 
-const Layout = ({ children }) => {
+export const Layout = ({ children }) => {
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyles />
@@ -39,5 +39,3 @@ const Layout = ({ children }) => {
 Layout.propTypes = {
   children: PropTypes.node
 };
-
-export default Layout;

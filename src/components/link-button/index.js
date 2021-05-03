@@ -42,7 +42,7 @@ const StyledLink = styled(Link)`
   ${button}
 `;
 
-const LinkButton = ({
+export const LinkButton = ({
   to,
   gatsby = false,
   reverse = false,
@@ -80,5 +80,3 @@ LinkButton.propTypes = {
   disabled: PropTypes.bool,
   children: PropTypes.string
 };
-
-export default LinkButton;

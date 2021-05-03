@@ -8,7 +8,7 @@ const ContentWrapper = styled.div`
   ${link}
 `;
 
-const Now = ({ data }) => {
+export const Now = ({ data }) => {
   const { html } = data;
   return (
     <ContentWrapper>
@@ -21,4 +21,3 @@ Now.propTypes = {
   data: PropTypes.object.isRequired
 };
 
-export default Now;

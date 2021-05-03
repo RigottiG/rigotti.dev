@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet';
 import siteOG from '../../images/og.jpg';
 import { config } from '../../helpers';
 
-const Seo = ({ postNode, postPath, postSeo, customDescription }) => {
+export const Seo = ({ postNode, postPath, postSeo, customDescription }) => {
   let title;
   let description;
   let image = siteOG;
@@ -103,5 +103,3 @@ const Seo = ({ postNode, postPath, postSeo, customDescription }) => {
     </Helmet>
   );
 };
-
-export default Seo;
