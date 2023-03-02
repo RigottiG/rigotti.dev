@@ -7,10 +7,7 @@ module.exports = {
         sans: ['var(--font-open-sans)'],
         mono: ['var(--font-montserrat)'],
       },
-      gridTemplateRows: {
-        layout: 'auto minmax(600px, 1fr) auto',
-      },
     },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/typography')],
 }

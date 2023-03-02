@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 export function Header() {
   return (
-    <header className="mx-auto flex flex-col items-center pt-12">
+    <header className="mx-auto flex flex-col items-center pt-4 pb-8">
       <nav className="space-x-2">
         <Link
           className="duration-200 hover:shadow-[0px_-25px_0px_inset_#0ea5e9]"
