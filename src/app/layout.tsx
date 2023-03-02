@@ -1,3 +1,7 @@
+/* eslint-disable no-undef */
+/* eslint-disable camelcase */
+import { Footer } from '@/components/footer'
+import { Header } from '@/components/header'
 import { Montserrat, Open_Sans } from 'next/font/google'
 
 import '@/styles/global.css'
@@ -24,7 +28,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${montserrat.variable} ${open_sans.variable}`}>
-      <body>{children}</body>
+      <body>
+        <div className="container grid grid-rows-layout px-4">
+          <Header />
+          {children}
+          <Footer />
+        </div>
+      </body>
     </html>
   )
 }
