@@ -10,22 +10,27 @@ type PostPageProps = {
   }
 }
 
-export default function PostPage({ params }: PostPageProps) {
-  const { slug } = params
+function getPostContent(slug: string) {
   const fileName = `${slug}.md`
   const filePath = path.join(process.cwd(), 'posts', fileName)
   const file = fs.readFileSync(filePath, 'utf-8')
+
+  return matter(file)
+}
+
+export default function PostPage({ params }: PostPageProps) {
+  const { slug } = params
   const {
     data: { date, title, subtitle },
     content,
-  } = matter(file)
+  } = getPostContent(slug)
 
   return (
     <article className="mx-auto mb-8 max-w-prose">
       <div className="space-y-2 text-center">
-        <h1 className="text-2xl text-slate-600">{title}</h1>
-        <p className="text-slate-600">{subtitle}</p>
-        <p className="text-sm text-slate-400">{formatDate(new Date(date))}</p>
+        <h1 className="text-2xl">{title}</h1>
+        <p>{subtitle}</p>
+        <p className="text-sm">{formatDate(new Date(date))}</p>
       </div>
 
       <div className="prose relative">

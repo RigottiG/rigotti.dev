@@ -1,3 +1,4 @@
+import { formatDate } from '@/utils/date'
 import Link from 'next/link'
 
 export type Post = {
@@ -28,12 +29,7 @@ export function PostCard({ post }: PostCardProps) {
       <h5 className="font-semibold">{title}</h5>
       <p className="text-sm">{subtitle}</p>
       <span className="inline-block text-sm">
-        Published on{' '}
-        {new Date(date).toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-        })}
+        Published on {formatDate(new Date(date))}
       </span>
       <div className="inline-block space-x-2">
         {tags?.map((tag) => (
