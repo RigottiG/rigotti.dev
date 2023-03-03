@@ -1,3 +1,12 @@
+---
+title: "Why I switch from Visual Studio Code to NeoVim"
+subtitle: "A Programmer's Journey from VSCode to Neovim."
+date: "2023-03-03"
+tags: ["Neovim", "VSCode", "Code Editor", "Performance", "Customizability", "Modal Editing", "Terminal Integration", "Productivity"]
+---
+
+
+
 # Why I switch from Visual Studio Code to NeoVim
 As a programmer, one of the most important tools in my arsenal is my code editor. I've been using Visual Studio Code (VSCode) for years and it's been a reliable editor, but recently I decided to make the switch to Neovim. In this blog post, I'll explain why I made the switch and why you might want to consider it too.
 
