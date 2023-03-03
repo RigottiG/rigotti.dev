@@ -2,6 +2,14 @@ import { PostCard } from '@/components/post-card'
 import { getPostsMetadata } from '@/services/posts'
 import Image from 'next/image'
 
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Home | Guilherme Rigotti',
+  description:
+    "It's me, Guilherme Rigotti! I'm a software developer living in Brazil 🇧 ",
+}
+
 const posts = getPostsMetadata()
 
 const sortedPosts = posts.sort((a, b) => {
