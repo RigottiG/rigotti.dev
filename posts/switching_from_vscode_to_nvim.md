@@ -6,8 +6,6 @@ tags: ["Neovim", "VSCode", "Code Editor", "Performance", "Customizability", "Mod
 ---
 
 
-
-# Why I switch from Visual Studio Code to NeoVim
 As a programmer, one of the most important tools in my arsenal is my code editor. I've been using Visual Studio Code (VSCode) for years and it's been a reliable editor, but recently I decided to make the switch to Neovim. In this blog post, I'll explain why I made the switch and why you might want to consider it too.
 
 First, let's talk about what Neovim is. Neovim is a fork of Vim, a highly customizable text editor that's been around since the 90s. Neovim is built to be more modern and extensible than Vim, with a focus on making it easier to develop plugins and integrate with other tools. Neovim also has a more consistent and flexible scripting language, making it easier to automate tasks and customize your workflow.
