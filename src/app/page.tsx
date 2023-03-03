@@ -38,7 +38,7 @@ export default async function Home() {
             Guilherme Rigotti <br /> also known as{' '}
             <a
               className="text-blue-600 underline visited:text-purple-600 hover:text-blue-800"
-              href="https://www.github.com.br/rigottig"
+              href="https://www.github.com/rigottig"
             >
               @rigottig
             </a>
