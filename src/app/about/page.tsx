@@ -8,6 +8,12 @@ import {
   SiJest,
   SiRust,
 } from 'react-icons/si'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'About | Guilherme Rigotti',
+  description: 'About me, my skills and experience.',
+}
 
 export default function AboutPage() {
   return (

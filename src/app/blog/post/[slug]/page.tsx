@@ -3,6 +3,7 @@ import fs from 'fs'
 import matter from 'gray-matter'
 import Markdown from 'markdown-to-jsx'
 import { formatDate } from '@/utils/date'
+import { Metadata } from 'next'
 
 type PostPageProps = {
   params: {
@@ -16,6 +17,16 @@ function getPostContent(slug: string) {
   const file = fs.readFileSync(filePath, 'utf-8')
 
   return matter(file)
+}
+
+export async function generateMetadata({
+  params,
+}: PostPageProps): Promise<Metadata> {
+  const {
+    data: { title, subtitle },
+  } = getPostContent(params.slug)
+
+  return { title, description: subtitle }
 }
 
 export default function PostPage({ params }: PostPageProps) {

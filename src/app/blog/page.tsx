@@ -1,5 +1,11 @@
 import { PostCard } from '@/components/post-card'
 import { getPostsMetadata } from '@/services/posts'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Blog | Guilherme Rigotti',
+  description: 'This is my personal blog.',
+}
 
 export default function BlogPage() {
   const posts = getPostsMetadata()

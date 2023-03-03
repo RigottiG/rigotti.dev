@@ -1,3 +1,10 @@
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Contact | Guilherme Rigotti',
+  description: 'My contact page, feel free to contact me.',
+}
+
 export default function ContactPage() {
   return (
     <main className="mb-[23rem] mt-[16rem] flex flex-col items-center justify-center space-y-4 text-center">
