@@ -5,7 +5,7 @@ import { TfiEmail } from 'react-icons/tfi'
 
 export function Footer() {
   return (
-    <footer className="container mx-auto mb-4 flex flex-col items-center space-y-5">
+    <footer className="sticky top-[100vh]  mb-4 flex flex-col items-center space-y-5">
       <ul className="flex gap-5">
         <li>
           <Link href="https://linkedin.com/in/rigottig">

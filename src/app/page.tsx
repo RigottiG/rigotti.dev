@@ -2,22 +2,9 @@ import { Post, PostCard } from '@/components/post-card'
 import Image from 'next/image'
 import fs from 'fs'
 import matter from 'gray-matter'
+import { getPostsMetadata } from '@/services/posts'
 
-const files = fs.readdirSync(`${process.cwd()}/posts`)
-
-const posts = files.map((filename) => {
-  const slug = filename.replace('.md', '')
-  const markdownWithMeta = fs.readFileSync(
-    `${process.cwd()}/posts/${filename}`,
-    'utf-8',
-  )
-  const { data: frontmatter } = matter(markdownWithMeta)
-
-  return {
-    slug,
-    frontmatter,
-  } as Post
-})
+const posts = getPostsMetadata()
 
 const sortedPosts = posts.sort((a, b) => {
   return (

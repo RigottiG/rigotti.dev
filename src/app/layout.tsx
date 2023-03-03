@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${montserrat.variable} ${open_sans.variable}`}>
       <body>
-        <div className="container mx-auto gap-10 px-4 md:gap-20">
+        <div className="container mx-auto min-h-screen gap-10 px-4 md:gap-20">
           <Header />
           {children}
           <Footer />
