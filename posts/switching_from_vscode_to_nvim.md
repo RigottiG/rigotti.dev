@@ -10,7 +10,7 @@ As a programmer, one of the most important tools in my arsenal is my code editor
 
 First, let's talk about what Neovim is. Neovim is a fork of Vim, a highly customizable text editor that's been around since the 90s. Neovim is built to be more modern and extensible than Vim, with a focus on making it easier to develop plugins and integrate with other tools. Neovim also has a more consistent and flexible scripting language, making it easier to automate tasks and customize your workflow.
 
-![Nvim](./images/switching_from_vscode_to_nvim.png)
+![my currently neovim](./images/switching_from_vscode_to_nvim.png)
 
 
 So why did I switch from VSCode to Neovim? There were a few reasons:
