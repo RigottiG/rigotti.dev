@@ -26,7 +26,7 @@ export function PostCard({ post }: PostCardProps) {
       href={`/blog/post/${slug}`}
       className="flex w-full flex-col items-center gap-y-2 rounded-md border-2 border-black p-2 text-center shadow-[3px_3px_0px_#000] duration-200 hover:shadow-[0px_5px_0px_#000]"
     >
-      <h5 className="font-semibold">{title}</h5>
+      <h4 className="font-semibold">{title}</h4>
       <p className="text-sm">{subtitle}</p>
       <span className="inline-block text-sm">
         Published on {formatDate(new Date(date))}
