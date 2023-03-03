@@ -2,7 +2,7 @@
 title: "Why I switch from Visual Studio Code to NeoVim"
 subtitle: "A Programmer's Journey from VSCode to Neovim."
 date: "2023-03-03"
-tags: ["Neovim", "VSCode", "Code Editor", "Performance", "Customizability", "Modal Editing", "Terminal Integration", "Productivity"]
+tags: ["Neovim", "VSCode", "Code Editor", "Productivity"]
 ---
 
 
