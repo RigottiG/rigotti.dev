@@ -1,8 +1,6 @@
-import { Post, PostCard } from '@/components/post-card'
-import Image from 'next/image'
-import fs from 'fs'
-import matter from 'gray-matter'
+import { PostCard } from '@/components/post-card'
 import { getPostsMetadata } from '@/services/posts'
+import Image from 'next/image'
 
 const posts = getPostsMetadata()
 
