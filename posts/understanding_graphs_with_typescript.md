@@ -6,10 +6,6 @@ tags: ["Typescript", "Data Structures", "Graph"]
 ---
 
 
-# Understanding Graphs with TypeScript
-
-## Introduction
-
 Graphs are a fundamental concept in computer science and mathematics. They are used to model relationships and connections between objects or data points. In this article, we will explore the basics of graphs and how to implement them in TypeScript, a popular programming language.
 
 ## Graph Basics
