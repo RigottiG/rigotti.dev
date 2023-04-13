@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+/* eslint-disable camelcase */
 import { Footer } from '@/components/footer'
 import { Header } from '@/components/header'
 import { Montserrat, Open_Sans } from 'next/font/google'
