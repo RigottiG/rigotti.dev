@@ -1,7 +1,7 @@
 ---
 title: "Understading Graphs with Typescript"
 subtitle: "Exploring Graphs with TypeScript."
-date: "2023-13-04"
+date: "2023-04-13"
 tags: ["Typescript", "Data Structures", "Graph"]
 ---
 
