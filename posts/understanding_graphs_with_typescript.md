@@ -59,7 +59,6 @@ g.addEdge(0, 2);
 g.addEdge(1, 2);
 g.addEdge(2, 3);
 g.printGraph();
-
 ```
 
 In this example, we create a Graph class that uses a Map to store the adjacency list. We also define methods to add edges and print the graph.
