@@ -1,8 +1,7 @@
 {
   "extends": [
-    "next/core-web-vitals",
-    "@rocketseat/eslint-config/react",
-    "plugin:tailwindcss/recommended",
-    "prettier"
+    "next",
+    "prettier",
+    "plugin:tailwindcss/recommended"
   ]
 }

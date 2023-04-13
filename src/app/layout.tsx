@@ -15,11 +15,13 @@ export const metadata = {
 const open_sans = Open_Sans({
   variable: '--font-open-sans',
   display: 'swap',
+  subsets: ['latin', 'latin-ext'],
 })
 
 const montserrat = Montserrat({
   variable: '--font-montserrat',
   display: 'swap',
+  subsets: ['latin', 'latin-ext'],
 })
 
 export default function RootLayout({
