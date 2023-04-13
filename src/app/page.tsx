@@ -7,7 +7,7 @@ import { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Home | Guilherme Rigotti',
   description:
-    "It's me, Guilherme Rigotti! I'm a software developer living in Brazil 🇧 ",
+    "It's me, Guilherme Rigotti! I'm a software developer living in Brazil",
 }
 
 const posts = getPostsMetadata()
@@ -31,6 +31,7 @@ export default async function Home() {
           height={280}
           alt="My profile photo from GitHub"
           className="place-self-center object-cover md:place-self-auto"
+          placeholder="blur"
         />
         <div className="space-y-4">
           <h1 className="mx-auto max-w-sm text-center text-2xl font-semibold leading-9 md:max-w-md">
