@@ -3,7 +3,7 @@
 import { Footer } from '@/components/footer'
 import { Header } from '@/components/header'
 import { Montserrat, Open_Sans } from 'next/font/google'
-import { Analytics } from "@vercel/analytics/react";
+import { Analytics } from '@vercel/analytics/react';
 
 import '@/styles/global.css'
 
