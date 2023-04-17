@@ -30,7 +30,7 @@ export default async function Home() {
           width={280}
           height={280}
           alt="My profile photo from GitHub"
-          className="place-self-center object-cover md:place-self-auto"
+          className="place-self-center object-cover md:place-self-auto rounded-full"
           placeholder="blur"
         />
         <div className="space-y-4">
