@@ -12,6 +12,7 @@ Git Bisect works by first identifying a good commit (one that doesn't contain th
 To demonstrate how Git Bisect works, let's consider the following scenario. Suppose you're working on a project and you've noticed a bug in the latest version. You know that the bug wasn't present in an earlier version of the codebase, but you're not sure when it was introduced. Here's how you could use Git Bisect to find the offending commit:
 
 1. Identify a good commit and a bad commit
+
 ```
 $ git bisect start
 $ git bisect bad <latest_commit>
@@ -19,9 +20,11 @@ $ git bisect good <earlier_commit>
 ```
 
 2. You will then need to test whether the bug is present in this commit, by running your code and checking whether the bug occurs. If it is present, run the following command:
+
 ```
 $ git bisect bad
 ```
+
 3. If it's not present, run:
 
 ```
