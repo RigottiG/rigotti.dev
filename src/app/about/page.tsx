@@ -74,6 +74,21 @@ export default function AboutPage() {
         <ul className="mt-4 space-y-1">
           <li className="text-sm leading-6">
             <a
+              href="https://www.axur.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className="">
+                <strong className="text-blue-600 underline duration-200 visited:text-purple-600 hover:text-blue-800">
+                  Axur
+                </strong>{' '}
+                Senior Frontend developer, 2023 - present
+              </span>
+            </a>
+          </li>
+          
+          <li className="text-sm leading-6">
+            <a
               href="https://www.cwi.com.br"
               target="_blank"
               rel="noopener noreferrer"
@@ -82,7 +97,7 @@ export default function AboutPage() {
                 <strong className="text-blue-600 underline duration-200 visited:text-purple-600 hover:text-blue-800">
                   CWI Software
                 </strong>{' '}
-                Frontend developer, 2019 - present
+                Frontend developer, 2019 - 2023
               </span>
             </a>
           </li>
