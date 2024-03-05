@@ -19,10 +19,10 @@ export default function AboutPage() {
   return (
     <main className="mx-auto mb-[18rem] mt-4 max-w-prose">
       <p className="mb-2 text-sm leading-6">
-        My name is <strong>Guilherme Rigotti</strong>, 23. I&apos;m a{' '}
+        My name is <strong>Guilherme Rigotti</strong>, 24. I&apos;m a{' '}
         <strong>software engineer</strong> from Brazil 🇧🇷, currently living in
         Rio Grande do Sul. I specialize in frontend technologies and have about
-        5 years of experience in software development.
+        7 years of experience in software development.
       </p>
       <p className="mb-2 text-sm leading-6">
         As a software engineer, I&apos;m passionate about technology and
