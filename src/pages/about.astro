@@ -1,0 +1,148 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+
+const experience = [
+  {
+    company: 'Axur',
+    role: 'Senior Frontend Developer',
+    period: '2023 - Present',
+    description: 'Leading frontend development for cybersecurity products.',
+    current: true,
+  },
+  {
+    company: 'CWI Software',
+    role: 'Frontend Developer',
+    period: '2019 - 2023',
+    description: 'Developed client projects using React and Vue.js.',
+  },
+  {
+    company: 'Mave Tecnologia',
+    role: 'Fullstack Developer',
+    period: '2018 - 2019',
+    description: 'Built web applications with PHP, Laravel, and JavaScript.',
+  },
+]
+
+const skills = {
+  frontend: ['React', 'TypeScript', 'Next.js', 'Astro', 'Vue.js', 'Tailwind CSS'],
+  backend: ['Node.js', 'Go', 'REST APIs', 'GraphQL'],
+  tools: ['Git', 'Neovim', 'Docker', 'Linux', 'CI/CD'],
+}
+---
+
+<BaseLayout
+  title="About | Guilherme Rigotti"
+  description="Learn more about Guilherme Rigotti - Software Engineer with 7+ years of experience."
+  currentPath="/about"
+>
+  <div class="space-y-10">
+    <!-- Intro -->
+    <section>
+      <h1 class="text-xl font-semibold text-neutral-100 mb-4">About</h1>
+      <div class="space-y-3 text-sm text-neutral-400 leading-relaxed max-w-lg">
+        <p>
+          I'm <span class="text-green-400">Guilherme Rigotti</span>, a software engineer from Brazil 🇧🇷 with 7+ years of experience building web applications.
+        </p>
+        <p>
+          I specialize in frontend development, creating scalable and performant applications with React, TypeScript, and modern web technologies.
+        </p>
+      </div>
+    </section>
+
+    <!-- Experience -->
+    <section>
+      <h2 class="text-xs uppercase tracking-wider text-neutral-500 mb-4">Experience</h2>
+      <div class="space-y-6">
+        {experience.map((job) => (
+          <div class="relative pl-4 border-l border-neutral-800">
+            <div class="flex items-start justify-between gap-4 mb-1">
+              <div class="flex items-center gap-2">
+                <span class="text-sm text-neutral-200">{job.company}</span>
+                {job.current && (
+                  <span class="flex items-center gap-1.5 text-xs text-green-400">
+                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                    now
+                  </span>
+                )}
+              </div>
+              <span class="text-xs text-neutral-600 shrink-0">{job.period}</span>
+            </div>
+            <p class="text-xs text-neutral-500 mb-1">{job.role}</p>
+            <p class="text-xs text-neutral-600">{job.description}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Skills -->
+    <section>
+      <h2 class="text-xs uppercase tracking-wider text-neutral-500 mb-4">Skills</h2>
+      <div class="grid gap-6 sm:grid-cols-3">
+        <div>
+          <h3 class="text-xs text-neutral-400 mb-2">Frontend</h3>
+          <div class="flex flex-wrap gap-1.5">
+            {skills.frontend.map((skill) => (
+              <span class="px-2 py-1 text-xs rounded bg-neutral-800/50 text-neutral-400 border border-neutral-800">
+                {skill}
+              </span>
+            ))}
+          </div>
+        </div>
+        <div>
+          <h3 class="text-xs text-neutral-400 mb-2">Backend</h3>
+          <div class="flex flex-wrap gap-1.5">
+            {skills.backend.map((skill) => (
+              <span class="px-2 py-1 text-xs rounded bg-neutral-800/50 text-neutral-400 border border-neutral-800">
+                {skill}
+              </span>
+            ))}
+          </div>
+        </div>
+        <div>
+          <h3 class="text-xs text-neutral-400 mb-2">Tools</h3>
+          <div class="flex flex-wrap gap-1.5">
+            {skills.tools.map((skill) => (
+              <span class="px-2 py-1 text-xs rounded bg-neutral-800/50 text-neutral-400 border border-neutral-800">
+                {skill}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Education -->
+    <section>
+      <h2 class="text-xs uppercase tracking-wider text-neutral-500 mb-4">Education</h2>
+      <div>
+        <p class="text-sm text-neutral-200">Universidade de Caxias do Sul</p>
+        <p class="text-xs text-neutral-500">Bachelor in Computer Science · 2016 - 2020</p>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="pt-4">
+      <div class="p-4 rounded-lg border border-neutral-800 bg-neutral-900/30">
+        <p class="text-neutral-300 text-sm mb-3">
+          Interested in working together?
+        </p>
+        <a
+          href="/contact"
+          class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-neutral-900 bg-green-500 rounded-md hover:bg-green-400 transition-colors"
+        >
+          Get in touch
+        </a>
+      </div>
+    </section>
+
+    <!-- Back -->
+    <nav class="pt-4 border-t border-neutral-800">
+      <a
+        href="/"
+        class="text-sm text-neutral-500 hover:text-green-400 transition-colors"
+      >
+        ← Back to home
+      </a>
+    </nav>
+  </div>
+</BaseLayout>
