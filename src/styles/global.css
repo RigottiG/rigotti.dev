@@ -1,3 +1,131 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --terminal-bg: #0a0a0a; /* Quase preto */
+    --terminal-fg: #e5e5e5;
+    --terminal-dim: #6b7280;
+    --terminal-accent: #22c55e; /* Green-500 */
+    --terminal-error: #ef4444;
+  }
+
+  html {
+    @apply scroll-smooth bg-neutral-950;
+  }
+
+  body {
+    @apply font-mono text-sm leading-relaxed text-neutral-300 antialiased;
+    background-color: var(--terminal-bg);
+  }
+
+  ::selection {
+    @apply bg-green-500/30 text-green-200;
+  }
+
+  /* Custom Scrollbar para parecer UI de terminal */
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-neutral-900;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-none border-2 border-neutral-900 bg-neutral-700;
+  }
+
+  /* Focus styles */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-green-500;
+  }
+}
+
+/* Utilitário para o cursor piscando */
+.cursor-blink::after {
+  content: '▋';
+  animation: blink 1s step-start infinite;
+  @apply ml-1 text-green-500;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Prose styles for blog posts */
+.prose {
+  @apply max-w-none leading-relaxed text-neutral-300;
+}
+
+.prose > * + * {
+  @apply mt-5;
+}
+
+.prose h2 {
+  @apply mb-4 mt-10 border-b border-neutral-800 pb-2 text-xl font-bold text-neutral-100;
+}
+
+.prose h3 {
+  @apply mb-3 mt-8 text-lg font-semibold text-neutral-100;
+}
+
+.prose p {
+  @apply leading-relaxed;
+}
+
+.prose a {
+  @apply text-green-400 underline decoration-green-500/30 underline-offset-2 transition-colors hover:decoration-green-400/60;
+}
+
+.prose strong {
+  @apply font-semibold text-neutral-200;
+}
+
+.prose code {
+  @apply rounded bg-neutral-800 px-1.5 py-0.5 text-sm text-green-400;
+}
+
+.prose pre {
+  @apply my-6 overflow-x-auto rounded-lg border border-neutral-800 bg-neutral-900 p-4;
+}
+
+.prose pre code {
+  @apply bg-transparent p-0 text-sm;
+}
+
+.prose ul,
+.prose ol {
+  @apply my-4 space-y-2 pl-5;
+}
+
+.prose li {
+  @apply text-neutral-300;
+}
+
+.prose li::marker {
+  @apply text-green-500;
+}
+
+.prose blockquote {
+  @apply my-6 border-l-2 border-green-500/50 pl-4 italic text-neutral-400;
+}
+
+.prose img {
+  @apply my-8 rounded-lg border border-neutral-800;
+}
+
+.prose hr {
+  @apply my-8 border-neutral-800;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

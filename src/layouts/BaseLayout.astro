@@ -1,0 +1,93 @@
+---
+import Header from '@/components/Header.astro'
+import Footer from '@/components/Footer.astro'
+import '@/styles/global.css'
+import { ClientRouter } from 'astro:transitions'
+
+interface Props {
+  title?: string
+  description?: string
+  image?: string
+  articleDate?: string
+  type?: 'website' | 'article'
+}
+
+const {
+  title = 'Guilherme Rigotti',
+  description = 'Software Engineer. Terminal enthusiast. Problem solver.',
+  image = '/og-image.png',
+  articleDate,
+  type = 'website'
+} = Astro.props
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const socialImageURL = new URL(image, Astro.site);
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    
+    <!-- SEO Principal -->
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+    <meta name="theme-color" content="#0a0a0a" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={socialImageURL} />
+    {articleDate && <meta property="article:published_time" content={articleDate} />}
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalURL} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={socialImageURL} />
+
+    <!-- Fontes (JetBrains Mono é excelente para terminais) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+
+    <ClientRouter />
+  </head>
+  <body class="min-h-screen flex items-center justify-center p-4 sm:p-8 bg-[#050505]">
+    
+    <!-- Terminal Container -->
+    <div class="w-full max-w-3xl shadow-2xl rounded-lg overflow-hidden border border-neutral-800 bg-[#0a0a0a] relative">
+      
+      <!-- Terminal Header (macOS Style) -->
+      <div class="bg-[#1a1a1a] px-4 py-3 flex items-center justify-between border-b border-neutral-800 select-none">
+        <div class="flex gap-2">
+          <div class="w-3 h-3 rounded-full bg-[#ff5f56] hover:bg-[#ff5f56]/80 transition-colors"></div>
+          <div class="w-3 h-3 rounded-full bg-[#ffbd2e] hover:bg-[#ffbd2e]/80 transition-colors"></div>
+          <div class="w-3 h-3 rounded-full bg-[#27c93f] hover:bg-[#27c93f]/80 transition-colors"></div>
+        </div>
+        <div class="text-xs text-neutral-500 font-mono flex gap-2">
+          <span class="hidden sm:inline">rigotti@dev:</span>
+          <span class="text-neutral-400">{Astro.url.pathname}</span>
+        </div>
+        <div class="w-10"></div> <!-- Spacer para centralizar -->
+      </div>
+
+      <!-- Content Area -->
+      <div class="p-6 sm:p-8 min-h-[600px] flex flex-col">
+        <Header />
+        <main class="flex-1 py-6 animate-in fade-in duration-500">
+          <slot />
+        </main>
+        <Footer />
+      </div>
+    </div>
+
+  </body>
+</html>

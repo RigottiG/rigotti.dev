@@ -1,0 +1,41 @@
+---
+import { type CollectionEntry } from 'astro:content';
+
+interface Props {
+  type: 'Person' | 'BlogPosting';
+  data?: CollectionEntry<'post'>['data'];
+  slug?: string;
+}
+
+const { type, data, slug } = Astro.props;
+
+let schema = {};
+
+if (type === 'Person') {
+  schema = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Guilherme Rigotti",
+    "url": "https://rigotti.dev",
+    "jobTitle": "Senior Software Engineer",
+    "sameAs": [
+      "https://github.com/rigottig",
+      "https://linkedin.com/in/rigottig"
+    ]
+  };
+} else if (type === 'BlogPosting' && data && slug) {
+  schema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": data.title,
+    "description": data.subtitle,
+    "datePublished": data.date.toISOString(),
+    "author": {
+      "@type": "Person",
+      "name": "Guilherme Rigotti"
+    },
+    "url": `https://rigotti.dev/blog/post/${slug}`
+  };
+}
+---
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />

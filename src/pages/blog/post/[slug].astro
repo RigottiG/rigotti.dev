@@ -1,0 +1,117 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { getCollection } from 'astro:content'
+import { type CollectionEntry } from 'astro:content'
+
+export async function getStaticPaths() {
+  const posts = await getCollection('post')
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }))
+}
+
+type Props = {
+  post: CollectionEntry<'post'>
+}
+
+const { post } = Astro.props
+const { slug, data } = post
+const { title, subtitle, date, tags } = data
+const { Content } = await post.render()
+
+const formatDate = (dateValue: Date | string | number) => {
+  const d = new Date(dateValue)
+  if (isNaN(d.getTime())) return ''
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(d)
+}
+
+// Estimate reading time
+const wordsPerMinute = 200
+const textContent = post.body || ''
+const wordCount = textContent.split(/\s+/).length
+const readingTime = Math.max(1, Math.ceil(wordCount / wordsPerMinute))
+---
+
+<BaseLayout
+  title={`${title} | Guilherme Rigotti`}
+  description={subtitle || `Blog post: ${title}`}
+  currentPath={`/blog/post/${slug}`}
+>
+  <article class="space-y-8">
+    <!-- Back -->
+    <nav>
+      <a
+        href="/blog"
+        class="text-sm text-neutral-500 hover:text-green-400 transition-colors"
+      >
+        ← Back to blog
+      </a>
+    </nav>
+
+    <!-- Header -->
+    <header class="space-y-4">
+      <div class="flex items-center gap-3 text-xs text-neutral-500">
+        <time datetime={new Date(date).toISOString()}>
+          {formatDate(date)}
+        </time>
+        <span>·</span>
+        <span>{readingTime} min read</span>
+      </div>
+
+      <h1 class="text-2xl font-bold text-neutral-100 leading-tight">
+        {title}
+      </h1>
+
+      {subtitle && (
+        <p class="text-neutral-400 text-sm">
+          {subtitle}
+        </p>
+      )}
+
+      {tags && tags.length > 0 && (
+        <div class="flex flex-wrap gap-2 pt-2">
+          {tags.map((tag) => (
+            <span class="text-xs text-neutral-500">
+              #{tag}
+            </span>
+          ))}
+        </div>
+      )}
+    </header>
+
+    <!-- Divider -->
+    <hr class="border-neutral-800" />
+
+    <!-- Content -->
+    <div class="prose">
+      <Content />
+    </div>
+
+    <!-- Footer -->
+    <footer class="pt-8 border-t border-neutral-800">
+      <div class="flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 text-sm font-medium">
+            GR
+          </div>
+          <div>
+            <p class="text-sm text-neutral-200">Guilherme Rigotti</p>
+            <p class="text-xs text-neutral-500">Software Engineer</p>
+          </div>
+        </div>
+
+        <a
+          href="/blog"
+          class="text-sm text-green-400 hover:text-green-300 transition-colors"
+        >
+          More posts →
+        </a>
+      </div>
+    </footer>
+  </article>
+</BaseLayout>
