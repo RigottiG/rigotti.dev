@@ -4,11 +4,19 @@
 
 @layer base {
   :root {
-    --terminal-bg: #0a0a0a; /* Quase preto */
+    --terminal-bg: #0a0a0a; /* Dark mode default */
     --terminal-fg: #e5e5e5;
     --terminal-dim: #6b7280;
     --terminal-accent: #22c55e; /* Green-500 */
     --terminal-error: #ef4444;
+  }
+
+  .light {
+    --terminal-bg: #ffffff;
+    --terminal-fg: #1a1a1a;
+    --terminal-dim: #6b7280;
+    --terminal-accent: #16a34a; /* Green-600 */
+    --terminal-error: #dc2626;
   }
 
   html {
@@ -16,12 +24,13 @@
   }
 
   body {
-    @apply font-mono text-sm leading-relaxed text-neutral-300 antialiased;
+    @apply font-mono text-sm leading-relaxed antialiased;
+    @apply text-neutral-800 dark:text-neutral-300;
     background-color: var(--terminal-bg);
   }
 
   ::selection {
-    @apply bg-green-500/30 text-green-200;
+    @apply bg-green-500/30 text-green-200 dark:text-green-200;
   }
 
   /* Custom Scrollbar para parecer UI de terminal */
@@ -35,6 +44,15 @@
 
   ::-webkit-scrollbar-thumb {
     @apply rounded-none border-2 border-neutral-900 bg-neutral-700;
+  }
+
+  /* Light mode scrollbar */
+  .light ::-webkit-scrollbar-track {
+    @apply bg-neutral-200;
+  }
+
+  .light ::-webkit-scrollbar-thumb {
+    @apply border-neutral-200 bg-neutral-400;
   }
 
   /* Focus styles */
@@ -58,7 +76,7 @@
 
 /* Prose styles for blog posts */
 .prose {
-  @apply max-w-none leading-relaxed text-neutral-300;
+  @apply max-w-none leading-relaxed text-neutral-900 dark:text-neutral-300;
 }
 
 .prose > * + * {
@@ -66,11 +84,11 @@
 }
 
 .prose h2 {
-  @apply mb-4 mt-10 border-b border-neutral-800 pb-2 text-xl font-bold text-neutral-100;
+  @apply mb-4 mt-10 border-b border-neutral-300 pb-2 text-xl font-bold text-neutral-900 dark:border-neutral-800 dark:text-neutral-100;
 }
 
 .prose h3 {
-  @apply mb-3 mt-8 text-lg font-semibold text-neutral-100;
+  @apply mb-3 mt-8 text-lg font-semibold text-neutral-900 dark:text-neutral-100;
 }
 
 .prose p {
@@ -78,19 +96,19 @@
 }
 
 .prose a {
-  @apply text-green-400 underline decoration-green-500/30 underline-offset-2 transition-colors hover:decoration-green-400/60;
+  @apply text-green-600 underline decoration-green-600/30 underline-offset-2 transition-colors hover:decoration-green-600/60 dark:text-green-400 dark:decoration-green-500/30 dark:hover:decoration-green-400/60;
 }
 
 .prose strong {
-  @apply font-semibold text-neutral-200;
+  @apply font-semibold text-neutral-900 dark:text-neutral-200;
 }
 
 .prose code {
-  @apply rounded bg-neutral-800 px-1.5 py-0.5 text-sm text-green-400;
+  @apply rounded bg-neutral-200 px-1.5 py-0.5 text-sm text-green-700 dark:bg-neutral-800 dark:text-green-400;
 }
 
 .prose pre {
-  @apply my-6 overflow-x-auto rounded-lg border border-neutral-800 bg-neutral-900 p-4;
+  @apply my-6 overflow-x-auto rounded-lg border border-neutral-300 bg-neutral-100 p-4 dark:border-neutral-800 dark:bg-neutral-900;
 }
 
 .prose pre code {
@@ -103,23 +121,23 @@
 }
 
 .prose li {
-  @apply text-neutral-300;
+  @apply text-neutral-900 dark:text-neutral-300;
 }
 
 .prose li::marker {
-  @apply text-green-500;
+  @apply text-green-600 dark:text-green-500;
 }
 
 .prose blockquote {
-  @apply my-6 border-l-2 border-green-500/50 pl-4 italic text-neutral-400;
+  @apply my-6 border-l-2 border-green-600/50 pl-4 italic text-neutral-800 dark:border-green-500/50 dark:text-neutral-400;
 }
 
 .prose img {
-  @apply my-8 rounded-lg border border-neutral-800;
+  @apply my-8 rounded-lg border border-neutral-300 dark:border-neutral-800;
 }
 
 .prose hr {
-  @apply my-8 border-neutral-800;
+  @apply my-8 border-neutral-300 dark:border-neutral-800;
 }
 
 /* Reduced motion */

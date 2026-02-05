@@ -14,19 +14,19 @@ const latestPosts = allPosts
   description="Senior Software Engineer from Brazil. Building scalable frontend applications and exploring system design."
 >
   <Schema type="Person" />
-  
+
   <div class="space-y-8">
     <!-- Intro Section -->
     <section class="space-y-4">
-      <div class="flex items-center gap-2 text-green-500">
+      <div class="flex items-center gap-2 text-green-600 dark:text-green-500">
         <span>➜</span>
         <span class="text-blue-400">~</span>
-        <span class="text-neutral-300">whoami</span>
+        <span class="text-neutral-700 dark:text-neutral-300">whoami</span>
       </div>
-      
-      <div class="pl-4 border-l-2 border-neutral-800 space-y-2">
-        <h1 class="text-xl text-neutral-100 font-bold">Guilherme Rigotti</h1>
-        <p class="text-neutral-400 max-w-lg">
+
+      <div class="pl-4 border-l-2 border-neutral-300 dark:border-neutral-800 space-y-2">
+        <h1 class="text-xl text-neutral-900 dark:text-neutral-100 font-bold">Guilherme Rigotti</h1>
+        <p class="text-neutral-700 dark:text-neutral-400 max-w-lg">
           Senior Software Engineer from Brazil 🇧🇷. <br/>
           Building scalable frontend applications and exploring the depths of system design.
         </p>
@@ -35,12 +35,12 @@ const latestPosts = allPosts
 
     <!-- Skills "Array" -->
     <section class="space-y-2">
-      <div class="flex items-center gap-2 text-green-500">
+      <div class="flex items-center gap-2 text-green-600 dark:text-green-500">
         <span>➜</span>
         <span class="text-blue-400">~</span>
-        <span class="text-neutral-300">ls ./skills</span>
+        <span class="text-neutral-700 dark:text-neutral-300">ls ./skills</span>
       </div>
-      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 pl-4 text-xs text-neutral-400">
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 pl-4 text-xs text-neutral-600 dark:text-neutral-400">
         <span>typescript.ts</span>
         <span>react.jsx</span>
         <span>astro.build</span>
@@ -52,44 +52,44 @@ const latestPosts = allPosts
 
     <!-- Experience -->
     <section class="space-y-4">
-      <div class="flex items-center gap-2 text-green-500">
+      <div class="flex items-center gap-2 text-green-600 dark:text-green-500">
         <span>➜</span>
         <span class="text-blue-400">~</span>
-        <span class="text-neutral-300">cat ./experience.json</span>
+        <span class="text-neutral-700 dark:text-neutral-300">cat ./experience.json</span>
       </div>
-      
+
       <div class="pl-4 space-y-3">
         <div class="flex items-start justify-between gap-4">
           <div>
             <div class="flex items-center gap-2">
-              <span class="text-neutral-200 text-sm">Axur</span>
-              <span class="flex items-center gap-1.5 text-xs text-green-400">
+              <span class="text-neutral-900 dark:text-neutral-200 text-sm">Axur</span>
+              <span class="flex items-center gap-1.5 text-xs text-green-600 dark:text-green-400">
                 <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
                 now
               </span>
             </div>
-            <span class="text-neutral-500 text-xs">Senior Frontend Developer</span>
+            <span class="text-neutral-600 dark:text-neutral-500 text-xs">Senior Frontend Developer</span>
           </div>
           <span class="text-xs text-neutral-600 shrink-0">2023 - Present</span>
         </div>
-        
+
         <div class="flex items-start justify-between gap-4">
           <div>
-            <span class="text-neutral-200 text-sm">CWI Software</span>
-            <div class="text-neutral-500 text-xs">Frontend Developer</div>
+            <span class="text-neutral-900 dark:text-neutral-200 text-sm">CWI Software</span>
+            <div class="text-neutral-600 dark:text-neutral-500 text-xs">Frontend Developer</div>
           </div>
           <span class="text-xs text-neutral-600 shrink-0">2019 - 2023</span>
         </div>
-        
+
         <div class="flex items-start justify-between gap-4">
           <div>
-            <span class="text-neutral-200 text-sm">Mave Tecnologia</span>
-            <div class="text-neutral-500 text-xs">Fullstack Developer</div>
+            <span class="text-neutral-900 dark:text-neutral-200 text-sm">Mave Tecnologia</span>
+            <div class="text-neutral-600 dark:text-neutral-500 text-xs">Fullstack Developer</div>
           </div>
           <span class="text-xs text-neutral-600 shrink-0">2018 - 2019</span>
         </div>
-        
-        <a href="/about" class="inline-block mt-2 text-sm text-green-400 hover:text-green-300 transition-colors">
+
+        <a href="/about" class="inline-block mt-2 text-sm text-green-600 dark:text-green-400 hover:text-green-300 transition-colors">
           cat ./resume.pdf →
         </a>
       </div>
@@ -98,10 +98,10 @@ const latestPosts = allPosts
     <!-- Latest Logs (Posts) -->
     {latestPosts.length > 0 && (
       <section class="space-y-4 pt-4">
-        <div class="flex items-center gap-2 text-green-500">
+        <div class="flex items-center gap-2 text-green-600 dark:text-green-500">
           <span>➜</span>
           <span class="text-blue-400">~</span>
-          <span class="text-neutral-300">tail -n 3 ./blog/logs</span>
+          <span class="text-neutral-700 dark:text-neutral-300">tail -n 3 ./blog/logs</span>
         </div>
 
         <div class="space-y-3 pl-4">
@@ -110,7 +110,7 @@ const latestPosts = allPosts
             return (
               <a href={`/blog/post/${post.slug}`} class="block group">
                 <div class="flex items-baseline justify-between gap-4">
-                  <span class="text-neutral-300 group-hover:text-green-400 group-hover:underline decoration-green-500/30 underline-offset-4 transition-all">
+                  <span class="text-neutral-700 dark:text-neutral-300 group-hover:text-green-600 dark:text-green-400 group-hover:underline decoration-green-500/30 underline-offset-4 transition-all">
                     {post.data.title}
                   </span>
                   <span class="text-xs text-neutral-600 shrink-0 font-mono">
@@ -121,8 +121,8 @@ const latestPosts = allPosts
             )
           })}
         </div>
-        
-        <a href="/blog" class="inline-block pl-4 text-sm text-green-400 hover:text-green-300 transition-colors">
+
+        <a href="/blog" class="inline-block pl-4 text-sm text-green-600 dark:text-green-400 hover:text-green-300 transition-colors">
           ls -la ./blog →
         </a>
       </section>
@@ -130,19 +130,19 @@ const latestPosts = allPosts
 
     <!-- Contact CTA -->
     <section class="pt-4">
-      <div class="flex items-center gap-2 text-green-500 mb-4">
+      <div class="flex items-center gap-2 text-green-600 dark:text-green-500 mb-4">
         <span>➜</span>
         <span class="text-blue-400">~</span>
-        <span class="text-neutral-300 cursor-blink">_</span>
+        <span class="text-neutral-700 dark:text-neutral-300 cursor-blink">_</span>
       </div>
-      
-      <div class="pl-4 p-4 rounded-lg border border-neutral-800 bg-neutral-900/30">
-        <p class="text-neutral-300 text-sm mb-3">
+
+      <div class="pl-4 p-4 rounded-lg border border-neutral-300 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900/30">
+        <p class="text-neutral-800 dark:text-neutral-300 text-sm mb-3">
           # Interested in working together?
         </p>
         <a
           href="/contact"
-          class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-neutral-900 bg-green-500 rounded-md hover:bg-green-400 transition-colors"
+          class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-neutral-900 bg-green-600 dark:bg-green-500 rounded-md hover:bg-green-700 dark:hover:bg-green-400 transition-colors"
         >
           ./contact --send
         </a>

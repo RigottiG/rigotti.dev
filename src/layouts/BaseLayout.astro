@@ -1,6 +1,8 @@
 ---
 import Header from '@/components/Header.astro'
 import Footer from '@/components/Footer.astro'
+import ThemeToggle from '@/components/ThemeToggle.astro'
+import ThemeScript from '@/components/ThemeScript.astro'
 import '@/styles/global.css'
 import { ClientRouter } from 'astro:transitions'
 
@@ -25,18 +27,19 @@ const socialImageURL = new URL(image, Astro.site);
 ---
 
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-    
+
     <!-- SEO Principal -->
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalURL} />
     <meta name="theme-color" content="#0a0a0a" />
+    <meta name="color-scheme" content="dark light" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content={type} />
@@ -60,27 +63,28 @@ const socialImageURL = new URL(image, Astro.site);
 
     <ClientRouter />
   </head>
-  <body class="min-h-screen flex items-center justify-center p-4 sm:p-8 bg-[#050505]">
-    
+  <body class="min-h-screen flex items-center justify-center p-4 sm:p-8 bg-neutral-100 dark:bg-[#050505] transition-colors">
+
     <!-- Terminal Container -->
-    <div class="w-full max-w-3xl shadow-2xl rounded-lg overflow-hidden border border-neutral-800 bg-[#0a0a0a] relative">
-      
+    <div class="w-full max-w-3xl shadow-2xl rounded-lg overflow-hidden border border-neutral-300 dark:border-neutral-800 bg-white dark:bg-[#0a0a0a] relative transition-colors">
+
       <!-- Terminal Header (macOS Style) -->
-      <div class="bg-[#1a1a1a] px-4 py-3 flex items-center justify-between border-b border-neutral-800 select-none">
+      <div class="bg-neutral-100 dark:bg-[#1a1a1a] px-4 py-3 flex items-center justify-between border-b border-neutral-300 dark:border-neutral-800 select-none transition-colors">
         <div class="flex gap-2">
           <div class="w-3 h-3 rounded-full bg-[#ff5f56] hover:bg-[#ff5f56]/80 transition-colors"></div>
           <div class="w-3 h-3 rounded-full bg-[#ffbd2e] hover:bg-[#ffbd2e]/80 transition-colors"></div>
           <div class="w-3 h-3 rounded-full bg-[#27c93f] hover:bg-[#27c93f]/80 transition-colors"></div>
         </div>
-        <div class="text-xs text-neutral-500 font-mono flex gap-2">
+        <div class="text-xs text-neutral-500 dark:text-neutral-500 font-mono flex gap-2">
           <span class="hidden sm:inline">rigotti@dev:</span>
-          <span class="text-neutral-400">{Astro.url.pathname}</span>
+          <span class="text-neutral-600 dark:text-neutral-400">{Astro.url.pathname}</span>
         </div>
-        <div class="w-10"></div> <!-- Spacer para centralizar -->
+        <ThemeToggle />
       </div>
 
       <!-- Content Area -->
       <div class="p-6 sm:p-8 min-h-[600px] flex flex-col">
+        <ThemeScript />
         <Header />
         <main class="flex-1 py-6 animate-in fade-in duration-500">
           <slot />

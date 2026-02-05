@@ -37,10 +37,10 @@ const skills = {
   <div class="space-y-10">
     <!-- Intro -->
     <section>
-      <h1 class="text-xl font-semibold text-neutral-100 mb-4">About</h1>
-      <div class="space-y-3 text-sm text-neutral-400 leading-relaxed max-w-lg">
+      <h1 class="text-xl font-semibold text-neutral-900 dark:text-neutral-100 mb-4">About</h1>
+      <div class="space-y-3 text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed max-w-lg">
         <p>
-          I'm <span class="text-green-400">Guilherme Rigotti</span>, a Software Engineer from Brazil 🇧🇷 with <span class="text-neutral-300">8+ years</span> of experience building web applications.
+          I'm <span class="text-green-600 dark:text-green-400">Guilherme Rigotti</span>, a Software Engineer from Brazil 🇧🇷 with <span class="text-neutral-700 dark:text-neutral-300">8+ years</span> of experience building web applications.
         </p>
         <p>
           I’m strongest on the frontend (React, TypeScript, UI architecture), but I’m also comfortable on the backend (Node.js/Go, APIs, system design) — I like owning problems end-to-end.
@@ -53,12 +53,12 @@ const skills = {
       <h2 class="text-xs uppercase tracking-wider text-neutral-500 mb-4">Experience</h2>
       <div class="space-y-6">
         {experience.map((job) => (
-          <div class="relative pl-4 border-l border-neutral-800">
+          <div class="relative pl-4 border-l border-neutral-300 dark:border-neutral-800">
             <div class="flex items-start justify-between gap-4 mb-1">
               <div class="flex items-center gap-2">
-                <span class="text-sm text-neutral-200">{job.company}</span>
+                <span class="text-sm text-neutral-900 dark:text-neutral-200">{job.company}</span>
                 {job.current && (
-                  <span class="flex items-center gap-1.5 text-xs text-green-400">
+                  <span class="flex items-center gap-1.5 text-xs text-green-600 dark:text-green-400">
                     <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
                     now
                   </span>
@@ -78,30 +78,30 @@ const skills = {
       <h2 class="text-xs uppercase tracking-wider text-neutral-500 mb-4">Skills</h2>
       <div class="grid gap-6 sm:grid-cols-3">
         <div>
-          <h3 class="text-xs text-neutral-400 mb-2">Frontend</h3>
+          <h3 class="text-xs text-neutral-600 dark:text-neutral-400 mb-2">Frontend</h3>
           <div class="flex flex-wrap gap-1.5">
             {skills.frontend.map((skill) => (
-              <span class="px-2 py-1 text-xs rounded bg-neutral-800/50 text-neutral-400 border border-neutral-800">
+              <span class="px-2 py-1 text-xs rounded bg-neutral-200 dark:bg-neutral-800/50 text-neutral-700 dark:text-neutral-400 border border-neutral-300 dark:border-neutral-800">
                 {skill}
               </span>
             ))}
           </div>
         </div>
         <div>
-          <h3 class="text-xs text-neutral-400 mb-2">Backend</h3>
+          <h3 class="text-xs text-neutral-600 dark:text-neutral-400 mb-2">Backend</h3>
           <div class="flex flex-wrap gap-1.5">
             {skills.backend.map((skill) => (
-              <span class="px-2 py-1 text-xs rounded bg-neutral-800/50 text-neutral-400 border border-neutral-800">
+              <span class="px-2 py-1 text-xs rounded bg-neutral-200 dark:bg-neutral-800/50 text-neutral-700 dark:text-neutral-400 border border-neutral-300 dark:border-neutral-800">
                 {skill}
               </span>
             ))}
           </div>
         </div>
         <div>
-          <h3 class="text-xs text-neutral-400 mb-2">Tools</h3>
+          <h3 class="text-xs text-neutral-600 dark:text-neutral-400 mb-2">Tools</h3>
           <div class="flex flex-wrap gap-1.5">
             {skills.tools.map((skill) => (
-              <span class="px-2 py-1 text-xs rounded bg-neutral-800/50 text-neutral-400 border border-neutral-800">
+              <span class="px-2 py-1 text-xs rounded bg-neutral-200 dark:bg-neutral-800/50 text-neutral-700 dark:text-neutral-400 border border-neutral-300 dark:border-neutral-800">
                 {skill}
               </span>
             ))}
@@ -115,12 +115,12 @@ const skills = {
       <h2 class="text-xs uppercase tracking-wider text-neutral-500 mb-4">Education</h2>
       <div class="space-y-4">
         <div>
-          <p class="text-sm text-neutral-200">Universidade La Salle</p>
+          <p class="text-sm text-neutral-900 dark:text-neutral-200">Universidade La Salle</p>
           <p class="text-xs text-neutral-500">Bachelor's degree, Computer Science · 2023 - 2027</p>
         </div>
 
         <div>
-          <p class="text-sm text-neutral-200">IFSUL - Instituto Federal Sul-rio-grandense</p>
+          <p class="text-sm text-neutral-900 dark:text-neutral-200">IFSUL - Instituto Federal Sul-rio-grandense</p>
           <p class="text-xs text-neutral-500">Technical degree, Information Technology · 2015 - 2018</p>
         </div>
       </div>
@@ -128,13 +128,13 @@ const skills = {
 
     <!-- CTA -->
     <section class="pt-4">
-      <div class="p-4 rounded-lg border border-neutral-800 bg-neutral-900/30">
-        <p class="text-neutral-300 text-sm mb-3">
+      <div class="p-4 rounded-lg border border-neutral-300 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900/30">
+        <p class="text-neutral-800 dark:text-neutral-300 text-sm mb-3">
           Interested in working together?
         </p>
         <a
           href="/contact"
-          class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-neutral-900 bg-green-500 rounded-md hover:bg-green-400 transition-colors"
+          class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-neutral-900 bg-green-600 dark:bg-green-500 rounded-md hover:bg-green-700 dark:hover:bg-green-400 transition-colors"
         >
           Get in touch
         </a>
@@ -142,10 +142,10 @@ const skills = {
     </section>
 
     <!-- Back -->
-    <nav class="pt-4 border-t border-neutral-800">
+    <nav class="pt-4 border-t border-neutral-300 dark:border-neutral-800">
       <a
         href="/"
-        class="text-sm text-neutral-500 hover:text-green-400 transition-colors"
+        class="text-sm text-neutral-600 dark:text-neutral-500 hover:text-green-600 dark:text-green-400 transition-colors"
       >
         ← Back to home
       </a>

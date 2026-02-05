@@ -18,10 +18,10 @@ const currentPath = Astro.url.pathname;
           href={item.href}
           class:list={[
             'group relative transition-colors',
-            isActive ? 'text-green-400 font-bold' : 'text-neutral-500 hover:text-neutral-300'
+            isActive ? 'text-green-600 dark:text-green-400 font-bold' : 'text-neutral-600 dark:text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-300'
           ]}
         >
-          <span class="opacity-0 group-hover:opacity-100 absolute -left-3 text-green-500 transition-opacity">
+          <span class="opacity-0 group-hover:opacity-100 absolute -left-3 text-green-600 dark:text-green-500 transition-opacity">
             &gt;
           </span>
           {isActive ? `./${item.label.replace('~/', '')}` : item.label}
@@ -29,5 +29,5 @@ const currentPath = Astro.url.pathname;
       )
     })}
   </nav>
-  <div class="h-px w-full bg-neutral-800 mt-4"></div>
+  <div class="h-px w-full bg-neutral-300 dark:bg-neutral-800 mt-4 transition-colors"></div>
 </header>

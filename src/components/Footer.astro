@@ -8,7 +8,7 @@ const links = [
 ]
 ---
 
-<footer class="mt-12 pt-6 border-t border-neutral-800">
+<footer class="mt-12 pt-6 border-t border-neutral-300 dark:border-neutral-800 transition-colors">
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
     <!-- Links -->
     <div class="flex items-center gap-4">
@@ -17,7 +17,7 @@ const links = [
           href={link.href}
           target={link.href.startsWith('mailto') ? undefined : '_blank'}
           rel={link.href.startsWith('mailto') ? undefined : 'noopener noreferrer'}
-          class="text-sm text-neutral-500 hover:text-green-400 transition-colors"
+          class="text-sm text-neutral-600 dark:text-neutral-500 hover:text-green-600 dark:hover:text-green-400 transition-colors"
         >
           {link.name}
         </a>
@@ -25,9 +25,9 @@ const links = [
     </div>
 
     <!-- Status & Copyright -->
-    <div class="flex items-center gap-4 text-sm text-neutral-600">
+    <div class="flex items-center gap-4 text-sm text-neutral-700 dark:text-neutral-600">
       <span class="flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+        <span class="w-2 h-2 rounded-full bg-green-600 dark:bg-green-500 animate-pulse"></span>
         Available
       </span>
       <span>© {currentYear}</span>

@@ -1,18 +1,103 @@
-<!DOCTYPE html><html lang="en" class="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.17.1"><!-- SEO Principal --><title>Why I switch from Visual Studio Code to NeoVim | Guilherme Rigotti</title><meta name="description" content="A Programmer's Journey from VSCode to Neovim."><link rel="canonical" href="https://rigotti.dev/blog/post/switching_from_vscode_to_nvim/"><meta name="theme-color" content="#0a0a0a"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://rigotti.dev/blog/post/switching_from_vscode_to_nvim/"><meta property="og:title" content="Why I switch from Visual Studio Code to NeoVim | Guilherme Rigotti"><meta property="og:description" content="A Programmer's Journey from VSCode to Neovim."><meta property="og:image" content="https://rigotti.dev/og-image.png"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://rigotti.dev/blog/post/switching_from_vscode_to_nvim/"><meta property="twitter:title" content="Why I switch from Visual Studio Code to NeoVim | Guilherme Rigotti"><meta property="twitter:description" content="A Programmer's Journey from VSCode to Neovim."><meta property="twitter:image" content="https://rigotti.dev/og-image.png"><!-- Fontes (JetBrains Mono é excelente para terminais) --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.CDGfc0hd.js"></script><link rel="stylesheet" href="/_astro/about.BVlYLrnJ.css"></head> <body class="min-h-screen flex items-center justify-center p-4 sm:p-8 bg-[#050505]"> <!-- Terminal Container --> <div class="w-full max-w-3xl shadow-2xl rounded-lg overflow-hidden border border-neutral-800 bg-[#0a0a0a] relative"> <!-- Terminal Header (macOS Style) --> <div class="bg-[#1a1a1a] px-4 py-3 flex items-center justify-between border-b border-neutral-800 select-none"> <div class="flex gap-2"> <div class="w-3 h-3 rounded-full bg-[#ff5f56] hover:bg-[#ff5f56]/80 transition-colors"></div> <div class="w-3 h-3 rounded-full bg-[#ffbd2e] hover:bg-[#ffbd2e]/80 transition-colors"></div> <div class="w-3 h-3 rounded-full bg-[#27c93f] hover:bg-[#27c93f]/80 transition-colors"></div> </div> <div class="text-xs text-neutral-500 font-mono flex gap-2"> <span class="hidden sm:inline">rigotti@dev:</span> <span class="text-neutral-400">/blog/post/switching_from_vscode_to_nvim/</span> </div> <div class="w-10"></div> <!-- Spacer para centralizar --> </div> <!-- Content Area --> <div class="p-6 sm:p-8 min-h-[600px] flex flex-col"> <header class="mb-8 font-mono text-sm"> <nav class="flex flex-wrap gap-x-6 gap-y-2"> <a href="/" class="group relative transition-colors text-neutral-500 hover:text-neutral-300"> <span class="opacity-0 group-hover:opacity-100 absolute -left-3 text-green-500 transition-opacity">
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.17.1"><!-- SEO Principal --><title>Why I switch from Visual Studio Code to NeoVim | Guilherme Rigotti</title><meta name="description" content="A Programmer's Journey from VSCode to Neovim."><link rel="canonical" href="https://rigotti.dev/blog/post/switching_from_vscode_to_nvim/"><meta name="theme-color" content="#0a0a0a"><meta name="color-scheme" content="dark light"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://rigotti.dev/blog/post/switching_from_vscode_to_nvim/"><meta property="og:title" content="Why I switch from Visual Studio Code to NeoVim | Guilherme Rigotti"><meta property="og:description" content="A Programmer's Journey from VSCode to Neovim."><meta property="og:image" content="https://rigotti.dev/og-image.png"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://rigotti.dev/blog/post/switching_from_vscode_to_nvim/"><meta property="twitter:title" content="Why I switch from Visual Studio Code to NeoVim | Guilherme Rigotti"><meta property="twitter:description" content="A Programmer's Journey from VSCode to Neovim."><meta property="twitter:image" content="https://rigotti.dev/og-image.png"><!-- Fontes (JetBrains Mono é excelente para terminais) --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.CDGfc0hd.js"></script><link rel="stylesheet" href="/_astro/about.BSGyeeIR.css"></head> <body class="min-h-screen flex items-center justify-center p-4 sm:p-8 bg-neutral-100 dark:bg-[#050505] transition-colors"> <!-- Terminal Container --> <div class="w-full max-w-3xl shadow-2xl rounded-lg overflow-hidden border border-neutral-300 dark:border-neutral-800 bg-white dark:bg-[#0a0a0a] relative transition-colors"> <!-- Terminal Header (macOS Style) --> <div class="bg-neutral-100 dark:bg-[#1a1a1a] px-4 py-3 flex items-center justify-between border-b border-neutral-300 dark:border-neutral-800 select-none transition-colors"> <div class="flex gap-2"> <div class="w-3 h-3 rounded-full bg-[#ff5f56] hover:bg-[#ff5f56]/80 transition-colors"></div> <div class="w-3 h-3 rounded-full bg-[#ffbd2e] hover:bg-[#ffbd2e]/80 transition-colors"></div> <div class="w-3 h-3 rounded-full bg-[#27c93f] hover:bg-[#27c93f]/80 transition-colors"></div> </div> <div class="text-xs text-neutral-500 dark:text-neutral-500 font-mono flex gap-2"> <span class="hidden sm:inline">rigotti@dev:</span> <span class="text-neutral-600 dark:text-neutral-400">/blog/post/switching_from_vscode_to_nvim/</span> </div> <button id="theme-toggle" class="p-2 rounded hover:bg-neutral-300 dark:hover:bg-neutral-700 transition-colors text-neutral-700 dark:text-neutral-300" aria-label="Toggle theme" title="Toggle theme"> <svg id="theme-icon-light" class="hidden w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path> </svg> <svg id="theme-icon-dark" class="hidden w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path> </svg> </button> </div> <!-- Content Area --> <div class="p-6 sm:p-8 min-h-[600px] flex flex-col"> <script>(function(){
+  // Only run in browser
+  if (typeof window !== 'undefined') {
+    const getTheme = () => {
+      const stored = localStorage.getItem('theme')
+      if (stored === 'light' || stored === 'dark') return stored
+      return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
+    }
+
+    const setTheme = (theme) => {
+      const html = document.documentElement
+      const iconLight = document.getElementById('theme-icon-light')
+      const iconDark = document.getElementById('theme-icon-dark')
+
+      html.classList.remove('light', 'dark')
+      html.classList.add(theme)
+
+      if (theme === 'dark') {
+        iconLight?.classList.remove('hidden')
+        iconDark?.classList.add('hidden')
+      } else {
+        iconLight?.classList.add('hidden')
+        iconDark?.classList.remove('hidden')
+      }
+
+      localStorage.setItem('theme', theme)
+    }
+
+    const updateIcons = () => {
+      const theme = getTheme()
+      const iconLight = document.getElementById('theme-icon-light')
+      const iconDark = document.getElementById('theme-icon-dark')
+
+      if (theme === 'dark') {
+        iconLight?.classList.remove('hidden')
+        iconDark?.classList.add('hidden')
+      } else {
+        iconLight?.classList.add('hidden')
+        iconDark?.classList.remove('hidden')
+      }
+    }
+
+    // Initialize theme immediately
+    setTheme(getTheme())
+
+    // Setup toggle button
+    const setupToggleButton = () => {
+      const toggleBtn = document.getElementById('theme-toggle')
+      if (toggleBtn && !toggleBtn.hasAttribute('data-listener')) {
+        toggleBtn.addEventListener('click', () => {
+          const currentTheme = getTheme()
+          const newTheme = currentTheme === 'dark' ? 'light' : 'dark'
+          setTheme(newTheme)
+        })
+        toggleBtn.setAttribute('data-listener', 'true')
+      }
+      // Always update icons when setup runs
+      updateIcons()
+    }
+
+    // Setup on page load
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupToggleButton)
+    } else {
+      setupToggleButton()
+    }
+
+    // Re-setup after page navigation (Astro View Transitions)
+    document.addEventListener('astro:page-load', () => {
+      // Apply theme immediately
+      setTheme(getTheme())
+      // Then setup button
+      setupToggleButton()
+    })
+
+    // Also observe DOM changes for the button
+    const observer = new MutationObserver(() => {
+      setupToggleButton()
+    })
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    })
+  }
+})();</script> <header class="mb-8 font-mono text-sm"> <nav class="flex flex-wrap gap-x-6 gap-y-2"> <a href="/" class="group relative transition-colors text-neutral-600 dark:text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-300"> <span class="opacity-0 group-hover:opacity-100 absolute -left-3 text-green-600 dark:text-green-500 transition-opacity">
 &gt;
-</span> ~/home </a><a href="/blog" class="group relative transition-colors text-green-400 font-bold"> <span class="opacity-0 group-hover:opacity-100 absolute -left-3 text-green-500 transition-opacity">
+</span> ~/home </a><a href="/blog" class="group relative transition-colors text-green-600 dark:text-green-400 font-bold"> <span class="opacity-0 group-hover:opacity-100 absolute -left-3 text-green-600 dark:text-green-500 transition-opacity">
 &gt;
-</span> ./blog </a><a href="/about" class="group relative transition-colors text-neutral-500 hover:text-neutral-300"> <span class="opacity-0 group-hover:opacity-100 absolute -left-3 text-green-500 transition-opacity">
+</span> ./blog </a><a href="/about" class="group relative transition-colors text-neutral-600 dark:text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-300"> <span class="opacity-0 group-hover:opacity-100 absolute -left-3 text-green-600 dark:text-green-500 transition-opacity">
 &gt;
-</span> ~/about </a><a href="/contact" class="group relative transition-colors text-neutral-500 hover:text-neutral-300"> <span class="opacity-0 group-hover:opacity-100 absolute -left-3 text-green-500 transition-opacity">
+</span> ~/about </a><a href="/contact" class="group relative transition-colors text-neutral-600 dark:text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-300"> <span class="opacity-0 group-hover:opacity-100 absolute -left-3 text-green-600 dark:text-green-500 transition-opacity">
 &gt;
-</span> ~/contact </a> </nav> <div class="h-px w-full bg-neutral-800 mt-4"></div> </header> <main class="flex-1 py-6 animate-in fade-in duration-500">  <article class="space-y-8"> <!-- Back --> <nav> <a href="/blog" class="text-sm text-neutral-500 hover:text-green-400 transition-colors">
+</span> ~/contact </a> </nav> <div class="h-px w-full bg-neutral-300 dark:bg-neutral-800 mt-4 transition-colors"></div> </header> <main class="flex-1 py-6 animate-in fade-in duration-500">  <article class="space-y-8"> <!-- Back --> <nav> <a href="/blog" class="text-sm text-neutral-600 dark:text-neutral-500 hover:text-green-600 dark:hover:text-green-400 transition-colors">
 ← Back to blog
-</a> </nav> <!-- Header --> <header class="space-y-4"> <div class="flex items-center gap-3 text-xs text-neutral-500"> <time datetime="2023-03-03T00:00:00.000Z"> March 2, 2023 </time> <span>·</span> <span>3 min read</span> </div> <h1 class="text-2xl font-bold text-neutral-100 leading-tight"> Why I switch from Visual Studio Code to NeoVim </h1> <p class="text-neutral-400 text-sm"> A Programmer&#39;s Journey from VSCode to Neovim. </p> <div class="flex flex-wrap gap-2 pt-2"> <span class="text-xs text-neutral-500">
-#Neovim </span><span class="text-xs text-neutral-500">
-#VSCode </span><span class="text-xs text-neutral-500">
-#Code Editor </span><span class="text-xs text-neutral-500">
-#Productivity </span> </div> </header> <!-- Divider --> <hr class="border-neutral-800"> <!-- Content --> <div class="prose"> <p>As a programmer, one of the most important tools in my arsenal is my code editor. I’ve been using Visual Studio Code (VSCode) for years and it’s been a reliable editor, but recently I decided to make the switch to Neovim. In this blog post, I’ll explain why I made the switch and why you might want to consider it too.</p>
+</a> </nav> <!-- Header --> <header class="space-y-4"> <div class="flex items-center gap-3 text-xs text-neutral-600 dark:text-neutral-500"> <time datetime="2023-03-03T00:00:00.000Z"> March 2, 2023 </time> <span>·</span> <span>3 min read</span> </div> <h1 class="text-2xl font-bold text-neutral-900 dark:text-neutral-100 leading-tight"> Why I switch from Visual Studio Code to NeoVim </h1> <p class="text-neutral-700 dark:text-neutral-400 text-sm"> A Programmer&#39;s Journey from VSCode to Neovim. </p> <div class="flex flex-wrap gap-2 pt-2"> <span class="text-xs text-neutral-700 dark:text-neutral-500">
+#Neovim </span><span class="text-xs text-neutral-700 dark:text-neutral-500">
+#VSCode </span><span class="text-xs text-neutral-700 dark:text-neutral-500">
+#Code Editor </span><span class="text-xs text-neutral-700 dark:text-neutral-500">
+#Productivity </span> </div> </header> <!-- Divider --> <hr class="border-neutral-300 dark:border-neutral-800"> <!-- Content --> <div class="prose"> <p>As a programmer, one of the most important tools in my arsenal is my code editor. I’ve been using Visual Studio Code (VSCode) for years and it’s been a reliable editor, but recently I decided to make the switch to Neovim. In this blog post, I’ll explain why I made the switch and why you might want to consider it too.</p>
 <p>First, let’s talk about what Neovim is. Neovim is a fork of Vim, a highly customizable text editor that’s been around since the 90s. Neovim is built to be more modern and extensible than Vim, with a focus on making it easier to develop plugins and integrate with other tools. Neovim also has a more consistent and flexible scripting language, making it easier to automate tasks and customize your workflow.</p>
 <p><img src="/images/switching_from_vscode_to_nvim.png" alt="my currently neovim"></p>
 <p>So why did I switch from VSCode to Neovim? There were a few reasons:</p>
@@ -24,10 +109,10 @@
 <p>Neovim uses a modal editing system, which can take a bit of getting used to, but is incredibly powerful once you get the hang of it. The modal editing system allows you to use different keystrokes to perform different actions, depending on which mode you’re in. This can greatly speed up your workflow once you get used to it. VSCode, on the other hand, uses a more traditional text editor interface.</p>
 <h2 id="terminal-integration">Terminal Integration</h2>
 <p>One of the things I love about Neovim is its terminal integration. I can run shell commands and interact with my terminal directly from within Neovim, without having to switch to a separate terminal window. This has been a game-changer for my workflow and has allowed me to streamline my development process.</p>
-<p>Overall, I’m really happy with my switch to Neovim. While there was a bit of a learning curve at first, I found that the benefits outweighed the initial investment. If you’re looking for a lightweight, customizable, and powerful code editor, I would definitely recommend giving Neovim a try.</p> </div> <!-- Footer --> <footer class="pt-8 border-t border-neutral-800"> <div class="flex items-center justify-between gap-4"> <div class="flex items-center gap-3"> <div class="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 text-sm font-medium">
+<p>Overall, I’m really happy with my switch to Neovim. While there was a bit of a learning curve at first, I found that the benefits outweighed the initial investment. If you’re looking for a lightweight, customizable, and powerful code editor, I would definitely recommend giving Neovim a try.</p> </div> <!-- Footer --> <footer class="pt-8 border-t border-neutral-300 dark:border-neutral-800"> <div class="flex items-center justify-between gap-4"> <div class="flex items-center gap-3"> <div class="w-10 h-10 rounded-full bg-green-600/20 dark:bg-green-500/20 flex items-center justify-center text-green-700 dark:text-green-400 text-sm font-medium">
 GR
-</div> <div> <p class="text-sm text-neutral-200">Guilherme Rigotti</p> <p class="text-xs text-neutral-500">Software Engineer</p> </div> </div> <a href="/blog" class="text-sm text-green-400 hover:text-green-300 transition-colors">
+</div> <div> <p class="text-sm text-neutral-900 dark:text-neutral-200">Guilherme Rigotti</p> <p class="text-xs text-neutral-700 dark:text-neutral-500">Software Engineer</p> </div> </div> <a href="/blog" class="text-sm text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 transition-colors">
 More posts →
-</a> </div> </footer> </article>  </main> <footer class="mt-12 pt-6 border-t border-neutral-800"> <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"> <!-- Links --> <div class="flex items-center gap-4"> <a href="https://github.com/rigottig" target="_blank" rel="noopener noreferrer" class="text-sm text-neutral-500 hover:text-green-400 transition-colors"> GitHub </a><a href="https://linkedin.com/in/rigottig" target="_blank" rel="noopener noreferrer" class="text-sm text-neutral-500 hover:text-green-400 transition-colors"> LinkedIn </a><a href="mailto:ggrigoti@gmail.com" class="text-sm text-neutral-500 hover:text-green-400 transition-colors"> Email </a> </div> <!-- Status & Copyright --> <div class="flex items-center gap-4 text-sm text-neutral-600"> <span class="flex items-center gap-2"> <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+</a> </div> </footer> </article>  </main> <footer class="mt-12 pt-6 border-t border-neutral-300 dark:border-neutral-800 transition-colors"> <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"> <!-- Links --> <div class="flex items-center gap-4"> <a href="https://github.com/rigottig" target="_blank" rel="noopener noreferrer" class="text-sm text-neutral-600 dark:text-neutral-500 hover:text-green-600 dark:hover:text-green-400 transition-colors"> GitHub </a><a href="https://linkedin.com/in/rigottig" target="_blank" rel="noopener noreferrer" class="text-sm text-neutral-600 dark:text-neutral-500 hover:text-green-600 dark:hover:text-green-400 transition-colors"> LinkedIn </a><a href="mailto:ggrigoti@gmail.com" class="text-sm text-neutral-600 dark:text-neutral-500 hover:text-green-600 dark:hover:text-green-400 transition-colors"> Email </a> </div> <!-- Status & Copyright --> <div class="flex items-center gap-4 text-sm text-neutral-700 dark:text-neutral-600"> <span class="flex items-center gap-2"> <span class="w-2 h-2 rounded-full bg-green-600 dark:bg-green-500 animate-pulse"></span>
 Available
 </span> <span>© 2026</span> </div> </div> </footer> </div> </div> </body></html>

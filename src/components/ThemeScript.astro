@@ -1,0 +1,89 @@
+---
+---
+
+<script define:vars={{}}>
+  // Only run in browser
+  if (typeof window !== 'undefined') {
+    const getTheme = () => {
+      const stored = localStorage.getItem('theme')
+      if (stored === 'light' || stored === 'dark') return stored
+      return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
+    }
+
+    const setTheme = (theme) => {
+      const html = document.documentElement
+      const iconLight = document.getElementById('theme-icon-light')
+      const iconDark = document.getElementById('theme-icon-dark')
+
+      html.classList.remove('light', 'dark')
+      html.classList.add(theme)
+
+      if (theme === 'dark') {
+        iconLight?.classList.remove('hidden')
+        iconDark?.classList.add('hidden')
+      } else {
+        iconLight?.classList.add('hidden')
+        iconDark?.classList.remove('hidden')
+      }
+
+      localStorage.setItem('theme', theme)
+    }
+
+    const updateIcons = () => {
+      const theme = getTheme()
+      const iconLight = document.getElementById('theme-icon-light')
+      const iconDark = document.getElementById('theme-icon-dark')
+
+      if (theme === 'dark') {
+        iconLight?.classList.remove('hidden')
+        iconDark?.classList.add('hidden')
+      } else {
+        iconLight?.classList.add('hidden')
+        iconDark?.classList.remove('hidden')
+      }
+    }
+
+    // Initialize theme immediately
+    setTheme(getTheme())
+
+    // Setup toggle button
+    const setupToggleButton = () => {
+      const toggleBtn = document.getElementById('theme-toggle')
+      if (toggleBtn && !toggleBtn.hasAttribute('data-listener')) {
+        toggleBtn.addEventListener('click', () => {
+          const currentTheme = getTheme()
+          const newTheme = currentTheme === 'dark' ? 'light' : 'dark'
+          setTheme(newTheme)
+        })
+        toggleBtn.setAttribute('data-listener', 'true')
+      }
+      // Always update icons when setup runs
+      updateIcons()
+    }
+
+    // Setup on page load
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupToggleButton)
+    } else {
+      setupToggleButton()
+    }
+
+    // Re-setup after page navigation (Astro View Transitions)
+    document.addEventListener('astro:page-load', () => {
+      // Apply theme immediately
+      setTheme(getTheme())
+      // Then setup button
+      setupToggleButton()
+    })
+
+    // Also observe DOM changes for the button
+    const observer = new MutationObserver(() => {
+      setupToggleButton()
+    })
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    })
+  }
+</script>
