@@ -4,36 +4,35 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 const experience = [
   {
     company: 'Axur',
-    role: 'Senior Frontend Developer',
+    role: 'Senior Software Engineer',
     period: '2023 - Present',
-    description: 'Leading frontend development for cybersecurity products.',
+    description: 'Leading UI architecture and contributing across the stack (APIs, tooling, CI/CD) for cybersecurity products.',
     current: true,
   },
   {
     company: 'CWI Software',
-    role: 'Frontend Developer',
+    role: 'Software Engineer',
     period: '2019 - 2023',
-    description: 'Developed client projects using React and Vue.js.',
+    description: 'Delivered client projects with React/Vue and collaborated closely with backend teams to ship end-to-end features.',
   },
   {
     company: 'Mave Tecnologia',
-    role: 'Fullstack Developer',
+    role: 'Software Engineer',
     period: '2018 - 2019',
-    description: 'Built web applications with PHP, Laravel, and JavaScript.',
+    description: 'Built full-stack web applications with PHP/Laravel and JavaScript, from API design to UI delivery.',
   },
 ]
 
 const skills = {
-  frontend: ['React', 'TypeScript', 'Next.js', 'Astro', 'Vue.js', 'Tailwind CSS'],
-  backend: ['Node.js', 'Go', 'REST APIs', 'GraphQL'],
+  frontend: ['React', 'TypeScript', 'Astro', 'Vue.js', 'Tailwind CSS', 'UI Architecture'],
+  backend: ['Node.js', 'Go', 'REST APIs', 'GraphQL', 'System Design'],
   tools: ['Git', 'Neovim', 'Docker', 'Linux', 'CI/CD'],
 }
 ---
 
 <BaseLayout
   title="About | Guilherme Rigotti"
-  description="Learn more about Guilherme Rigotti - Software Engineer with 7+ years of experience."
-  currentPath="/about"
+  description="Learn more about Guilherme Rigotti — Software Engineer with 8+ years of experience across frontend and backend."
 >
   <div class="space-y-10">
     <!-- Intro -->
@@ -41,10 +40,10 @@ const skills = {
       <h1 class="text-xl font-semibold text-neutral-100 mb-4">About</h1>
       <div class="space-y-3 text-sm text-neutral-400 leading-relaxed max-w-lg">
         <p>
-          I'm <span class="text-green-400">Guilherme Rigotti</span>, a software engineer from Brazil 🇧🇷 with 7+ years of experience building web applications.
+          I'm <span class="text-green-400">Guilherme Rigotti</span>, a Software Engineer from Brazil 🇧🇷 with <span class="text-neutral-300">8+ years</span> of experience building web applications.
         </p>
         <p>
-          I specialize in frontend development, creating scalable and performant applications with React, TypeScript, and modern web technologies.
+          I’m strongest on the frontend (React, TypeScript, UI architecture), but I’m also comfortable on the backend (Node.js/Go, APIs, system design) — I like owning problems end-to-end.
         </p>
       </div>
     </section>
@@ -114,9 +113,16 @@ const skills = {
     <!-- Education -->
     <section>
       <h2 class="text-xs uppercase tracking-wider text-neutral-500 mb-4">Education</h2>
-      <div>
-        <p class="text-sm text-neutral-200">Universidade de Caxias do Sul</p>
-        <p class="text-xs text-neutral-500">Bachelor in Computer Science · 2016 - 2020</p>
+      <div class="space-y-4">
+        <div>
+          <p class="text-sm text-neutral-200">Universidade La Salle</p>
+          <p class="text-xs text-neutral-500">Bachelor's degree, Computer Science · 2023 - 2027</p>
+        </div>
+
+        <div>
+          <p class="text-sm text-neutral-200">IFSUL - Instituto Federal Sul-rio-grandense</p>
+          <p class="text-xs text-neutral-500">Technical degree, Information Technology · 2015 - 2018</p>
+        </div>
       </div>
     </section>
 
