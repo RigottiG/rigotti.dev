@@ -40,48 +40,20 @@ The content is organized as follows:
 </file_summary>
 
 <directory_structure>
-.astro/
-  collections/
-    post.schema.json
-  content-assets.mjs
-  content-modules.mjs
-  content.d.ts
-  data-store.json
-  settings.json
-  types.d.ts
 .claude/
   settings.local.json
-posts/
-  git_bisect.md
-  switching_from_vscode_to_nvim.md
-  understanding_graphs_with_typescript.md
 public/
   images/
     switching_from_vscode_to_nvim.png
 src/
-  app/
-    about/
-      page.tsx
-    blog/
-      post/
-        [slug]/
-          page.tsx
-      page.tsx
-    contact/
-      page.tsx
-    favicon.ico
-    layout.tsx
-    page.tsx
   components/
-    footer/
-      index.tsx
-    header/
-      index.tsx
-    post-card/
-      index.tsx
     Footer.astro
     Header.astro
     PostCard.astro
+    Schema.astro
+    ThemeScript.astro
+    ThemeToggle.astro
+    Typewriter.astro
   content/
     post/
       git_bisect.md
@@ -93,14 +65,15 @@ src/
     blog/
       post/
         [slug].astro
+      tag/
+        [tag].astro
       index.astro
+    404.astro
     about.astro
     contact.astro
     index.astro
     robots.txt.ts
-  services/
-    posts/
-      index.ts
+    rss.xml.ts
   styles/
     global.css
   utils/
@@ -108,318 +81,20 @@ src/
 .editorconfig
 .eslintrc.json
 .gitignore
+.nvmrc
 .prettierrc.json
+AGENTS.md
 astro.config.mjs
 CLAUDE.md
 content.config.ts
-next.config.js
 package.json
-postcss.config.js
 README.md
-tailwind.config.js
 tailwind.config.mjs
 tsconfig.json
 </directory_structure>
 
 <files>
 This section contains the contents of the repository's files.
-
-<file path=".astro/collections/post.schema.json">
-{
-  "$ref": "#/definitions/post",
-  "definitions": {
-    "post": {
-      "type": "object",
-      "properties": {
-        "title": {
-          "type": "string"
-        },
-        "subtitle": {
-          "type": "string"
-        },
-        "date": {
-          "anyOf": [
-            {
-              "type": "string",
-              "format": "date-time"
-            },
-            {
-              "type": "string",
-              "format": "date"
-            },
-            {
-              "type": "integer",
-              "format": "unix-time"
-            }
-          ]
-        },
-        "tags": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "default": []
-        },
-        "$schema": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "title",
-        "date"
-      ],
-      "additionalProperties": false
-    }
-  },
-  "$schema": "http://json-schema.org/draft-07/schema#"
-}
-</file>
-
-<file path=".astro/content-assets.mjs">
-export default new Map();
-</file>
-
-<file path=".astro/content-modules.mjs">
-export default new Map();
-</file>
-
-<file path=".astro/content.d.ts">
-declare module 'astro:content' {
-	interface Render {
-		'.mdx': Promise<{
-			Content: import('astro').MDXContent;
-			headings: import('astro').MarkdownHeading[];
-			remarkPluginFrontmatter: Record<string, any>;
-			components: import('astro').MDXInstance<{}>['components'];
-		}>;
-	}
-}
-
-declare module 'astro:content' {
-	export interface RenderResult {
-		Content: import('astro/runtime/server/index.js').AstroComponentFactory;
-		headings: import('astro').MarkdownHeading[];
-		remarkPluginFrontmatter: Record<string, any>;
-	}
-	interface Render {
-		'.md': Promise<RenderResult>;
-	}
-
-	export interface RenderedContent {
-		html: string;
-		metadata?: {
-			imagePaths: Array<string>;
-			[key: string]: unknown;
-		};
-	}
-}
-
-declare module 'astro:content' {
-	type Flatten<T> = T extends { [K: string]: infer U } ? U : never;
-
-	export type CollectionKey = keyof AnyEntryMap;
-	export type CollectionEntry<C extends CollectionKey> = Flatten<AnyEntryMap[C]>;
-
-	export type ContentCollectionKey = keyof ContentEntryMap;
-	export type DataCollectionKey = keyof DataEntryMap;
-
-	type AllValuesOf<T> = T extends any ? T[keyof T] : never;
-	type ValidContentEntrySlug<C extends keyof ContentEntryMap> = AllValuesOf<
-		ContentEntryMap[C]
-	>['slug'];
-
-	export type ReferenceDataEntry<
-		C extends CollectionKey,
-		E extends keyof DataEntryMap[C] = string,
-	> = {
-		collection: C;
-		id: E;
-	};
-	export type ReferenceContentEntry<
-		C extends keyof ContentEntryMap,
-		E extends ValidContentEntrySlug<C> | (string & {}) = string,
-	> = {
-		collection: C;
-		slug: E;
-	};
-	export type ReferenceLiveEntry<C extends keyof LiveContentConfig['collections']> = {
-		collection: C;
-		id: string;
-	};
-
-	/** @deprecated Use `getEntry` instead. */
-	export function getEntryBySlug<
-		C extends keyof ContentEntryMap,
-		E extends ValidContentEntrySlug<C> | (string & {}),
-	>(
-		collection: C,
-		// Note that this has to accept a regular string too, for SSR
-		entrySlug: E,
-	): E extends ValidContentEntrySlug<C>
-		? Promise<CollectionEntry<C>>
-		: Promise<CollectionEntry<C> | undefined>;
-
-	/** @deprecated Use `getEntry` instead. */
-	export function getDataEntryById<C extends keyof DataEntryMap, E extends keyof DataEntryMap[C]>(
-		collection: C,
-		entryId: E,
-	): Promise<CollectionEntry<C>>;
-
-	export function getCollection<C extends keyof AnyEntryMap, E extends CollectionEntry<C>>(
-		collection: C,
-		filter?: (entry: CollectionEntry<C>) => entry is E,
-	): Promise<E[]>;
-	export function getCollection<C extends keyof AnyEntryMap>(
-		collection: C,
-		filter?: (entry: CollectionEntry<C>) => unknown,
-	): Promise<CollectionEntry<C>[]>;
-
-	export function getLiveCollection<C extends keyof LiveContentConfig['collections']>(
-		collection: C,
-		filter?: LiveLoaderCollectionFilterType<C>,
-	): Promise<
-		import('astro').LiveDataCollectionResult<LiveLoaderDataType<C>, LiveLoaderErrorType<C>>
-	>;
-
-	export function getEntry<
-		C extends keyof ContentEntryMap,
-		E extends ValidContentEntrySlug<C> | (string & {}),
-	>(
-		entry: ReferenceContentEntry<C, E>,
-	): E extends ValidContentEntrySlug<C>
-		? Promise<CollectionEntry<C>>
-		: Promise<CollectionEntry<C> | undefined>;
-	export function getEntry<
-		C extends keyof DataEntryMap,
-		E extends keyof DataEntryMap[C] | (string & {}),
-	>(
-		entry: ReferenceDataEntry<C, E>,
-	): E extends keyof DataEntryMap[C]
-		? Promise<DataEntryMap[C][E]>
-		: Promise<CollectionEntry<C> | undefined>;
-	export function getEntry<
-		C extends keyof ContentEntryMap,
-		E extends ValidContentEntrySlug<C> | (string & {}),
-	>(
-		collection: C,
-		slug: E,
-	): E extends ValidContentEntrySlug<C>
-		? Promise<CollectionEntry<C>>
-		: Promise<CollectionEntry<C> | undefined>;
-	export function getEntry<
-		C extends keyof DataEntryMap,
-		E extends keyof DataEntryMap[C] | (string & {}),
-	>(
-		collection: C,
-		id: E,
-	): E extends keyof DataEntryMap[C]
-		? string extends keyof DataEntryMap[C]
-			? Promise<DataEntryMap[C][E]> | undefined
-			: Promise<DataEntryMap[C][E]>
-		: Promise<CollectionEntry<C> | undefined>;
-	export function getLiveEntry<C extends keyof LiveContentConfig['collections']>(
-		collection: C,
-		filter: string | LiveLoaderEntryFilterType<C>,
-	): Promise<import('astro').LiveDataEntryResult<LiveLoaderDataType<C>, LiveLoaderErrorType<C>>>;
-
-	/** Resolve an array of entry references from the same collection */
-	export function getEntries<C extends keyof ContentEntryMap>(
-		entries: ReferenceContentEntry<C, ValidContentEntrySlug<C>>[],
-	): Promise<CollectionEntry<C>[]>;
-	export function getEntries<C extends keyof DataEntryMap>(
-		entries: ReferenceDataEntry<C, keyof DataEntryMap[C]>[],
-	): Promise<CollectionEntry<C>[]>;
-
-	export function render<C extends keyof AnyEntryMap>(
-		entry: AnyEntryMap[C][string],
-	): Promise<RenderResult>;
-
-	export function reference<C extends keyof AnyEntryMap>(
-		collection: C,
-	): import('astro/zod').ZodEffects<
-		import('astro/zod').ZodString,
-		C extends keyof ContentEntryMap
-			? ReferenceContentEntry<C, ValidContentEntrySlug<C>>
-			: ReferenceDataEntry<C, keyof DataEntryMap[C]>
-	>;
-	// Allow generic `string` to avoid excessive type errors in the config
-	// if `dev` is not running to update as you edit.
-	// Invalid collection names will be caught at build time.
-	export function reference<C extends string>(
-		collection: C,
-	): import('astro/zod').ZodEffects<import('astro/zod').ZodString, never>;
-
-	type ReturnTypeOrOriginal<T> = T extends (...args: any[]) => infer R ? R : T;
-	type InferEntrySchema<C extends keyof AnyEntryMap> = import('astro/zod').infer<
-		ReturnTypeOrOriginal<Required<ContentConfig['collections'][C]>['schema']>
-	>;
-
-	type ContentEntryMap = {
-		
-	};
-
-	type DataEntryMap = {
-		"post": Record<string, {
-  id: string;
-  body?: string;
-  collection: "post";
-  data: any;
-  rendered?: RenderedContent;
-  filePath?: string;
-}>;
-
-	};
-
-	type AnyEntryMap = ContentEntryMap & DataEntryMap;
-
-	type ExtractLoaderTypes<T> = T extends import('astro/loaders').LiveLoader<
-		infer TData,
-		infer TEntryFilter,
-		infer TCollectionFilter,
-		infer TError
-	>
-		? { data: TData; entryFilter: TEntryFilter; collectionFilter: TCollectionFilter; error: TError }
-		: { data: never; entryFilter: never; collectionFilter: never; error: never };
-	type ExtractDataType<T> = ExtractLoaderTypes<T>['data'];
-	type ExtractEntryFilterType<T> = ExtractLoaderTypes<T>['entryFilter'];
-	type ExtractCollectionFilterType<T> = ExtractLoaderTypes<T>['collectionFilter'];
-	type ExtractErrorType<T> = ExtractLoaderTypes<T>['error'];
-
-	type LiveLoaderDataType<C extends keyof LiveContentConfig['collections']> =
-		LiveContentConfig['collections'][C]['schema'] extends undefined
-			? ExtractDataType<LiveContentConfig['collections'][C]['loader']>
-			: import('astro/zod').infer<
-					Exclude<LiveContentConfig['collections'][C]['schema'], undefined>
-				>;
-	type LiveLoaderEntryFilterType<C extends keyof LiveContentConfig['collections']> =
-		ExtractEntryFilterType<LiveContentConfig['collections'][C]['loader']>;
-	type LiveLoaderCollectionFilterType<C extends keyof LiveContentConfig['collections']> =
-		ExtractCollectionFilterType<LiveContentConfig['collections'][C]['loader']>;
-	type LiveLoaderErrorType<C extends keyof LiveContentConfig['collections']> = ExtractErrorType<
-		LiveContentConfig['collections'][C]['loader']
-	>;
-
-	export type ContentConfig = typeof import("../src/content.config.mjs");
-	export type LiveContentConfig = never;
-}
-</file>
-
-<file path=".astro/data-store.json">
-[["Map",1,2,7,8],"meta::meta",["Map",3,4,5,6],"astro-version","5.17.1","astro-config-digest","{\"root\":{},\"srcDir\":{},\"publicDir\":{},\"outDir\":{},\"cacheDir\":{},\"site\":\"https://rigotti.dev\",\"compressHTML\":true,\"base\":\"/\",\"trailingSlash\":\"ignore\",\"output\":\"static\",\"scopedStyleStrategy\":\"attribute\",\"build\":{\"format\":\"directory\",\"client\":{},\"server\":{},\"assets\":\"_astro\",\"serverEntry\":\"entry.mjs\",\"redirects\":false,\"inlineStylesheets\":\"auto\",\"concurrency\":1},\"server\":{\"open\":false,\"host\":false,\"port\":4321,\"streaming\":true,\"allowedHosts\":[]},\"redirects\":{},\"image\":{\"endpoint\":{\"route\":\"/_image\"},\"service\":{\"entrypoint\":\"astro/assets/services/sharp\",\"config\":{}},\"domains\":[],\"remotePatterns\":[],\"responsiveStyles\":false},\"devToolbar\":{\"enabled\":true},\"markdown\":{\"syntaxHighlight\":{\"type\":\"shiki\",\"excludeLangs\":[\"math\"]},\"shikiConfig\":{\"langs\":[],\"langAlias\":{},\"theme\":\"github-dark\",\"themes\":{},\"wrap\":false,\"transformers\":[]},\"remarkPlugins\":[],\"rehypePlugins\":[],\"remarkRehype\":{},\"gfm\":true,\"smartypants\":true},\"security\":{\"checkOrigin\":true,\"allowedDomains\":[]},\"env\":{\"schema\":{},\"validateSecrets\":false},\"experimental\":{\"clientPrerender\":false,\"contentIntellisense\":false,\"headingIdCompat\":false,\"preserveScriptOrder\":false,\"liveContentCollections\":false,\"csp\":false,\"staticImportMetaEnv\":false,\"chromeDevtoolsWorkspace\":false,\"failOnPrerenderConflict\":false,\"svgo\":false},\"legacy\":{\"collections\":false}}","post",["Map",9,10,44,45,64,65],"switching_from_vscode_to_nvim",{"id":9,"data":11,"body":20,"filePath":21,"digest":22,"rendered":23,"legacyId":43},{"title":12,"subtitle":13,"date":14,"tags":15},"Why I switch from Visual Studio Code to NeoVim","A Programmer's Journey from VSCode to Neovim.","2023-03-03",[16,17,18,19],"Neovim","VSCode","Code Editor","Productivity","As a programmer, one of the most important tools in my arsenal is my code editor. I've been using Visual Studio Code (VSCode) for years and it's been a reliable editor, but recently I decided to make the switch to Neovim. In this blog post, I'll explain why I made the switch and why you might want to consider it too.\n\nFirst, let's talk about what Neovim is. Neovim is a fork of Vim, a highly customizable text editor that's been around since the 90s. Neovim is built to be more modern and extensible than Vim, with a focus on making it easier to develop plugins and integrate with other tools. Neovim also has a more consistent and flexible scripting language, making it easier to automate tasks and customize your workflow.\n\n![my currently neovim](/images/switching_from_vscode_to_nvim.png)\n\n\nSo why did I switch from VSCode to Neovim? There were a few reasons:\n\n## Performance\nOne of the main reasons I switched to Neovim was for its performance. While VSCode is a great editor, it can be a bit slow and bloated at times. Neovim, on the other hand, is incredibly lightweight and fast. It loads up almost instantly and I can open and switch between files with ease.\n\n## Customizability\nAnother reason I switched to Neovim was for its customizability. Neovim has an extensive plugin ecosystem and can be customized to suit your needs. With a few tweaks to my configuration file, I was able to create a highly personalized environment that perfectly suited my workflow. VSCode is also highly customizable, but I found that I had to install a lot of extensions to get it to work the way I wanted.\n\n## Modal Editing\nNeovim uses a modal editing system, which can take a bit of getting used to, but is incredibly powerful once you get the hang of it. The modal editing system allows you to use different keystrokes to perform different actions, depending on which mode you're in. This can greatly speed up your workflow once you get used to it. VSCode, on the other hand, uses a more traditional text editor interface.\n\n## Terminal Integration\nOne of the things I love about Neovim is its terminal integration. I can run shell commands and interact with my terminal directly from within Neovim, without having to switch to a separate terminal window. This has been a game-changer for my workflow and has allowed me to streamline my development process.\n\nOverall, I'm really happy with my switch to Neovim. While there was a bit of a learning curve at first, I found that the benefits outweighed the initial investment. If you're looking for a lightweight, customizable, and powerful code editor, I would definitely recommend giving Neovim a try.","src/content/post/switching_from_vscode_to_nvim.md","c803bd0bc3e5379c",{"html":24,"metadata":25},"\u003Cp>As a programmer, one of the most important tools in my arsenal is my code editor. I’ve been using Visual Studio Code (VSCode) for years and it’s been a reliable editor, but recently I decided to make the switch to Neovim. In this blog post, I’ll explain why I made the switch and why you might want to consider it too.\u003C/p>\n\u003Cp>First, let’s talk about what Neovim is. Neovim is a fork of Vim, a highly customizable text editor that’s been around since the 90s. Neovim is built to be more modern and extensible than Vim, with a focus on making it easier to develop plugins and integrate with other tools. Neovim also has a more consistent and flexible scripting language, making it easier to automate tasks and customize your workflow.\u003C/p>\n\u003Cp>\u003Cimg src=\"/images/switching_from_vscode_to_nvim.png\" alt=\"my currently neovim\">\u003C/p>\n\u003Cp>So why did I switch from VSCode to Neovim? There were a few reasons:\u003C/p>\n\u003Ch2 id=\"performance\">Performance\u003C/h2>\n\u003Cp>One of the main reasons I switched to Neovim was for its performance. While VSCode is a great editor, it can be a bit slow and bloated at times. Neovim, on the other hand, is incredibly lightweight and fast. It loads up almost instantly and I can open and switch between files with ease.\u003C/p>\n\u003Ch2 id=\"customizability\">Customizability\u003C/h2>\n\u003Cp>Another reason I switched to Neovim was for its customizability. Neovim has an extensive plugin ecosystem and can be customized to suit your needs. With a few tweaks to my configuration file, I was able to create a highly personalized environment that perfectly suited my workflow. VSCode is also highly customizable, but I found that I had to install a lot of extensions to get it to work the way I wanted.\u003C/p>\n\u003Ch2 id=\"modal-editing\">Modal Editing\u003C/h2>\n\u003Cp>Neovim uses a modal editing system, which can take a bit of getting used to, but is incredibly powerful once you get the hang of it. The modal editing system allows you to use different keystrokes to perform different actions, depending on which mode you’re in. This can greatly speed up your workflow once you get used to it. VSCode, on the other hand, uses a more traditional text editor interface.\u003C/p>\n\u003Ch2 id=\"terminal-integration\">Terminal Integration\u003C/h2>\n\u003Cp>One of the things I love about Neovim is its terminal integration. I can run shell commands and interact with my terminal directly from within Neovim, without having to switch to a separate terminal window. This has been a game-changer for my workflow and has allowed me to streamline my development process.\u003C/p>\n\u003Cp>Overall, I’m really happy with my switch to Neovim. While there was a bit of a learning curve at first, I found that the benefits outweighed the initial investment. If you’re looking for a lightweight, customizable, and powerful code editor, I would definitely recommend giving Neovim a try.\u003C/p>",{"headings":26,"localImagePaths":40,"remoteImagePaths":41,"frontmatter":11,"imagePaths":42},[27,31,34,37],{"depth":28,"slug":29,"text":30},2,"performance","Performance",{"depth":28,"slug":32,"text":33},"customizability","Customizability",{"depth":28,"slug":35,"text":36},"modal-editing","Modal Editing",{"depth":28,"slug":38,"text":39},"terminal-integration","Terminal Integration",[],[],[],"switching_from_vscode_to_nvim.md","git_bisect",{"id":44,"data":46,"body":53,"filePath":54,"digest":55,"rendered":56,"legacyId":63},{"title":47,"subtitle":48,"date":49,"tags":50},"Git Bisect for bugfinding","Efficiently Debugging Your Codebase with Git Bisect: A Step-by-Step Guide.","2023-04-18",[51,52],"Git","Git Bisect","Git is a powerful tool that helps software developers manage their codebase efficiently. One of the most useful features of Git is Git Bisect. Git Bisect allows you to find the exact commit that introduced a bug by performing a binary search on the commit history. I personally discovered this feature just over a year ago, and it has become an invaluable tool in my workflow.\n\nGit Bisect works by first identifying a good commit (one that doesn't contain the bug) and a bad commit (one that does contain the bug). It then performs a binary search on the commit history between those two commits, checking out commits and asking you to confirm whether the bug is present or not. With each confirmation, Git Bisect eliminates half of the remaining commits until it finds the exact commit that introduced the bug.\n\nTo demonstrate how Git Bisect works, let's consider the following scenario. Suppose you're working on a project and you've noticed a bug in the latest version. You know that the bug wasn't present in an earlier version of the codebase, but you're not sure when it was introduced. Here's how you could use Git Bisect to find the offending commit:\n\n1. Identify a good commit and a bad commit\n\n```\n$ git bisect start\n$ git bisect bad \u003Clatest_commit>\n$ git bisect good \u003Cearlier_commit>\n```\n\n2. You will then need to test whether the bug is present in this commit, by running your code and checking whether the bug occurs. If it is present, run the following command:\n\n```\n$ git bisect bad\n```\n\n3. If it's not present, run:\n\n```\n$ git bisect good\n```\n\nRepeat step 2 until Git Bisect finds the exact commit that introduced the bug.\nOnce Git Bisect has identified the offending commit, you can use Git's built-in tools to view the changes made in that commit and fix the bug.\n\nIn conclusion, Git Bisect is a powerful feature that can save you a lot of time and effort when debugging your code. It's amazing that even after years of working with Git, I only discovered this feature just over a year ago. But since then, it has become an indispensable tool in my workflow, and I highly recommend that all developers learn how to use it.","src/content/post/git_bisect.md","d534a5c1cc21d69d",{"html":57,"metadata":58},"\u003Cp>Git is a powerful tool that helps software developers manage their codebase efficiently. One of the most useful features of Git is Git Bisect. Git Bisect allows you to find the exact commit that introduced a bug by performing a binary search on the commit history. I personally discovered this feature just over a year ago, and it has become an invaluable tool in my workflow.\u003C/p>\n\u003Cp>Git Bisect works by first identifying a good commit (one that doesn’t contain the bug) and a bad commit (one that does contain the bug). It then performs a binary search on the commit history between those two commits, checking out commits and asking you to confirm whether the bug is present or not. With each confirmation, Git Bisect eliminates half of the remaining commits until it finds the exact commit that introduced the bug.\u003C/p>\n\u003Cp>To demonstrate how Git Bisect works, let’s consider the following scenario. Suppose you’re working on a project and you’ve noticed a bug in the latest version. You know that the bug wasn’t present in an earlier version of the codebase, but you’re not sure when it was introduced. Here’s how you could use Git Bisect to find the offending commit:\u003C/p>\n\u003Col>\n\u003Cli>Identify a good commit and a bad commit\u003C/li>\n\u003C/ol>\n\u003Cpre class=\"astro-code github-dark\" style=\"background-color:#24292e;color:#e1e4e8; overflow-x: auto;\" tabindex=\"0\" data-language=\"plaintext\">\u003Ccode>\u003Cspan class=\"line\">\u003Cspan>$ git bisect start\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan>$ git bisect bad &#x3C;latest_commit>\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan>$ git bisect good &#x3C;earlier_commit>\u003C/span>\u003C/span>\u003C/code>\u003C/pre>\n\u003Col start=\"2\">\n\u003Cli>You will then need to test whether the bug is present in this commit, by running your code and checking whether the bug occurs. If it is present, run the following command:\u003C/li>\n\u003C/ol>\n\u003Cpre class=\"astro-code github-dark\" style=\"background-color:#24292e;color:#e1e4e8; overflow-x: auto;\" tabindex=\"0\" data-language=\"plaintext\">\u003Ccode>\u003Cspan class=\"line\">\u003Cspan>$ git bisect bad\u003C/span>\u003C/span>\u003C/code>\u003C/pre>\n\u003Col start=\"3\">\n\u003Cli>If it’s not present, run:\u003C/li>\n\u003C/ol>\n\u003Cpre class=\"astro-code github-dark\" style=\"background-color:#24292e;color:#e1e4e8; overflow-x: auto;\" tabindex=\"0\" data-language=\"plaintext\">\u003Ccode>\u003Cspan class=\"line\">\u003Cspan>$ git bisect good\u003C/span>\u003C/span>\u003C/code>\u003C/pre>\n\u003Cp>Repeat step 2 until Git Bisect finds the exact commit that introduced the bug.\nOnce Git Bisect has identified the offending commit, you can use Git’s built-in tools to view the changes made in that commit and fix the bug.\u003C/p>\n\u003Cp>In conclusion, Git Bisect is a powerful feature that can save you a lot of time and effort when debugging your code. It’s amazing that even after years of working with Git, I only discovered this feature just over a year ago. But since then, it has become an indispensable tool in my workflow, and I highly recommend that all developers learn how to use it.\u003C/p>",{"headings":59,"localImagePaths":60,"remoteImagePaths":61,"frontmatter":46,"imagePaths":62},[],[],[],[],"git_bisect.md","understanding_graphs_with_typescript",{"id":64,"data":66,"body":74,"filePath":75,"digest":76,"rendered":77,"legacyId":96},{"title":67,"subtitle":68,"date":69,"tags":70},"Understading Graphs with Typescript","Exploring Graphs with TypeScript.","2023-04-13",[71,72,73],"Typescript","Data Structures","Graph","Graphs are a fundamental concept in computer science and mathematics. They are used to model relationships and connections between objects or data points. In this article, we will explore the basics of graphs and how to implement them in TypeScript, a popular programming language.\n\n## Graph Basics\n\nA graph is a collection of vertices (also called nodes) and edges. Vertices represent objects or data points, while edges represent the relationships or connections between them. There are two main types of graphs: directed and undirected.\n\nIn a directed graph, the edges have a direction and represent a one-way relationship between two vertices. For example, in a social media graph, an edge from vertex A to vertex B could represent A following B, but not vice versa.\n\nIn an undirected graph, the edges do not have a direction and represent a two-way relationship between two vertices. For example, in a road network graph, an edge between two cities represents a connection that can be traveled in both directions.\n\n## Implementing Graphs in TypeScript\n\nTo implement a graph in TypeScript, we can use an adjacency list or an adjacency matrix. An adjacency list is an array of arrays, where each inner array represents a vertex and its neighbors. An adjacency matrix is a two-dimensional array that represents the edges between vertices.\n\nHere is an example of implementing an adjacency list in TypeScript:\n\n```typescript\nclass Graph {\n  private vertices: number;\n  private adjList: Map\u003Cnumber, number[]>;\n\n  constructor(vertices: number) {\n    this.vertices = vertices;\n    this.adjList = new Map\u003Cnumber, number[]>();\n    for (let i = 0; i \u003C this.vertices; i++) {\n      this.adjList.set(i, []);\n    }\n  }\n\n  addEdge(v: number, w: number) {\n    this.adjList.get(v).push(w);\n    this.adjList.get(w).push(v);\n  }\n\n  printGraph() {\n    let keys = this.adjList.keys();\n    for (let i of keys) {\n      let neighbors = this.adjList.get(i);\n      let result = \"\";\n      for (let j of neighbors) {\n        result += j + \" \";\n      }\n      console.log(i + \" -> \" + result);\n    }\n  }\n}\n\nlet g = new Graph(4);\ng.addEdge(0, 1);\ng.addEdge(0, 2);\ng.addEdge(1, 2);\ng.addEdge(2, 3);\ng.printGraph();\n```\n\nIn this example, we create a Graph class that uses a Map to store the adjacency list. We also define methods to add edges and print the graph.\n\n## Conclusion\n\nGraphs are a powerful tool for modeling relationships and connections between objects or data points. In TypeScript, we can implement graphs using an adjacency list or an adjacency matrix. By understanding the basics of graphs and how to implement them in TypeScript, we can use them to solve complex problems in computer science and beyond.\n\n## Learn more\n1. \"Introduction to Graph Theory\" by Richard J. Trudeau - This book provides a comprehensive introduction to graph theory, covering both basic and advanced topics.\n\n2. \"Graph Algorithms\" by Shimon Even - This book focuses on algorithms for graph traversal, shortest path problems, minimum spanning trees, and network flows.\n\n3. \"Data Structures and Algorithms in JavaScript\" by Michael McMillan - This book provides an introduction to data structures and algorithms, including graphs, using the JavaScript programming language.\n\n4. \"Graph Theory and Complex Networks: An Introduction\" by Maarten van Steen - This book provides an introduction to graph theory and complex networks, covering topics such as social networks, the web graph, and the small-world phenomenon.","src/content/post/understanding_graphs_with_typescript.md","2e6ad41cbb326d89",{"html":78,"metadata":79},"\u003Cp>Graphs are a fundamental concept in computer science and mathematics. They are used to model relationships and connections between objects or data points. In this article, we will explore the basics of graphs and how to implement them in TypeScript, a popular programming language.\u003C/p>\n\u003Ch2 id=\"graph-basics\">Graph Basics\u003C/h2>\n\u003Cp>A graph is a collection of vertices (also called nodes) and edges. Vertices represent objects or data points, while edges represent the relationships or connections between them. There are two main types of graphs: directed and undirected.\u003C/p>\n\u003Cp>In a directed graph, the edges have a direction and represent a one-way relationship between two vertices. For example, in a social media graph, an edge from vertex A to vertex B could represent A following B, but not vice versa.\u003C/p>\n\u003Cp>In an undirected graph, the edges do not have a direction and represent a two-way relationship between two vertices. For example, in a road network graph, an edge between two cities represents a connection that can be traveled in both directions.\u003C/p>\n\u003Ch2 id=\"implementing-graphs-in-typescript\">Implementing Graphs in TypeScript\u003C/h2>\n\u003Cp>To implement a graph in TypeScript, we can use an adjacency list or an adjacency matrix. An adjacency list is an array of arrays, where each inner array represents a vertex and its neighbors. An adjacency matrix is a two-dimensional array that represents the edges between vertices.\u003C/p>\n\u003Cp>Here is an example of implementing an adjacency list in TypeScript:\u003C/p>\n\u003Cpre class=\"astro-code github-dark\" style=\"background-color:#24292e;color:#e1e4e8; overflow-x: auto;\" tabindex=\"0\" data-language=\"typescript\">\u003Ccode>\u003Cspan class=\"line\">\u003Cspan style=\"color:#F97583\">class\u003C/span>\u003Cspan style=\"color:#B392F0\"> Graph\u003C/span>\u003Cspan style=\"color:#E1E4E8\"> {\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan style=\"color:#F97583\">  private\u003C/span>\u003Cspan style=\"color:#FFAB70\"> vertices\u003C/span>\u003Cspan style=\"color:#F97583\">:\u003C/span>\u003Cspan style=\"color:#79B8FF\"> number\u003C/span>\u003Cspan style=\"color:#E1E4E8\">;\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan style=\"color:#F97583\">  private\u003C/span>\u003Cspan style=\"color:#FFAB70\"> adjList\u003C/span>\u003Cspan style=\"color:#F97583\">:\u003C/span>\u003Cspan style=\"color:#B392F0\"> Map\u003C/span>\u003Cspan style=\"color:#E1E4E8\">&#x3C;\u003C/span>\u003Cspan style=\"color:#79B8FF\">number\u003C/span>\u003Cspan style=\"color:#E1E4E8\">, \u003C/span>\u003Cspan style=\"color:#79B8FF\">number\u003C/span>\u003Cspan style=\"color:#E1E4E8\">[]>;\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan style=\"color:#F97583\">  constructor\u003C/span>\u003Cspan style=\"color:#E1E4E8\">(\u003C/span>\u003Cspan style=\"color:#FFAB70\">vertices\u003C/span>\u003Cspan style=\"color:#F97583\">:\u003C/span>\u003Cspan style=\"color:#79B8FF\"> number\u003C/span>\u003Cspan style=\"color:#E1E4E8\">) {\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan style=\"color:#79B8FF\">    this\u003C/span>\u003Cspan style=\"color:#E1E4E8\">.vertices \u003C/span>\u003Cspan style=\"color:#F97583\">=\u003C/span>\u003Cspan style=\"color:#E1E4E8\"> vertices;\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan style=\"color:#79B8FF\">    this\u003C/span>\u003Cspan style=\"color:#E1E4E8\">.adjList \u003C/span>\u003Cspan style=\"color:#F97583\">=\u003C/span>\u003Cspan style=\"color:#F97583\"> new\u003C/span>\u003Cspan style=\"color:#B392F0\"> Map\u003C/span>\u003Cspan style=\"color:#E1E4E8\">&#x3C;\u003C/span>\u003Cspan style=\"color:#79B8FF\">number\u003C/span>\u003Cspan style=\"color:#E1E4E8\">, \u003C/span>\u003Cspan style=\"color:#79B8FF\">number\u003C/span>\u003Cspan style=\"color:#E1E4E8\">[]>();\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan style=\"color:#F97583\">    for\u003C/span>\u003Cspan style=\"color:#E1E4E8\"> (\u003C/span>\u003Cspan style=\"color:#F97583\">let\u003C/span>\u003Cspan style=\"color:#E1E4E8\"> i \u003C/span>\u003Cspan style=\"color:#F97583\">=\u003C/span>\u003Cspan style=\"color:#79B8FF\"> 0\u003C/span>\u003Cspan style=\"color:#E1E4E8\">; i \u003C/span>\u003Cspan style=\"color:#F97583\">&#x3C;\u003C/span>\u003Cspan style=\"color:#79B8FF\"> this\u003C/span>\u003Cspan style=\"color:#E1E4E8\">.vertices; i\u003C/span>\u003Cspan style=\"color:#F97583\">++\u003C/span>\u003Cspan style=\"color:#E1E4E8\">) {\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan style=\"color:#79B8FF\">      this\u003C/span>\u003Cspan style=\"color:#E1E4E8\">.adjList.\u003C/span>\u003Cspan style=\"color:#B392F0\">set\u003C/span>\u003Cspan style=\"color:#E1E4E8\">(i, []);\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan style=\"color:#E1E4E8\">    }\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan style=\"color:#E1E4E8\">  }\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan style=\"color:#B392F0\">  addEdge\u003C/span>\u003Cspan style=\"color:#E1E4E8\">(\u003C/span>\u003Cspan style=\"color:#FFAB70\">v\u003C/span>\u003Cspan style=\"color:#F97583\">:\u003C/span>\u003Cspan style=\"color:#79B8FF\"> number\u003C/span>\u003Cspan style=\"color:#E1E4E8\">, \u003C/span>\u003Cspan style=\"color:#FFAB70\">w\u003C/span>\u003Cspan style=\"color:#F97583\">:\u003C/span>\u003Cspan style=\"color:#79B8FF\"> number\u003C/span>\u003Cspan style=\"color:#E1E4E8\">) {\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan style=\"color:#79B8FF\">    this\u003C/span>\u003Cspan style=\"color:#E1E4E8\">.adjList.\u003C/span>\u003Cspan style=\"color:#B392F0\">get\u003C/span>\u003Cspan style=\"color:#E1E4E8\">(v).\u003C/span>\u003Cspan style=\"color:#B392F0\">push\u003C/span>\u003Cspan style=\"color:#E1E4E8\">(w);\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan style=\"color:#79B8FF\">    this\u003C/span>\u003Cspan style=\"color:#E1E4E8\">.adjList.\u003C/span>\u003Cspan style=\"color:#B392F0\">get\u003C/span>\u003Cspan style=\"color:#E1E4E8\">(w).\u003C/span>\u003Cspan style=\"color:#B392F0\">push\u003C/span>\u003Cspan style=\"color:#E1E4E8\">(v);\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan style=\"color:#E1E4E8\">  }\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan style=\"color:#B392F0\">  printGraph\u003C/span>\u003Cspan style=\"color:#E1E4E8\">() {\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan style=\"color:#F97583\">    let\u003C/span>\u003Cspan style=\"color:#E1E4E8\"> keys \u003C/span>\u003Cspan style=\"color:#F97583\">=\u003C/span>\u003Cspan style=\"color:#79B8FF\"> this\u003C/span>\u003Cspan style=\"color:#E1E4E8\">.adjList.\u003C/span>\u003Cspan style=\"color:#B392F0\">keys\u003C/span>\u003Cspan style=\"color:#E1E4E8\">();\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan style=\"color:#F97583\">    for\u003C/span>\u003Cspan style=\"color:#E1E4E8\"> (\u003C/span>\u003Cspan style=\"color:#F97583\">let\u003C/span>\u003Cspan style=\"color:#E1E4E8\"> i \u003C/span>\u003Cspan style=\"color:#F97583\">of\u003C/span>\u003Cspan style=\"color:#E1E4E8\"> keys) {\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan style=\"color:#F97583\">      let\u003C/span>\u003Cspan style=\"color:#E1E4E8\"> neighbors \u003C/span>\u003Cspan style=\"color:#F97583\">=\u003C/span>\u003Cspan style=\"color:#79B8FF\"> this\u003C/span>\u003Cspan style=\"color:#E1E4E8\">.adjList.\u003C/span>\u003Cspan style=\"color:#B392F0\">get\u003C/span>\u003Cspan style=\"color:#E1E4E8\">(i);\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan style=\"color:#F97583\">      let\u003C/span>\u003Cspan style=\"color:#E1E4E8\"> result \u003C/span>\u003Cspan style=\"color:#F97583\">=\u003C/span>\u003Cspan style=\"color:#9ECBFF\"> \"\"\u003C/span>\u003Cspan style=\"color:#E1E4E8\">;\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan style=\"color:#F97583\">      for\u003C/span>\u003Cspan style=\"color:#E1E4E8\"> (\u003C/span>\u003Cspan style=\"color:#F97583\">let\u003C/span>\u003Cspan style=\"color:#E1E4E8\"> j \u003C/span>\u003Cspan style=\"color:#F97583\">of\u003C/span>\u003Cspan style=\"color:#E1E4E8\"> neighbors) {\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan style=\"color:#E1E4E8\">        result \u003C/span>\u003Cspan style=\"color:#F97583\">+=\u003C/span>\u003Cspan style=\"color:#E1E4E8\"> j \u003C/span>\u003Cspan style=\"color:#F97583\">+\u003C/span>\u003Cspan style=\"color:#9ECBFF\"> \" \"\u003C/span>\u003Cspan style=\"color:#E1E4E8\">;\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan style=\"color:#E1E4E8\">      }\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan style=\"color:#E1E4E8\">      console.\u003C/span>\u003Cspan style=\"color:#B392F0\">log\u003C/span>\u003Cspan style=\"color:#E1E4E8\">(i \u003C/span>\u003Cspan style=\"color:#F97583\">+\u003C/span>\u003Cspan style=\"color:#9ECBFF\"> \" -> \"\u003C/span>\u003Cspan style=\"color:#F97583\"> +\u003C/span>\u003Cspan style=\"color:#E1E4E8\"> result);\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan style=\"color:#E1E4E8\">    }\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan style=\"color:#E1E4E8\">  }\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan style=\"color:#E1E4E8\">}\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan style=\"color:#F97583\">let\u003C/span>\u003Cspan style=\"color:#E1E4E8\"> g \u003C/span>\u003Cspan style=\"color:#F97583\">=\u003C/span>\u003Cspan style=\"color:#F97583\"> new\u003C/span>\u003Cspan style=\"color:#B392F0\"> Graph\u003C/span>\u003Cspan style=\"color:#E1E4E8\">(\u003C/span>\u003Cspan style=\"color:#79B8FF\">4\u003C/span>\u003Cspan style=\"color:#E1E4E8\">);\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan style=\"color:#E1E4E8\">g.\u003C/span>\u003Cspan style=\"color:#B392F0\">addEdge\u003C/span>\u003Cspan style=\"color:#E1E4E8\">(\u003C/span>\u003Cspan style=\"color:#79B8FF\">0\u003C/span>\u003Cspan style=\"color:#E1E4E8\">, \u003C/span>\u003Cspan style=\"color:#79B8FF\">1\u003C/span>\u003Cspan style=\"color:#E1E4E8\">);\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan style=\"color:#E1E4E8\">g.\u003C/span>\u003Cspan style=\"color:#B392F0\">addEdge\u003C/span>\u003Cspan style=\"color:#E1E4E8\">(\u003C/span>\u003Cspan style=\"color:#79B8FF\">0\u003C/span>\u003Cspan style=\"color:#E1E4E8\">, \u003C/span>\u003Cspan style=\"color:#79B8FF\">2\u003C/span>\u003Cspan style=\"color:#E1E4E8\">);\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan style=\"color:#E1E4E8\">g.\u003C/span>\u003Cspan style=\"color:#B392F0\">addEdge\u003C/span>\u003Cspan style=\"color:#E1E4E8\">(\u003C/span>\u003Cspan style=\"color:#79B8FF\">1\u003C/span>\u003Cspan style=\"color:#E1E4E8\">, \u003C/span>\u003Cspan style=\"color:#79B8FF\">2\u003C/span>\u003Cspan style=\"color:#E1E4E8\">);\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan style=\"color:#E1E4E8\">g.\u003C/span>\u003Cspan style=\"color:#B392F0\">addEdge\u003C/span>\u003Cspan style=\"color:#E1E4E8\">(\u003C/span>\u003Cspan style=\"color:#79B8FF\">2\u003C/span>\u003Cspan style=\"color:#E1E4E8\">, \u003C/span>\u003Cspan style=\"color:#79B8FF\">3\u003C/span>\u003Cspan style=\"color:#E1E4E8\">);\u003C/span>\u003C/span>\n\u003Cspan class=\"line\">\u003Cspan style=\"color:#E1E4E8\">g.\u003C/span>\u003Cspan style=\"color:#B392F0\">printGraph\u003C/span>\u003Cspan style=\"color:#E1E4E8\">();\u003C/span>\u003C/span>\u003C/code>\u003C/pre>\n\u003Cp>In this example, we create a Graph class that uses a Map to store the adjacency list. We also define methods to add edges and print the graph.\u003C/p>\n\u003Ch2 id=\"conclusion\">Conclusion\u003C/h2>\n\u003Cp>Graphs are a powerful tool for modeling relationships and connections between objects or data points. In TypeScript, we can implement graphs using an adjacency list or an adjacency matrix. By understanding the basics of graphs and how to implement them in TypeScript, we can use them to solve complex problems in computer science and beyond.\u003C/p>\n\u003Ch2 id=\"learn-more\">Learn more\u003C/h2>\n\u003Col>\n\u003Cli>\n\u003Cp>“Introduction to Graph Theory” by Richard J. Trudeau - This book provides a comprehensive introduction to graph theory, covering both basic and advanced topics.\u003C/p>\n\u003C/li>\n\u003Cli>\n\u003Cp>“Graph Algorithms” by Shimon Even - This book focuses on algorithms for graph traversal, shortest path problems, minimum spanning trees, and network flows.\u003C/p>\n\u003C/li>\n\u003Cli>\n\u003Cp>“Data Structures and Algorithms in JavaScript” by Michael McMillan - This book provides an introduction to data structures and algorithms, including graphs, using the JavaScript programming language.\u003C/p>\n\u003C/li>\n\u003Cli>\n\u003Cp>“Graph Theory and Complex Networks: An Introduction” by Maarten van Steen - This book provides an introduction to graph theory and complex networks, covering topics such as social networks, the web graph, and the small-world phenomenon.\u003C/p>\n\u003C/li>\n\u003C/ol>",{"headings":80,"localImagePaths":93,"remoteImagePaths":94,"frontmatter":66,"imagePaths":95},[81,84,87,90],{"depth":28,"slug":82,"text":83},"graph-basics","Graph Basics",{"depth":28,"slug":85,"text":86},"implementing-graphs-in-typescript","Implementing Graphs in TypeScript",{"depth":28,"slug":88,"text":89},"conclusion","Conclusion",{"depth":28,"slug":91,"text":92},"learn-more","Learn more",[],[],[],"understanding_graphs_with_typescript.md"]
-</file>
-
-<file path=".astro/settings.json">
-{
-	"_variables": {
-		"lastUpdateCheck": 1770303598930
-	}
-}
-</file>
-
-<file path=".astro/types.d.ts">
-/// <reference types="astro/client" />
-/// <reference path="content.d.ts" />
-</file>
 
 <file path=".claude/settings.local.json">
 {
@@ -434,1040 +109,6 @@ declare module 'astro:content' {
 }
 </file>
 
-<file path="src/components/Footer.astro">
----
-const currentYear = new Date().getFullYear()
-
-const links = [
-  { name: 'GitHub', href: 'https://github.com/rigottig' },
-  { name: 'LinkedIn', href: 'https://linkedin.com/in/rigottig' },
-  { name: 'Email', href: 'mailto:ggrigoti@gmail.com' },
-]
----
-
-<footer class="mt-12 pt-6 border-t border-neutral-800">
-  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-    <!-- Links -->
-    <div class="flex items-center gap-4">
-      {links.map((link) => (
-        <a
-          href={link.href}
-          target={link.href.startsWith('mailto') ? undefined : '_blank'}
-          rel={link.href.startsWith('mailto') ? undefined : 'noopener noreferrer'}
-          class="text-sm text-neutral-500 hover:text-green-400 transition-colors"
-        >
-          {link.name}
-        </a>
-      ))}
-    </div>
-
-    <!-- Status & Copyright -->
-    <div class="flex items-center gap-4 text-sm text-neutral-600">
-      <span class="flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-        Available
-      </span>
-      <span>© {currentYear}</span>
-    </div>
-  </div>
-</footer>
-</file>
-
-<file path="src/components/Header.astro">
----
-interface Props {
-  currentPath?: string
-}
-
-const { currentPath = '/' } = Astro.props
-
-const navItems = [
-  { href: '/', label: 'home' },
-  { href: '/blog', label: 'blog' },
-  { href: '/about', label: 'about' },
-  { href: '/contact', label: 'contact' },
-]
-
-const isActive = (path: string) => {
-  if (path === '/') return currentPath === '/'
-  return currentPath.startsWith(path)
-}
----
-
-<header class="mb-8 pb-6 border-b border-neutral-800">
-  <nav class="flex items-center gap-6">
-    {navItems.map((item) => (
-      <a
-        href={item.href}
-        class:list={[
-          'text-sm transition-colors',
-          isActive(item.href)
-            ? 'text-green-400'
-            : 'text-neutral-500 hover:text-neutral-300'
-        ]}
-      >
-        {isActive(item.href) && <span class="text-green-500 mr-1">→</span>}
-        {item.label}
-      </a>
-    ))}
-  </nav>
-</header>
-</file>
-
-<file path="src/components/PostCard.astro">
----
-import type { CollectionEntry } from 'astro:content'
-
-type Props = {
-  post: CollectionEntry<'post'>
-}
-
-const { post } = Astro.props
-const { slug, data } = post
-const { title, subtitle, date, tags } = data
-
-const formatDate = (dateValue: Date | string | number) => {
-  const d = new Date(dateValue)
-  if (isNaN(d.getTime())) return ''
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'short',
-    day: 'numeric',
-  }).format(d)
-}
----
-
-<a
-  href={`/blog/post/${slug}`}
-  class="group block py-3 -mx-2 px-2 rounded-md hover:bg-neutral-800/30 transition-colors"
->
-  <div class="flex items-start justify-between gap-4">
-    <div class="min-w-0 flex-1">
-      <h3 class="text-sm text-neutral-200 group-hover:text-green-400 transition-colors">
-        {title}
-      </h3>
-      {subtitle && (
-        <p class="text-xs text-neutral-500 mt-1 truncate">
-          {subtitle}
-        </p>
-      )}
-      {tags && tags.length > 0 && (
-        <div class="flex flex-wrap gap-1.5 mt-2">
-          {tags.slice(0, 3).map((tag) => (
-            <span class="text-xs text-neutral-600">
-              #{tag}
-            </span>
-          ))}
-        </div>
-      )}
-    </div>
-    <time
-      datetime={new Date(date).toISOString()}
-      class="text-xs text-neutral-600 shrink-0 pt-0.5"
-    >
-      {formatDate(date)}
-    </time>
-  </div>
-</a>
-</file>
-
-<file path="src/content/post/git_bisect.md">
----
-title: "Git Bisect for bugfinding"
-subtitle: "Efficiently Debugging Your Codebase with Git Bisect: A Step-by-Step Guide."
-date: "2023-04-18"
-tags: ["Git", "Git Bisect"]
----
-
-Git is a powerful tool that helps software developers manage their codebase efficiently. One of the most useful features of Git is Git Bisect. Git Bisect allows you to find the exact commit that introduced a bug by performing a binary search on the commit history. I personally discovered this feature just over a year ago, and it has become an invaluable tool in my workflow.
-
-Git Bisect works by first identifying a good commit (one that doesn't contain the bug) and a bad commit (one that does contain the bug). It then performs a binary search on the commit history between those two commits, checking out commits and asking you to confirm whether the bug is present or not. With each confirmation, Git Bisect eliminates half of the remaining commits until it finds the exact commit that introduced the bug.
-
-To demonstrate how Git Bisect works, let's consider the following scenario. Suppose you're working on a project and you've noticed a bug in the latest version. You know that the bug wasn't present in an earlier version of the codebase, but you're not sure when it was introduced. Here's how you could use Git Bisect to find the offending commit:
-
-1. Identify a good commit and a bad commit
-
-```
-$ git bisect start
-$ git bisect bad <latest_commit>
-$ git bisect good <earlier_commit>
-```
-
-2. You will then need to test whether the bug is present in this commit, by running your code and checking whether the bug occurs. If it is present, run the following command:
-
-```
-$ git bisect bad
-```
-
-3. If it's not present, run:
-
-```
-$ git bisect good
-```
-
-Repeat step 2 until Git Bisect finds the exact commit that introduced the bug.
-Once Git Bisect has identified the offending commit, you can use Git's built-in tools to view the changes made in that commit and fix the bug.
-
-In conclusion, Git Bisect is a powerful feature that can save you a lot of time and effort when debugging your code. It's amazing that even after years of working with Git, I only discovered this feature just over a year ago. But since then, it has become an indispensable tool in my workflow, and I highly recommend that all developers learn how to use it.
-</file>
-
-<file path="src/content/post/switching_from_vscode_to_nvim.md">
----
-title: "Why I switch from Visual Studio Code to NeoVim"
-subtitle: "A Programmer's Journey from VSCode to Neovim."
-date: "2023-03-03"
-tags: ["Neovim", "VSCode", "Code Editor", "Productivity"]
----
-
-
-As a programmer, one of the most important tools in my arsenal is my code editor. I've been using Visual Studio Code (VSCode) for years and it's been a reliable editor, but recently I decided to make the switch to Neovim. In this blog post, I'll explain why I made the switch and why you might want to consider it too.
-
-First, let's talk about what Neovim is. Neovim is a fork of Vim, a highly customizable text editor that's been around since the 90s. Neovim is built to be more modern and extensible than Vim, with a focus on making it easier to develop plugins and integrate with other tools. Neovim also has a more consistent and flexible scripting language, making it easier to automate tasks and customize your workflow.
-
-![my currently neovim](/images/switching_from_vscode_to_nvim.png)
-
-
-So why did I switch from VSCode to Neovim? There were a few reasons:
-
-## Performance
-One of the main reasons I switched to Neovim was for its performance. While VSCode is a great editor, it can be a bit slow and bloated at times. Neovim, on the other hand, is incredibly lightweight and fast. It loads up almost instantly and I can open and switch between files with ease.
-
-## Customizability
-Another reason I switched to Neovim was for its customizability. Neovim has an extensive plugin ecosystem and can be customized to suit your needs. With a few tweaks to my configuration file, I was able to create a highly personalized environment that perfectly suited my workflow. VSCode is also highly customizable, but I found that I had to install a lot of extensions to get it to work the way I wanted.
-
-## Modal Editing
-Neovim uses a modal editing system, which can take a bit of getting used to, but is incredibly powerful once you get the hang of it. The modal editing system allows you to use different keystrokes to perform different actions, depending on which mode you're in. This can greatly speed up your workflow once you get used to it. VSCode, on the other hand, uses a more traditional text editor interface.
-
-## Terminal Integration
-One of the things I love about Neovim is its terminal integration. I can run shell commands and interact with my terminal directly from within Neovim, without having to switch to a separate terminal window. This has been a game-changer for my workflow and has allowed me to streamline my development process.
-
-Overall, I'm really happy with my switch to Neovim. While there was a bit of a learning curve at first, I found that the benefits outweighed the initial investment. If you're looking for a lightweight, customizable, and powerful code editor, I would definitely recommend giving Neovim a try.
-</file>
-
-<file path="src/content/post/understanding_graphs_with_typescript.md">
----
-title: "Understading Graphs with Typescript"
-subtitle: "Exploring Graphs with TypeScript."
-date: "2023-04-13"
-tags: ["Typescript", "Data Structures", "Graph"]
----
-
-
-Graphs are a fundamental concept in computer science and mathematics. They are used to model relationships and connections between objects or data points. In this article, we will explore the basics of graphs and how to implement them in TypeScript, a popular programming language.
-
-## Graph Basics
-
-A graph is a collection of vertices (also called nodes) and edges. Vertices represent objects or data points, while edges represent the relationships or connections between them. There are two main types of graphs: directed and undirected.
-
-In a directed graph, the edges have a direction and represent a one-way relationship between two vertices. For example, in a social media graph, an edge from vertex A to vertex B could represent A following B, but not vice versa.
-
-In an undirected graph, the edges do not have a direction and represent a two-way relationship between two vertices. For example, in a road network graph, an edge between two cities represents a connection that can be traveled in both directions.
-
-## Implementing Graphs in TypeScript
-
-To implement a graph in TypeScript, we can use an adjacency list or an adjacency matrix. An adjacency list is an array of arrays, where each inner array represents a vertex and its neighbors. An adjacency matrix is a two-dimensional array that represents the edges between vertices.
-
-Here is an example of implementing an adjacency list in TypeScript:
-
-```typescript
-class Graph {
-  private vertices: number;
-  private adjList: Map<number, number[]>;
-
-  constructor(vertices: number) {
-    this.vertices = vertices;
-    this.adjList = new Map<number, number[]>();
-    for (let i = 0; i < this.vertices; i++) {
-      this.adjList.set(i, []);
-    }
-  }
-
-  addEdge(v: number, w: number) {
-    this.adjList.get(v).push(w);
-    this.adjList.get(w).push(v);
-  }
-
-  printGraph() {
-    let keys = this.adjList.keys();
-    for (let i of keys) {
-      let neighbors = this.adjList.get(i);
-      let result = "";
-      for (let j of neighbors) {
-        result += j + " ";
-      }
-      console.log(i + " -> " + result);
-    }
-  }
-}
-
-let g = new Graph(4);
-g.addEdge(0, 1);
-g.addEdge(0, 2);
-g.addEdge(1, 2);
-g.addEdge(2, 3);
-g.printGraph();
-```
-
-In this example, we create a Graph class that uses a Map to store the adjacency list. We also define methods to add edges and print the graph.
-
-## Conclusion
-
-Graphs are a powerful tool for modeling relationships and connections between objects or data points. In TypeScript, we can implement graphs using an adjacency list or an adjacency matrix. By understanding the basics of graphs and how to implement them in TypeScript, we can use them to solve complex problems in computer science and beyond.
-
-## Learn more
-1. "Introduction to Graph Theory" by Richard J. Trudeau - This book provides a comprehensive introduction to graph theory, covering both basic and advanced topics.
-
-2. "Graph Algorithms" by Shimon Even - This book focuses on algorithms for graph traversal, shortest path problems, minimum spanning trees, and network flows.
-
-3. "Data Structures and Algorithms in JavaScript" by Michael McMillan - This book provides an introduction to data structures and algorithms, including graphs, using the JavaScript programming language.
-
-4. "Graph Theory and Complex Networks: An Introduction" by Maarten van Steen - This book provides an introduction to graph theory and complex networks, covering topics such as social networks, the web graph, and the small-world phenomenon.
-</file>
-
-<file path="src/layouts/BaseLayout.astro">
----
-import Header from '@/components/Header.astro'
-import Footer from '@/components/Footer.astro'
-import '@/styles/global.css'
-
-interface Props {
-  title?: string
-  description?: string
-  image?: string
-  canonicalURL?: string
-  currentPath?: string
-}
-
-const {
-  title = 'Guilherme Rigotti',
-  description = 'Software Engineer from Brazil',
-  image = '/og-image.png',
-  canonicalURL = new URL(Astro.url.pathname, Astro.site).href,
-  currentPath = '/',
-} = Astro.props
----
-
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="generator" content={Astro.generator} />
-
-    <link rel="canonical" href={canonicalURL} />
-
-    <title>{title}</title>
-    <meta name="title" content={title} />
-    <meta name="description" content={description} />
-    <meta name="theme-color" content="#0a0a0a" />
-
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content={canonicalURL} />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:image" content={new URL(image, Astro.site)} />
-
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content={canonicalURL} />
-    <meta property="twitter:title" content={title} />
-    <meta property="twitter:description" content={description} />
-    <meta property="twitter:image" content={new URL(image, Astro.site)} />
-
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-  </head>
-  <body class="bg-neutral-950 text-neutral-300">
-    <!-- Main container -->
-    <div class="min-h-screen flex items-center justify-center p-4 sm:p-8">
-      <div class="w-full max-w-3xl">
-        <!-- Terminal Window -->
-        <div class="rounded-lg border border-neutral-800 bg-neutral-900/80 shadow-2xl overflow-hidden">
-          <!-- macOS Title Bar -->
-          <div class="flex items-center gap-2 px-4 py-3 bg-neutral-800/50 border-b border-neutral-800">
-            <div class="flex items-center gap-1.5">
-              <span class="w-3 h-3 rounded-full bg-red-500/80"></span>
-              <span class="w-3 h-3 rounded-full bg-yellow-500/80"></span>
-              <span class="w-3 h-3 rounded-full bg-green-500/80"></span>
-            </div>
-            <span class="flex-1 text-center text-xs text-neutral-500">
-              rigotti@dev: ~
-            </span>
-            <div class="w-[52px]"></div>
-          </div>
-
-          <!-- Terminal Content -->
-          <div class="p-6 sm:p-8">
-            <Header currentPath={currentPath} />
-
-            <main class="py-8">
-              <slot />
-            </main>
-
-            <Footer />
-          </div>
-        </div>
-      </div>
-    </div>
-  </body>
-</html>
-</file>
-
-<file path="src/pages/blog/post/[slug].astro">
----
-import BaseLayout from '@/layouts/BaseLayout.astro'
-import { getCollection } from 'astro:content'
-import { type CollectionEntry } from 'astro:content'
-
-export async function getStaticPaths() {
-  const posts = await getCollection('post')
-  return posts.map((post) => ({
-    params: { slug: post.slug },
-    props: { post },
-  }))
-}
-
-type Props = {
-  post: CollectionEntry<'post'>
-}
-
-const { post } = Astro.props
-const { slug, data } = post
-const { title, subtitle, date, tags } = data
-const { Content } = await post.render()
-
-const formatDate = (dateValue: Date | string | number) => {
-  const d = new Date(dateValue)
-  if (isNaN(d.getTime())) return ''
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  }).format(d)
-}
-
-// Estimate reading time
-const wordsPerMinute = 200
-const textContent = post.body || ''
-const wordCount = textContent.split(/\s+/).length
-const readingTime = Math.max(1, Math.ceil(wordCount / wordsPerMinute))
----
-
-<BaseLayout
-  title={`${title} | Guilherme Rigotti`}
-  description={subtitle || `Blog post: ${title}`}
-  currentPath={`/blog/post/${slug}`}
->
-  <article class="space-y-8">
-    <!-- Back -->
-    <nav>
-      <a
-        href="/blog"
-        class="text-sm text-neutral-500 hover:text-green-400 transition-colors"
-      >
-        ← Back to blog
-      </a>
-    </nav>
-
-    <!-- Header -->
-    <header class="space-y-4">
-      <div class="flex items-center gap-3 text-xs text-neutral-500">
-        <time datetime={new Date(date).toISOString()}>
-          {formatDate(date)}
-        </time>
-        <span>·</span>
-        <span>{readingTime} min read</span>
-      </div>
-
-      <h1 class="text-2xl font-bold text-neutral-100 leading-tight">
-        {title}
-      </h1>
-
-      {subtitle && (
-        <p class="text-neutral-400 text-sm">
-          {subtitle}
-        </p>
-      )}
-
-      {tags && tags.length > 0 && (
-        <div class="flex flex-wrap gap-2 pt-2">
-          {tags.map((tag) => (
-            <span class="text-xs text-neutral-500">
-              #{tag}
-            </span>
-          ))}
-        </div>
-      )}
-    </header>
-
-    <!-- Divider -->
-    <hr class="border-neutral-800" />
-
-    <!-- Content -->
-    <div class="prose">
-      <Content />
-    </div>
-
-    <!-- Footer -->
-    <footer class="pt-8 border-t border-neutral-800">
-      <div class="flex items-center justify-between gap-4">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 text-sm font-medium">
-            GR
-          </div>
-          <div>
-            <p class="text-sm text-neutral-200">Guilherme Rigotti</p>
-            <p class="text-xs text-neutral-500">Software Engineer</p>
-          </div>
-        </div>
-
-        <a
-          href="/blog"
-          class="text-sm text-green-400 hover:text-green-300 transition-colors"
-        >
-          More posts →
-        </a>
-      </div>
-    </footer>
-  </article>
-</BaseLayout>
-</file>
-
-<file path="src/pages/blog/index.astro">
----
-import BaseLayout from '@/layouts/BaseLayout.astro'
-import { getCollection } from 'astro:content'
-
-const allPosts = await getCollection('post')
-const sortedPosts = allPosts.sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
-)
-
-const formatDate = (date: Date) => {
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  }).format(date)
-}
----
-
-<BaseLayout
-  title="Blog | Guilherme Rigotti"
-  description="Thoughts and tutorials about software development"
-  currentPath="/blog"
->
-  <div class="space-y-8">
-    <!-- Header -->
-    <header>
-      <h1 class="text-xl font-semibold text-neutral-100 mb-2">Blog</h1>
-      <p class="text-neutral-500 text-sm">
-        Thoughts and tutorials about software development.
-      </p>
-    </header>
-
-    <!-- Posts List -->
-    <section>
-      {sortedPosts.length > 0 ? (
-        <div class="space-y-1">
-          {sortedPosts.map((post) => (
-            <a
-              href={`/blog/post/${post.slug}`}
-              class="group flex items-start justify-between gap-4 py-3 -mx-2 px-2 rounded-md hover:bg-neutral-800/30 transition-colors"
-            >
-              <div class="min-w-0 flex-1">
-                <h2 class="text-sm text-neutral-200 group-hover:text-green-400 transition-colors">
-                  {post.data.title}
-                </h2>
-                {post.data.subtitle && (
-                  <p class="text-xs text-neutral-500 mt-1 truncate">
-                    {post.data.subtitle}
-                  </p>
-                )}
-                {post.data.tags && post.data.tags.length > 0 && (
-                  <div class="flex flex-wrap gap-1.5 mt-2">
-                    {post.data.tags.slice(0, 3).map((tag) => (
-                      <span class="text-xs text-neutral-600">
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-              <time
-                datetime={new Date(post.data.date).toISOString()}
-                class="text-xs text-neutral-600 shrink-0 pt-0.5"
-              >
-                {formatDate(new Date(post.data.date))}
-              </time>
-            </a>
-          ))}
-        </div>
-      ) : (
-        <div class="text-center py-12">
-          <p class="text-neutral-500 text-sm">No posts yet.</p>
-        </div>
-      )}
-    </section>
-
-    <!-- Back -->
-    <nav class="pt-4 border-t border-neutral-800">
-      <a
-        href="/"
-        class="text-sm text-neutral-500 hover:text-green-400 transition-colors"
-      >
-        ← Back to home
-      </a>
-    </nav>
-  </div>
-</BaseLayout>
-</file>
-
-<file path="src/pages/about.astro">
----
-import BaseLayout from '@/layouts/BaseLayout.astro'
-
-const experience = [
-  {
-    company: 'Axur',
-    role: 'Senior Frontend Developer',
-    period: '2023 - Present',
-    description: 'Leading frontend development for cybersecurity products.',
-    current: true,
-  },
-  {
-    company: 'CWI Software',
-    role: 'Frontend Developer',
-    period: '2019 - 2023',
-    description: 'Developed client projects using React and Vue.js.',
-  },
-  {
-    company: 'Mave Tecnologia',
-    role: 'Fullstack Developer',
-    period: '2018 - 2019',
-    description: 'Built web applications with PHP, Laravel, and JavaScript.',
-  },
-]
-
-const skills = {
-  frontend: ['React', 'TypeScript', 'Next.js', 'Astro', 'Vue.js', 'Tailwind CSS'],
-  backend: ['Node.js', 'Go', 'REST APIs', 'GraphQL'],
-  tools: ['Git', 'Neovim', 'Docker', 'Linux', 'CI/CD'],
-}
----
-
-<BaseLayout
-  title="About | Guilherme Rigotti"
-  description="Learn more about Guilherme Rigotti - Software Engineer with 7+ years of experience."
-  currentPath="/about"
->
-  <div class="space-y-10">
-    <!-- Intro -->
-    <section>
-      <h1 class="text-xl font-semibold text-neutral-100 mb-4">About</h1>
-      <div class="space-y-3 text-sm text-neutral-400 leading-relaxed max-w-lg">
-        <p>
-          I'm <span class="text-green-400">Guilherme Rigotti</span>, a software engineer from Brazil 🇧🇷 with 7+ years of experience building web applications.
-        </p>
-        <p>
-          I specialize in frontend development, creating scalable and performant applications with React, TypeScript, and modern web technologies.
-        </p>
-      </div>
-    </section>
-
-    <!-- Experience -->
-    <section>
-      <h2 class="text-xs uppercase tracking-wider text-neutral-500 mb-4">Experience</h2>
-      <div class="space-y-6">
-        {experience.map((job) => (
-          <div class="relative pl-4 border-l border-neutral-800">
-            <div class="flex items-start justify-between gap-4 mb-1">
-              <div class="flex items-center gap-2">
-                <span class="text-sm text-neutral-200">{job.company}</span>
-                {job.current && (
-                  <span class="flex items-center gap-1.5 text-xs text-green-400">
-                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                    now
-                  </span>
-                )}
-              </div>
-              <span class="text-xs text-neutral-600 shrink-0">{job.period}</span>
-            </div>
-            <p class="text-xs text-neutral-500 mb-1">{job.role}</p>
-            <p class="text-xs text-neutral-600">{job.description}</p>
-          </div>
-        ))}
-      </div>
-    </section>
-
-    <!-- Skills -->
-    <section>
-      <h2 class="text-xs uppercase tracking-wider text-neutral-500 mb-4">Skills</h2>
-      <div class="grid gap-6 sm:grid-cols-3">
-        <div>
-          <h3 class="text-xs text-neutral-400 mb-2">Frontend</h3>
-          <div class="flex flex-wrap gap-1.5">
-            {skills.frontend.map((skill) => (
-              <span class="px-2 py-1 text-xs rounded bg-neutral-800/50 text-neutral-400 border border-neutral-800">
-                {skill}
-              </span>
-            ))}
-          </div>
-        </div>
-        <div>
-          <h3 class="text-xs text-neutral-400 mb-2">Backend</h3>
-          <div class="flex flex-wrap gap-1.5">
-            {skills.backend.map((skill) => (
-              <span class="px-2 py-1 text-xs rounded bg-neutral-800/50 text-neutral-400 border border-neutral-800">
-                {skill}
-              </span>
-            ))}
-          </div>
-        </div>
-        <div>
-          <h3 class="text-xs text-neutral-400 mb-2">Tools</h3>
-          <div class="flex flex-wrap gap-1.5">
-            {skills.tools.map((skill) => (
-              <span class="px-2 py-1 text-xs rounded bg-neutral-800/50 text-neutral-400 border border-neutral-800">
-                {skill}
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Education -->
-    <section>
-      <h2 class="text-xs uppercase tracking-wider text-neutral-500 mb-4">Education</h2>
-      <div>
-        <p class="text-sm text-neutral-200">Universidade de Caxias do Sul</p>
-        <p class="text-xs text-neutral-500">Bachelor in Computer Science · 2016 - 2020</p>
-      </div>
-    </section>
-
-    <!-- CTA -->
-    <section class="pt-4">
-      <div class="p-4 rounded-lg border border-neutral-800 bg-neutral-900/30">
-        <p class="text-neutral-300 text-sm mb-3">
-          Interested in working together?
-        </p>
-        <a
-          href="/contact"
-          class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-neutral-900 bg-green-500 rounded-md hover:bg-green-400 transition-colors"
-        >
-          Get in touch
-        </a>
-      </div>
-    </section>
-
-    <!-- Back -->
-    <nav class="pt-4 border-t border-neutral-800">
-      <a
-        href="/"
-        class="text-sm text-neutral-500 hover:text-green-400 transition-colors"
-      >
-        ← Back to home
-      </a>
-    </nav>
-  </div>
-</BaseLayout>
-</file>
-
-<file path="src/pages/contact.astro">
----
-import BaseLayout from '@/layouts/BaseLayout.astro'
-
-const contacts = [
-  {
-    name: 'Email',
-    value: 'ggrigoti@gmail.com',
-    href: 'mailto:ggrigoti@gmail.com',
-  },
-  {
-    name: 'GitHub',
-    value: 'github.com/rigottig',
-    href: 'https://github.com/rigottig',
-  },
-  {
-    name: 'LinkedIn',
-    value: 'linkedin.com/in/rigottig',
-    href: 'https://linkedin.com/in/rigottig',
-  },
-]
----
-
-<BaseLayout
-  title="Contact | Guilherme Rigotti"
-  description="Get in touch with Guilherme Rigotti"
-  currentPath="/contact"
->
-  <div class="space-y-10">
-    <!-- Header -->
-    <section>
-      <h1 class="text-xl font-semibold text-neutral-100 mb-2">Contact</h1>
-      <p class="text-neutral-500 text-sm max-w-md">
-        I'm always open to discussing new projects, opportunities, or just having a chat about technology.
-      </p>
-    </section>
-
-    <!-- Contact Methods -->
-    <section>
-      <h2 class="text-xs uppercase tracking-wider text-neutral-500 mb-4">Get in touch</h2>
-      <div class="space-y-3">
-        {contacts.map((contact) => (
-          <a
-            href={contact.href}
-            target={contact.href.startsWith('mailto') ? undefined : '_blank'}
-            rel={contact.href.startsWith('mailto') ? undefined : 'noopener noreferrer'}
-            class="group flex items-center justify-between gap-4 py-3 -mx-2 px-2 rounded-md hover:bg-neutral-800/30 transition-colors"
-          >
-            <div>
-              <span class="text-sm text-neutral-200 group-hover:text-green-400 transition-colors">
-                {contact.name}
-              </span>
-              <p class="text-xs text-neutral-500">{contact.value}</p>
-            </div>
-            <span class="text-neutral-600 group-hover:text-green-400 transition-colors">→</span>
-          </a>
-        ))}
-      </div>
-    </section>
-
-    <!-- Availability -->
-    <section>
-      <h2 class="text-xs uppercase tracking-wider text-neutral-500 mb-4">Availability</h2>
-      <div class="p-4 rounded-lg border border-neutral-800 bg-neutral-900/30">
-        <div class="flex items-center gap-2 mb-3">
-          <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-          <span class="text-sm text-green-400">Available for opportunities</span>
-        </div>
-        <div class="grid grid-cols-2 gap-4 text-xs">
-          <div>
-            <span class="text-neutral-500">Location</span>
-            <p class="text-neutral-300">Brazil (UTC-3)</p>
-          </div>
-          <div>
-            <span class="text-neutral-500">Response time</span>
-            <p class="text-neutral-300">Within 24 hours</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Email CTA -->
-    <section class="pt-2">
-      <div class="p-4 rounded-lg border border-neutral-800 bg-neutral-900/30">
-        <p class="text-neutral-300 text-sm mb-3">
-          Let's work together!
-        </p>
-        <a
-          href="mailto:ggrigoti@gmail.com"
-          class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-neutral-900 bg-green-500 rounded-md hover:bg-green-400 transition-colors"
-        >
-          Send email
-        </a>
-      </div>
-    </section>
-
-    <!-- Back -->
-    <nav class="pt-4 border-t border-neutral-800">
-      <a
-        href="/"
-        class="text-sm text-neutral-500 hover:text-green-400 transition-colors"
-      >
-        ← Back to home
-      </a>
-    </nav>
-  </div>
-</BaseLayout>
-</file>
-
-<file path="src/pages/index.astro">
----
-import BaseLayout from '@/layouts/BaseLayout.astro'
-import { getCollection } from 'astro:content'
-
-const allPosts = await getCollection('post')
-const sortedPosts = allPosts.sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
-)
-const latestPosts = sortedPosts.slice(0, 3)
-
-const skills = [
-  'TypeScript',
-  'React',
-  'Next.js',
-  'Astro',
-  'Node.js',
-  'Tailwind CSS',
-  'Go',
-  'Git',
-  'Linux',
-]
-
-const experience = [
-  {
-    company: 'Axur',
-    role: 'Senior Frontend Developer',
-    period: '2023 - Present',
-    current: true,
-  },
-  {
-    company: 'CWI Software',
-    role: 'Frontend Developer',
-    period: '2019 - 2023',
-  },
-  {
-    company: 'Mave Tecnologia',
-    role: 'Fullstack Developer',
-    period: '2018 - 2019',
-  },
-]
-
-const formatDate = (date: Date) => {
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'short',
-    day: 'numeric',
-  }).format(date)
-}
----
-
-<BaseLayout
-  title="Guilherme Rigotti — Software Engineer"
-  description="Software Engineer from Brazil with 7+ years of experience in frontend development."
-  currentPath="/"
->
-  <div class="space-y-12">
-    <!-- Hero -->
-    <section>
-      <h1 class="text-xl font-semibold text-neutral-100 mb-2">
-        Guilherme Rigotti
-      </h1>
-      <p class="text-neutral-400 mb-4">
-        Senior Software Engineer · Brazil 🇧🇷
-      </p>
-      <p class="text-neutral-500 text-sm leading-relaxed max-w-lg">
-        7+ years building web applications. Focused on React, TypeScript, and creating great user experiences.
-      </p>
-    </section>
-
-    <!-- Skills -->
-    <section>
-      <h2 class="text-xs uppercase tracking-wider text-neutral-500 mb-4">Skills</h2>
-      <div class="flex flex-wrap gap-2">
-        {skills.map((skill) => (
-          <span class="px-2.5 py-1 text-xs rounded-md bg-neutral-800/50 text-neutral-400 border border-neutral-800">
-            {skill}
-          </span>
-        ))}
-      </div>
-    </section>
-
-    <!-- Experience -->
-    <section>
-      <h2 class="text-xs uppercase tracking-wider text-neutral-500 mb-4">Experience</h2>
-      <div class="space-y-4">
-        {experience.map((job) => (
-          <div class="flex items-start justify-between gap-4">
-            <div>
-              <div class="flex items-center gap-2">
-                <span class="text-neutral-200 text-sm">{job.company}</span>
-                {job.current && (
-                  <span class="flex items-center gap-1.5 text-xs text-green-400">
-                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                    now
-                  </span>
-                )}
-              </div>
-              <span class="text-neutral-500 text-xs">{job.role}</span>
-            </div>
-            <span class="text-xs text-neutral-600 shrink-0">{job.period}</span>
-          </div>
-        ))}
-      </div>
-      <a href="/about" class="inline-block mt-4 text-sm text-green-400 hover:text-green-300 transition-colors">
-        Full resume →
-      </a>
-    </section>
-
-    <!-- Posts -->
-    {latestPosts.length > 0 && (
-      <section>
-        <h2 class="text-xs uppercase tracking-wider text-neutral-500 mb-4">Recent Posts</h2>
-        <div class="space-y-3">
-          {latestPosts.map((post) => (
-            <a
-              href={`/blog/post/${post.slug}`}
-              class="group flex items-center justify-between gap-4 py-2 -mx-2 px-2 rounded-md hover:bg-neutral-800/30 transition-colors"
-            >
-              <span class="text-sm text-neutral-300 group-hover:text-green-400 transition-colors truncate">
-                {post.data.title}
-              </span>
-              <span class="text-xs text-neutral-600 shrink-0">
-                {formatDate(new Date(post.data.date))}
-              </span>
-            </a>
-          ))}
-        </div>
-        <a href="/blog" class="inline-block mt-4 text-sm text-green-400 hover:text-green-300 transition-colors">
-          All posts →
-        </a>
-      </section>
-    )}
-
-    <!-- Contact CTA -->
-    <section class="pt-4">
-      <div class="p-4 rounded-lg border border-neutral-800 bg-neutral-900/30">
-        <p class="text-neutral-300 text-sm mb-3">
-          Interested in working together?
-        </p>
-        <a
-          href="/contact"
-          class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-neutral-900 bg-green-500 rounded-md hover:bg-green-400 transition-colors"
-        >
-          Get in touch
-        </a>
-      </div>
-    </section>
-  </div>
-</BaseLayout>
-</file>
-
-<file path="src/pages/robots.txt.ts">
-export function GET() {
-  return new Response(
-    `User-agent: *
-Allow: /
-
-Sitemap: https://rigotti.dev/sitemap-index.xml
-`,
-    { headers: { 'Content-Type': 'text/plain; charset=utf-8' } }
-  )
-}
-</file>
-
-<file path="astro.config.mjs">
-import { defineConfig } from 'astro/config'
-import tailwind from '@astrojs/tailwind'
-import vercel from '@astrojs/vercel'
-import sitemap from '@astrojs/sitemap'
-import mdx from '@astrojs/mdx'
-
-export default defineConfig({
-  site: 'https://rigotti.dev',
-  integrations: [
-    tailwind({
-      applyInputStylesToLayout: false,
-    }),
-    sitemap(),
-    mdx(),
-  ],
-  output: 'static',
-  adapter: vercel(),
-})
-</file>
-
 <file path="CLAUDE.md">
 # CLAUDE.md
 
@@ -1479,6 +120,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 pnpm dev          # Start development server (Astro)
 pnpm build        # Build for production (static site)
 pnpm preview      # Preview production build locally
+pnpm lint         # Run ESLint
 ```
 
 ## Project Architecture
@@ -1564,214 +206,143 @@ Blog posts use Astro's Content Collections. Collections are auto-generated from 
 3. The post will be automatically available at `/blog/post/[slug]/`
 </file>
 
-<file path="content.config.ts">
-import { defineCollection, z } from 'astro:content'
+<file path="src/components/Schema.astro">
+---
+import { type CollectionEntry } from 'astro:content';
 
-// Define the schema for blog posts
-const post = defineCollection({
-  schema: z.object({
-    title: z.string(),
-    subtitle: z.string().optional(),
-    date: z.coerce.date(),
-    tags: z.array(z.string()).default([]),
-  }),
-})
+interface Props {
+  type: 'Person' | 'BlogPosting';
+  data?: CollectionEntry<'post'>['data'];
+  slug?: string;
+}
 
-// Export a single `collections` object to register your collection(s)
-export const collections = { post }
-</file>
+const { type, data, slug } = Astro.props;
 
-<file path="tailwind.config.mjs">
-/** @type {import('tailwindcss').Config} */
-export default {
-  content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
-  theme: {
-    extend: {
-      fontFamily: {
-        mono: [
-          'JetBrains Mono',
-          'ui-monospace',
-          'SFMono-Regular',
-          'Menlo',
-          'Monaco',
-          'Consolas',
-          'monospace',
-        ],
-      },
+let schema = {};
+
+if (type === 'Person') {
+  schema = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Guilherme Rigotti",
+    "url": "https://rigotti.dev",
+    "jobTitle": "Senior Software Engineer",
+    "sameAs": [
+      "https://github.com/rigottig",
+      "https://linkedin.com/in/rigottig"
+    ]
+  };
+} else if (type === 'BlogPosting' && data && slug) {
+  schema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": data.title,
+    "description": data.subtitle,
+    "datePublished": data.date.toISOString(),
+    "author": {
+      "@type": "Person",
+      "name": "Guilherme Rigotti"
     },
-  },
-  plugins: [require('@tailwindcss/typography')],
+    "url": `https://rigotti.dev/blog/post/${slug}`
+  };
 }
+---
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />
 </file>
 
-<file path="src/services/posts/index.ts">
-import { Post } from '@/components/post-card'
-import fs from 'fs'
-import matter from 'gray-matter'
+<file path="src/components/ThemeToggle.astro">
+---
+---
 
-export function getPostsMetadata(): Post[] {
-  const files = fs.readdirSync(`${process.cwd()}/posts`)
-
-  const posts = files.map((filename) => {
-    const slug = filename.replace('.md', '')
-    const markdownWithMeta = fs.readFileSync(
-      `${process.cwd()}/posts/${filename}`,
-      'utf-8',
-    )
-    const { data: frontmatter } = matter(markdownWithMeta)
-
-    return {
-      slug,
-      frontmatter,
-    } as Post
-  })
-
-  return posts
-}
+<button
+  id="theme-toggle"
+  class="p-2 rounded hover:bg-neutral-300 dark:hover:bg-neutral-700 transition-colors text-neutral-700 dark:text-neutral-300"
+  aria-label="Toggle theme"
+  title="Toggle theme"
+>
+  <svg id="theme-icon-light" class="hidden w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+  </svg>
+  <svg id="theme-icon-dark" class="hidden w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+  </svg>
+</button>
 </file>
 
-<file path="src/styles/global.css">
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+<file path="src/components/Typewriter.astro">
+---
+interface Props {
+  command: string
+  prompt?: string
+  delay?: number
+}
 
-@layer base {
-  html {
-    @apply scroll-smooth bg-neutral-950;
+const { command, prompt = '~', delay = 0 } = Astro.props
+---
+
+<div class="typewriter-command flex items-center gap-2 text-green-600 dark:text-green-500" data-command={command} data-delay={delay}>
+  <span>➜</span>
+  <span class="text-blue-400">{prompt}</span>
+  <span class="command-text text-neutral-700 dark:text-neutral-300"></span>
+  <span class="cursor text-neutral-700 dark:text-neutral-300">▋</span>
+</div>
+
+<style>
+  .typewriter-command .cursor {
+    animation: blink 1s step-end infinite;
+  }
+  
+  .typewriter-command.typed .cursor {
+    display: none;
+  }
+  
+  @keyframes blink {
+    from, to { opacity: 1; }
+    50% { opacity: 0; }
+  }
+</style>
+
+<script>
+  function runTypewriter() {
+    const commands = document.querySelectorAll('.typewriter-command:not(.initialized)')
+    
+    commands.forEach((el, index) => {
+      el.classList.add('initialized')
+      
+      const command = el.getAttribute('data-command') || ''
+      const delay = parseInt(el.getAttribute('data-delay') || '0')
+      const textEl = el.querySelector('.command-text') as HTMLElement
+      
+      if (!textEl) return
+      
+      textEl.textContent = ''
+      el.classList.remove('typed')
+      
+      const baseDelay = index * 600 + delay
+      const charDelay = 50
+      let charIndex = 0
+      
+      setTimeout(() => {
+        const typeChar = () => {
+          if (charIndex < command.length) {
+            textEl.textContent += command[charIndex]
+            charIndex++
+            setTimeout(typeChar, charDelay)
+          } else {
+            el.classList.add('typed')
+          }
+        }
+        typeChar()
+      }, baseDelay)
+    })
   }
 
-  body {
-    @apply font-mono text-sm leading-relaxed text-neutral-300 antialiased;
-  }
-
-  ::selection {
-    @apply bg-green-500/30 text-green-200;
-  }
-
-  /* Minimal scrollbar */
-  ::-webkit-scrollbar {
-    @apply h-1.5 w-1.5;
-  }
-
-  ::-webkit-scrollbar-track {
-    @apply bg-transparent;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    @apply rounded-full bg-neutral-700 hover:bg-neutral-600;
-  }
-
-  /* Focus styles */
-  :focus-visible {
-    @apply outline-2 outline-offset-2 outline-green-500;
-  }
-}
-
-/* Prose styles for blog posts */
-.prose {
-  @apply max-w-none leading-relaxed text-neutral-300;
-}
-
-.prose > * + * {
-  @apply mt-5;
-}
-
-.prose h2 {
-  @apply mb-4 mt-10 border-b border-neutral-800 pb-2 text-xl font-bold text-neutral-100;
-}
-
-.prose h3 {
-  @apply mb-3 mt-8 text-lg font-semibold text-neutral-100;
-}
-
-.prose p {
-  @apply leading-relaxed;
-}
-
-.prose a {
-  @apply text-green-400 underline decoration-green-500/30 underline-offset-2 transition-colors hover:decoration-green-400/60;
-}
-
-.prose strong {
-  @apply font-semibold text-neutral-200;
-}
-
-.prose code {
-  @apply rounded bg-neutral-800 px-1.5 py-0.5 text-sm text-green-400;
-}
-
-.prose pre {
-  @apply my-6 overflow-x-auto rounded-lg border border-neutral-800 bg-neutral-900 p-4;
-}
-
-.prose pre code {
-  @apply bg-transparent p-0 text-sm;
-}
-
-.prose ul,
-.prose ol {
-  @apply my-4 space-y-2 pl-5;
-}
-
-.prose li {
-  @apply text-neutral-300;
-}
-
-.prose li::marker {
-  @apply text-green-500;
-}
-
-.prose blockquote {
-  @apply my-6 border-l-2 border-green-500/50 pl-4 italic text-neutral-400;
-}
-
-.prose img {
-  @apply my-8 rounded-lg border border-neutral-800;
-}
-
-.prose hr {
-  @apply my-8 border-neutral-800;
-}
-
-/* Reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
-}
+  document.addEventListener('astro:page-load', runTypewriter)
+  runTypewriter()
+</script>
 </file>
 
-<file path="src/utils/date.ts">
-export function formatDate(date: Date) {
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
-}
-</file>
-
-<file path=".editorconfig">
-[*]
-charset = utf-8
-insert_final_newline = true
-end_of_line = lf
-indent_style = space
-indent_size = 2
-max_line_length = 80
-</file>
-
-<file path="postcss.config.js">
-module.exports = {
-  plugins: {
-    tailwindcss: {},
-    autoprefixer: {},
-  },
-}
-</file>
-
-<file path="posts/git_bisect.md">
+<file path="src/content/post/git_bisect.md">
 ---
 title: "Git Bisect for bugfinding"
 subtitle: "Efficiently Debugging Your Codebase with Git Bisect: A Step-by-Step Guide."
@@ -1811,8 +382,1715 @@ Once Git Bisect has identified the offending commit, you can use Git's built-in 
 In conclusion, Git Bisect is a powerful feature that can save you a lot of time and effort when debugging your code. It's amazing that even after years of working with Git, I only discovered this feature just over a year ago. But since then, it has become an indispensable tool in my workflow, and I highly recommend that all developers learn how to use it.
 </file>
 
+<file path="src/pages/blog/tag/[tag].astro">
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { getCollection } from 'astro:content'
+import { formatDate } from '@/utils/date'
+
+export async function getStaticPaths() {
+  const posts = await getCollection('post')
+  const allTags = new Set<string>()
+
+  posts.forEach((post) => {
+    post.data.tags?.forEach((tag) => allTags.add(tag))
+  })
+
+  return Array.from(allTags).map((tag) => ({
+    params: { tag: tag.toLowerCase().replace(/\s+/g, '-') },
+    props: {
+      tag,
+      posts: posts.filter((post) =>
+        post.data.tags?.map((t) => t.toLowerCase()).includes(tag.toLowerCase())
+      ),
+    },
+  }))
+}
+
+interface Props {
+  tag: string
+  posts: Awaited<ReturnType<typeof getCollection<'post'>>>
+}
+
+const { tag, posts } = Astro.props
+const sortedPosts = posts.sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+)
+---
+
+<BaseLayout
+  title={`${tag} | Guilherme Rigotti`}
+  description={`Posts tagged with ${tag}`}
+  currentPath={`/blog/tag/${tag}`}
+>
+  <div class="space-y-8">
+    <header>
+      <div class="flex items-center gap-2 text-green-600 dark:text-green-500 mb-2">
+        <span>➜</span>
+        <span class="text-blue-400">~</span>
+        <span class="text-neutral-700 dark:text-neutral-300">grep "#{tag}" ./posts</span>
+      </div>
+      <h1 class="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
+        Posts tagged with <span class="text-green-600 dark:text-green-400">#{tag}</span>
+      </h1>
+      <p class="text-neutral-600 dark:text-neutral-500 text-sm mt-1">
+        {sortedPosts.length} post{sortedPosts.length !== 1 ? 's' : ''} found
+      </p>
+    </header>
+
+    <section>
+      {sortedPosts.length > 0 ? (
+        <div class="space-y-1">
+          {sortedPosts.map((post) => (
+            <a
+              href={`/blog/post/${post.slug}`}
+              class="group flex items-start justify-between gap-4 py-3 -mx-2 px-2 rounded-md hover:bg-neutral-200/50 dark:hover:bg-neutral-800/30 transition-colors"
+            >
+              <div class="min-w-0 flex-1">
+                <h2 class="text-sm text-neutral-900 dark:text-neutral-200 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">
+                  {post.data.title}
+                </h2>
+                {post.data.subtitle && (
+                  <p class="text-xs text-neutral-600 dark:text-neutral-500 mt-1 truncate">
+                    {post.data.subtitle}
+                  </p>
+                )}
+              </div>
+              <time
+                datetime={new Date(post.data.date).toISOString()}
+                class="text-xs text-neutral-700 dark:text-neutral-600 shrink-0 pt-0.5"
+              >
+                {formatDate(post.data.date, 'short')}
+              </time>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-12">
+          <p class="text-neutral-600 dark:text-neutral-500 text-sm">No posts found.</p>
+        </div>
+      )}
+    </section>
+
+    <nav class="pt-4 border-t border-neutral-300 dark:border-neutral-800 flex gap-4">
+      <a
+        href="/blog"
+        class="text-sm text-neutral-600 dark:text-neutral-500 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+      >
+        ← All posts
+      </a>
+      <a
+        href="/"
+        class="text-sm text-neutral-600 dark:text-neutral-500 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+      >
+        ~/home
+      </a>
+    </nav>
+  </div>
+</BaseLayout>
+</file>
+
+<file path="src/pages/404.astro">
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+---
+
+<BaseLayout title="404 - Not Found | Guilherme Rigotti">
+  <div class="space-y-8">
+    <section class="space-y-4">
+      <div class="flex items-center gap-2 text-green-600 dark:text-green-500">
+        <span>➜</span>
+        <span class="text-blue-400">~</span>
+        <span class="text-neutral-700 dark:text-neutral-300">{Astro.url.pathname}</span>
+      </div>
+
+      <div class="pl-4 border-l-2 border-red-500/50 space-y-4">
+        <div class="space-y-2">
+          <p class="text-red-500 dark:text-red-400 font-mono text-sm">
+            bash: {Astro.url.pathname}: No such file or directory
+          </p>
+          <p class="text-neutral-600 dark:text-neutral-400 text-sm">
+            Error 404: The page you're looking for doesn't exist or has been moved.
+          </p>
+        </div>
+
+        <div class="text-xs text-neutral-500 dark:text-neutral-600 font-mono">
+          <p>Command failed with exit code: 404</p>
+          <p class="mt-1">Tip: Check the path and try again.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="space-y-2">
+      <div class="flex items-center gap-2 text-green-600 dark:text-green-500">
+        <span>➜</span>
+        <span class="text-blue-400">~</span>
+        <span class="text-neutral-700 dark:text-neutral-300">ls ./available-routes</span>
+      </div>
+
+      <div class="pl-4 grid gap-2 text-sm">
+        <a
+          href="/"
+          class="text-neutral-600 dark:text-neutral-400 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+        >
+          ~/home
+        </a>
+        <a
+          href="/blog"
+          class="text-neutral-600 dark:text-neutral-400 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+        >
+          ~/blog
+        </a>
+        <a
+          href="/about"
+          class="text-neutral-600 dark:text-neutral-400 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+        >
+          ~/about
+        </a>
+        <a
+          href="/contact"
+          class="text-neutral-600 dark:text-neutral-400 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+        >
+          ~/contact
+        </a>
+      </div>
+    </section>
+
+    <section class="pt-4">
+      <a
+        href="/"
+        class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-neutral-900 bg-green-600 dark:bg-green-500 rounded-md hover:bg-green-700 dark:hover:bg-green-400 transition-colors"
+      >
+        cd ~
+      </a>
+    </section>
+  </div>
+</BaseLayout>
+</file>
+
+<file path="src/pages/robots.txt.ts">
+export function GET() {
+  return new Response(
+    `User-agent: *
+Allow: /
+
+Sitemap: https://rigotti.dev/sitemap-index.xml
+`,
+    { headers: { 'Content-Type': 'text/plain; charset=utf-8' } }
+  )
+}
+</file>
+
+<file path="src/pages/rss.xml.ts">
+import rss from '@astrojs/rss'
+import { getCollection } from 'astro:content'
+import type { APIContext } from 'astro'
+
+export async function GET(context: APIContext) {
+  const posts = await getCollection('post')
+  const sortedPosts = posts.sort(
+    (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+  )
+
+  return rss({
+    title: 'Guilherme Rigotti - Blog',
+    description:
+      'Thoughts and tutorials about software development, frontend engineering, and system design.',
+    site: context.site ?? 'https://rigotti.dev',
+    items: sortedPosts.map((post) => ({
+      title: post.data.title,
+      pubDate: new Date(post.data.date),
+      description: post.data.subtitle ?? '',
+      link: `/blog/post/${post.slug}/`,
+    })),
+    customData: `<language>en-us</language>`,
+  })
+}
+</file>
+
+<file path=".editorconfig">
+[*]
+charset = utf-8
+insert_final_newline = true
+end_of_line = lf
+indent_style = space
+indent_size = 2
+max_line_length = 80
+</file>
+
+<file path=".nvmrc">
+24
+</file>
+
+<file path="AGENTS.md">
+# AGENTS.md
+
+This file provides guidance for AI agents working in this repository.
+
+## Development Commands
+
+```bash
+pnpm dev          # Start development server (Astro)
+pnpm build        # Build for production (static site)
+pnpm preview      # Preview production build locally
+pnpm lint         # Run ESLint
+```
+
+**Note:** This project does not have tests. No test commands are available.
+
+## Project Overview
+
+This is an Astro personal portfolio/blog with a macOS Terminal design theme. Uses 100% static site generation (SSG) with Content Collections for blog posts.
+
+## Code Style Guidelines
+
+### Formatting
+
+- **No semicolons** (`semi: false` in Prettier config)
+- **Single quotes** for strings and JSX attributes
+- **2 spaces** indentation
+- **Trailing commas** (ES5 style)
+
+### Imports
+
+- Use `@/*` path alias for imports from `src/` directory:
+  ```astro
+  import BaseLayout from '@/layouts/BaseLayout.astro'
+  import Header from '@/components/Header.astro'
+  import type { CollectionEntry } from 'astro:content'
+  ```
+
+### Astro Components
+
+- Frontmatter script block with `---` delimiters
+- Define Props interface for type safety:
+
+  ```astro
+  ---
+  interface Props {
+    title?: string
+    description?: string
+  }
+
+  const { title, description } = Astro.props
+  ---
+  ```
+
+- Destructure `Astro.props` directly, not from variable
+- Use `class:list` for conditional classes
+- Client-side scripts use `<script define:vars={{}}>` pattern
+
+### TypeScript
+
+- Strict mode enabled (`extends: "astro/tsconfigs/strict"`)
+- Use type exports for reusable types
+- Arrow function syntax preferred
+- No explicit return types for simple functions (inference)
+
+### Naming Conventions
+
+- **Components**: PascalCase (`Header.astro`, `BaseLayout.astro`)
+- **Functions/Variables**: camelCase (`formatDate`, `navItems`)
+- **Types/Interfaces**: PascalCase (`Props`, `CollectionEntry`)
+
+### Styling
+
+- Tailwind CSS with Tailwind Typography plugin
+- Dark mode using `dark:` prefix (automatic class-based)
+- **Terminal theme colors**:
+  - Green accent: `#22c55e` (dark), `#16a34a` (light)
+  - Background: `#0a0a0a` (dark), `#ffffff` (light)
+  - Text: Neutral grays (neutral-100 to neutral-900)
+- Monospace font (`font-mono`) for UI elements
+- JetBrains Mono font for code/terminal aesthetics
+- Transition classes on hover states
+
+### Content Collections
+
+Blog posts are Markdown files in `src/content/post/` with frontmatter:
+
+```yaml
+---
+title: 'Post Title'
+subtitle: 'Brief description'
+date: 'YYYY-MM-DD'
+tags: ['tag1', 'tag2']
+---
+```
+
+Use `getCollection('post')` to fetch all posts. Routes use `getStaticPaths()` for dynamic pages.
+
+### Error Handling
+
+- Use `isNaN(d.getTime())` for date validation
+- No explicit try-catch in current codebase
+- Default values in Props destructuring for safety
+
+### Astro Patterns
+
+- Current path: `Astro.url.pathname`
+- Site URL: `Astro.site`
+- Content rendering: `const { Content } = await post.render()`
+- Date formatting: `Intl.DateTimeFormat('en-US', {...})`
+- URL construction: `new URL(path, Astro.site)` for absolute URLs
+
+### Blog Post Specifics
+
+- Reading time: 200 words per minute calculation
+- Date formats use `en-US` locale consistently
+- Post slug: `post.slug` from CollectionEntry
+- Frontmatter access: `post.data.title`, `post.data.date`, etc.
+- Body content: `post.body` for reading time calculation
+
+### Content Collection Types
+
+- Blog posts are of type `CollectionEntry<'post'>`
+- Import: `import type { CollectionEntry } from 'astro:content'`
+- Access typed data via `post.data` with inferred types
+
+### ESLint
+
+- Extends: `next`, `prettier`, `plugin:tailwindcss/recommended`
+- Run `pnpm lint` to check code
+
+## File Structure
+
+- `src/pages/` - Astro pages (index.astro, about.astro, blog/index.astro, blog/post/[slug].astro)
+- `src/components/` - Reusable UI components
+- `src/layouts/` - Layout components (BaseLayout.astro)
+- `src/content/post/` - Markdown blog posts
+- `src/styles/` - Global CSS with Tailwind
+- `src/utils/` - Utility functions
+- `public/` - Static assets
+
+## Deployment
+
+- **Static site**: Built as static HTML/CSS/JS
+- **Adapter**: Vercel adapter configured
+- **Build output**: `dist/` directory
+- **Sitemap**: Auto-generated via @astrojs/sitemap integration
+</file>
+
+<file path="astro.config.mjs">
+import { defineConfig } from 'astro/config'
+import tailwind from '@astrojs/tailwind'
+import vercel from '@astrojs/vercel'
+import sitemap from '@astrojs/sitemap'
+import mdx from '@astrojs/mdx'
+
+export default defineConfig({
+  site: 'https://rigotti.dev',
+  integrations: [
+    tailwind({
+      applyInputStylesToLayout: false,
+    }),
+    sitemap(),
+    mdx(),
+  ],
+  output: 'static',
+  adapter: vercel(),
+})
+</file>
+
+<file path="content.config.ts">
+import { defineCollection, z } from 'astro:content'
+
+// Define the schema for blog posts
+const post = defineCollection({
+  schema: z.object({
+    title: z.string(),
+    subtitle: z.string().optional(),
+    date: z.coerce.date(),
+    tags: z.array(z.string()).default([]),
+  }),
+})
+
+// Export a single `collections` object to register your collection(s)
+export const collections = { post }
+</file>
+
+<file path="src/components/ThemeScript.astro">
+---
+---
+
+<script define:vars={{}}>
+  if (typeof window !== 'undefined') {
+    const getTheme = () => {
+      const stored = localStorage.getItem('theme')
+      if (stored === 'light' || stored === 'dark') return stored
+      return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
+    }
+
+    const setTheme = (theme) => {
+      const html = document.documentElement
+      const iconLight = document.getElementById('theme-icon-light')
+      const iconDark = document.getElementById('theme-icon-dark')
+
+      html.classList.remove('light', 'dark')
+      html.classList.add(theme)
+
+      if (theme === 'dark') {
+        iconLight?.classList.remove('hidden')
+        iconDark?.classList.add('hidden')
+      } else {
+        iconLight?.classList.add('hidden')
+        iconDark?.classList.remove('hidden')
+      }
+
+      localStorage.setItem('theme', theme)
+    }
+
+    const updateIcons = () => {
+      const theme = getTheme()
+      const iconLight = document.getElementById('theme-icon-light')
+      const iconDark = document.getElementById('theme-icon-dark')
+
+      if (theme === 'dark') {
+        iconLight?.classList.remove('hidden')
+        iconDark?.classList.add('hidden')
+      } else {
+        iconLight?.classList.add('hidden')
+        iconDark?.classList.remove('hidden')
+      }
+    }
+
+    setTheme(getTheme())
+
+    const setupToggleButton = () => {
+      const toggleBtn = document.getElementById('theme-toggle')
+      if (toggleBtn && !toggleBtn.hasAttribute('data-listener')) {
+        toggleBtn.addEventListener('click', () => {
+          const currentTheme = getTheme()
+          const newTheme = currentTheme === 'dark' ? 'light' : 'dark'
+          setTheme(newTheme)
+        })
+        toggleBtn.setAttribute('data-listener', 'true')
+      }
+      updateIcons()
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupToggleButton)
+    } else {
+      setupToggleButton()
+    }
+
+    document.addEventListener('astro:page-load', () => {
+      setTheme(getTheme())
+      setupToggleButton()
+    })
+
+    const observer = new MutationObserver(() => {
+      setupToggleButton()
+    })
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    })
+  }
+</script>
+</file>
+
+<file path="src/content/post/switching_from_vscode_to_nvim.md">
+---
+title: 'Why I switched from Visual Studio Code to NeoVim'
+subtitle: "A Programmer's Journey from VSCode to Neovim."
+date: '2023-03-03'
+tags: ['Neovim', 'VSCode', 'Code Editor', 'Productivity']
+---
+
+As a programmer, one of the most important tools in my arsenal is my code editor. I've been using Visual Studio Code (VSCode) for years and it's been a reliable editor, but recently I decided to make the switch to Neovim. In this blog post, I'll explain why I made the switch and why you might want to consider it too.
+
+First, let's talk about what Neovim is. Neovim is a fork of Vim, a highly customizable text editor that's been around since the 90s. Neovim is built to be more modern and extensible than Vim, with a focus on making it easier to develop plugins and integrate with other tools. Neovim also has a more consistent and flexible scripting language, making it easier to automate tasks and customize your workflow.
+
+![my currently neovim](/images/switching_from_vscode_to_nvim.png)
+
+So why did I switch from VSCode to Neovim? There were a few reasons:
+
+## Performance
+
+One of the main reasons I switched to Neovim was for its performance. While VSCode is a great editor, it can be a bit slow and bloated at times. Neovim, on the other hand, is incredibly lightweight and fast. It loads up almost instantly and I can open and switch between files with ease.
+
+## Customizability
+
+Another reason I switched to Neovim was for its customizability. Neovim has an extensive plugin ecosystem and can be customized to suit your needs. With a few tweaks to my configuration file, I was able to create a highly personalized environment that perfectly suited my workflow. VSCode is also highly customizable, but I found that I had to install a lot of extensions to get it to work the way I wanted.
+
+## Modal Editing
+
+Neovim uses a modal editing system, which can take a bit of getting used to, but is incredibly powerful once you get the hang of it. The modal editing system allows you to use different keystrokes to perform different actions, depending on which mode you're in. This can greatly speed up your workflow once you get used to it. VSCode, on the other hand, uses a more traditional text editor interface.
+
+## Terminal Integration
+
+One of the things I love about Neovim is its terminal integration. I can run shell commands and interact with my terminal directly from within Neovim, without having to switch to a separate terminal window. This has been a game-changer for my workflow and has allowed me to streamline my development process.
+
+Overall, I'm really happy with my switch to Neovim. While there was a bit of a learning curve at first, I found that the benefits outweighed the initial investment. If you're looking for a lightweight, customizable, and powerful code editor, I would definitely recommend giving Neovim a try.
+</file>
+
+<file path="src/content/post/understanding_graphs_with_typescript.md">
+---
+title: 'Understanding Graphs with Typescript'
+subtitle: 'Exploring Graphs with TypeScript.'
+date: '2023-04-13'
+tags: ['Typescript', 'Data Structures', 'Graph']
+---
+
+Graphs are a fundamental concept in computer science and mathematics. They are used to model relationships and connections between objects or data points. In this article, we will explore the basics of graphs and how to implement them in TypeScript, a popular programming language.
+
+## Graph Basics
+
+A graph is a collection of vertices (also called nodes) and edges. Vertices represent objects or data points, while edges represent the relationships or connections between them. There are two main types of graphs: directed and undirected.
+
+In a directed graph, the edges have a direction and represent a one-way relationship between two vertices. For example, in a social media graph, an edge from vertex A to vertex B could represent A following B, but not vice versa.
+
+In an undirected graph, the edges do not have a direction and represent a two-way relationship between two vertices. For example, in a road network graph, an edge between two cities represents a connection that can be traveled in both directions.
+
+## Implementing Graphs in TypeScript
+
+To implement a graph in TypeScript, we can use an adjacency list or an adjacency matrix. An adjacency list is an array of arrays, where each inner array represents a vertex and its neighbors. An adjacency matrix is a two-dimensional array that represents the edges between vertices.
+
+Here is an example of implementing an adjacency list in TypeScript:
+
+```typescript
+class Graph {
+  private vertices: number
+  private adjList: Map<number, number[]>
+
+  constructor(vertices: number) {
+    this.vertices = vertices
+    this.adjList = new Map<number, number[]>()
+    for (let i = 0; i < this.vertices; i++) {
+      this.adjList.set(i, [])
+    }
+  }
+
+  addEdge(v: number, w: number) {
+    this.adjList.get(v).push(w)
+    this.adjList.get(w).push(v)
+  }
+
+  printGraph() {
+    let keys = this.adjList.keys()
+    for (let i of keys) {
+      let neighbors = this.adjList.get(i)
+      let result = ''
+      for (let j of neighbors) {
+        result += j + ' '
+      }
+      console.log(i + ' -> ' + result)
+    }
+  }
+}
+
+let g = new Graph(4)
+g.addEdge(0, 1)
+g.addEdge(0, 2)
+g.addEdge(1, 2)
+g.addEdge(2, 3)
+g.printGraph()
+```
+
+In this example, we create a Graph class that uses a Map to store the adjacency list. We also define methods to add edges and print the graph.
+
+## Conclusion
+
+Graphs are a powerful tool for modeling relationships and connections between objects or data points. In TypeScript, we can implement graphs using an adjacency list or an adjacency matrix. By understanding the basics of graphs and how to implement them in TypeScript, we can use them to solve complex problems in computer science and beyond.
+
+## Learn more
+
+1. "Introduction to Graph Theory" by Richard J. Trudeau - This book provides a comprehensive introduction to graph theory, covering both basic and advanced topics.
+
+2. "Graph Algorithms" by Shimon Even - This book focuses on algorithms for graph traversal, shortest path problems, minimum spanning trees, and network flows.
+
+3. "Data Structures and Algorithms in JavaScript" by Michael McMillan - This book provides an introduction to data structures and algorithms, including graphs, using the JavaScript programming language.
+
+4. "Graph Theory and Complex Networks: An Introduction" by Maarten van Steen - This book provides an introduction to graph theory and complex networks, covering topics such as social networks, the web graph, and the small-world phenomenon.
+</file>
+
+<file path="src/pages/contact.astro">
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+
+const contacts = [
+  {
+    name: 'Email',
+    value: 'ggrigoti@gmail.com',
+    href: 'mailto:ggrigoti@gmail.com',
+  },
+  {
+    name: 'GitHub',
+    value: 'github.com/rigottig',
+    href: 'https://github.com/rigottig',
+  },
+  {
+    name: 'LinkedIn',
+    value: 'linkedin.com/in/rigottig',
+    href: 'https://linkedin.com/in/rigottig',
+  },
+]
+---
+
+<BaseLayout
+  title="Contact | Guilherme Rigotti"
+  description="Get in touch with Guilherme Rigotti"
+  currentPath="/contact"
+>
+  <div class="space-y-10">
+    <!-- Header -->
+    <section>
+      <h1 class="text-xl font-semibold text-neutral-900 dark:text-neutral-100 mb-2">Contact</h1>
+      <p class="text-neutral-600 dark:text-neutral-500 text-sm max-w-md">
+        I'm always open to discussing new projects, opportunities, or just having a chat about technology.
+      </p>
+    </section>
+
+    <!-- Contact Methods -->
+    <section>
+      <h2 class="text-xs uppercase tracking-wider text-neutral-600 dark:text-neutral-500 mb-4">Get in touch</h2>
+      <div class="space-y-3">
+        {contacts.map((contact) => (
+          <a
+            href={contact.href}
+            target={contact.href.startsWith('mailto') ? undefined : '_blank'}
+            rel={contact.href.startsWith('mailto') ? undefined : 'noopener noreferrer'}
+            class="group flex items-center justify-between gap-4 py-3 -mx-2 px-2 rounded-md hover:bg-neutral-200/50 dark:hover:bg-neutral-800/30 transition-colors"
+          >
+            <div>
+              <span class="text-sm text-neutral-900 dark:text-neutral-200 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">
+                {contact.name}
+              </span>
+              <p class="text-xs text-neutral-600 dark:text-neutral-500">{contact.value}</p>
+            </div>
+            <span class="text-neutral-600 group-hover:text-green-600 dark:text-green-400 transition-colors">→</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Availability -->
+    <section>
+      <h2 class="text-xs uppercase tracking-wider text-neutral-600 dark:text-neutral-500 mb-4">Availability</h2>
+      <div class="p-4 rounded-lg border border-neutral-300 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900/30">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="w-2 h-2 rounded-full bg-green-600 dark:bg-green-500 animate-pulse"></span>
+          <span class="text-sm text-green-600 dark:text-green-400">Available for opportunities</span>
+        </div>
+        <div class="grid grid-cols-2 gap-4 text-xs">
+          <div>
+            <span class="text-neutral-600 dark:text-neutral-500">Location</span>
+            <p class="text-neutral-800 dark:text-neutral-300">Brazil (UTC-3)</p>
+          </div>
+          <div>
+            <span class="text-neutral-600 dark:text-neutral-500">Response time</span>
+            <p class="text-neutral-800 dark:text-neutral-300">Within 24 hours</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Email CTA -->
+    <section class="pt-2">
+      <div class="p-4 rounded-lg border border-neutral-300 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900/30">
+        <p class="text-neutral-800 dark:text-neutral-300 text-sm mb-3">
+          Let's work together!
+        </p>
+        <a
+          href="mailto:ggrigoti@gmail.com"
+          class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-neutral-900 bg-green-600 dark:bg-green-500 rounded-md hover:bg-green-700 dark:hover:bg-green-400 transition-colors"
+        >
+          Send email
+        </a>
+      </div>
+    </section>
+
+    <!-- Back -->
+    <nav class="pt-4 border-t border-neutral-300 dark:border-neutral-800">
+      <a
+        href="/"
+        class="text-sm text-neutral-600 dark:text-neutral-500 hover:text-green-600 dark:text-green-400 transition-colors"
+      >
+        ← Back to home
+      </a>
+    </nav>
+  </div>
+</BaseLayout>
+</file>
+
+<file path=".prettierrc.json">
+{
+  "trailingComma": "es5",
+  "semi": false,
+  "tabWidth": 2,
+  "singleQuote": true,
+  "jsxSingleQuote": true,
+  "plugins": ["prettier-plugin-tailwindcss"]
+}
+</file>
+
+<file path="src/components/Footer.astro">
+---
+const currentYear = new Date().getFullYear()
+
+const links = [
+  { name: 'GitHub', href: 'https://github.com/rigottig' },
+  { name: 'LinkedIn', href: 'https://linkedin.com/in/rigottig' },
+  { name: 'RSS', href: '/rss.xml' },
+  { name: 'Email', href: 'mailto:ggrigoti@gmail.com' },
+]
+---
+
+<footer class="mt-12 pt-6 border-t border-neutral-300 dark:border-neutral-800 transition-colors">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <!-- Links -->
+    <div class="flex items-center gap-4">
+      {links.map((link) => (
+        <a
+          href={link.href}
+          target={link.href.startsWith('mailto') ? undefined : '_blank'}
+          rel={link.href.startsWith('mailto') ? undefined : 'noopener noreferrer'}
+          class="text-sm text-neutral-600 dark:text-neutral-500 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+        >
+          {link.name}
+        </a>
+      ))}
+    </div>
+
+    <!-- Status & Copyright -->
+    <div class="flex items-center gap-4 text-sm text-neutral-700 dark:text-neutral-600">
+      <span class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-green-600 dark:bg-green-500 animate-pulse"></span>
+        Available
+      </span>
+      <span>© {currentYear}</span>
+    </div>
+  </div>
+</footer>
+</file>
+
+<file path="src/components/Header.astro">
+---
+const navItems = [
+  { href: '/', label: '~/home', cmd: 'cd ~' },
+  { href: '/blog', label: '~/blog', cmd: 'cd blog' },
+  { href: '/about', label: '~/about', cmd: 'cat about' },
+  { href: '/contact', label: '~/contact', cmd: 'mail' },
+]
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="mb-8 font-mono text-sm">
+  <nav class="flex flex-wrap gap-x-6 gap-y-2">
+    {navItems.map((item) => {
+      const isActive = currentPath === item.href || (item.href !== '/' && currentPath.startsWith(item.href));
+      return (
+        <a
+          href={item.href}
+          aria-current={isActive ? 'page' : undefined}
+          class:list={[
+            'group relative transition-colors',
+            isActive ? 'text-green-600 dark:text-green-400 font-bold' : 'text-neutral-600 dark:text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-300'
+          ]}
+        >
+          <span class="opacity-0 group-hover:opacity-100 absolute -left-3 text-green-600 dark:text-green-500 transition-opacity">
+            &gt;
+          </span>
+          {isActive ? `./${item.label.replace('~/', '')}` : item.label}
+        </a>
+      )
+    })}
+  </nav>
+  <div class="h-px w-full bg-neutral-300 dark:bg-neutral-800 mt-4 transition-colors"></div>
+</header>
+</file>
+
+<file path="src/pages/about.astro">
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+
+const experience = [
+  {
+    company: 'Axur',
+    role: 'Senior Software Engineer',
+    period: '2023 - Present',
+    description: 'Leading UI architecture and contributing across the stack (APIs, tooling, CI/CD) for cybersecurity products.',
+    current: true,
+  },
+  {
+    company: 'CWI Software',
+    role: 'Software Engineer',
+    period: '2019 - 2023',
+    description: 'Delivered client projects with React/Vue and collaborated closely with backend teams to ship end-to-end features.',
+  },
+  {
+    company: 'Mave Tecnologia',
+    role: 'Software Engineer',
+    period: '2018 - 2019',
+    description: 'Built full-stack web applications with PHP/Laravel and JavaScript, from API design to UI delivery.',
+  },
+]
+
+const skills = {
+  frontend: ['React', 'TypeScript', 'Astro', 'Vue.js', 'Tailwind CSS', 'UI Architecture'],
+  backend: ['Node.js', 'Go', 'REST APIs', 'GraphQL', 'System Design'],
+  tools: ['Git', 'Neovim', 'Docker', 'Linux', 'CI/CD'],
+}
+---
+
+<BaseLayout
+  title="About | Guilherme Rigotti"
+  description="Learn more about Guilherme Rigotti — Software Engineer with 8+ years of experience across frontend and backend."
+>
+  <div class="space-y-10">
+    <!-- Intro -->
+    <section>
+      <h1 class="text-xl font-semibold text-neutral-900 dark:text-neutral-100 mb-4">About</h1>
+      <div class="space-y-3 text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed max-w-lg">
+        <p>
+          I'm <span class="text-green-600 dark:text-green-400">Guilherme Rigotti</span>, a Software Engineer from Brazil 🇧🇷 with <span class="text-neutral-700 dark:text-neutral-300">8+ years</span> of experience building web applications.
+        </p>
+        <p>
+          I’m strongest on the frontend (React, TypeScript, UI architecture), but I’m also comfortable on the backend (Node.js/Go, APIs, system design) — I like owning problems end-to-end.
+        </p>
+      </div>
+    </section>
+
+    <!-- Experience -->
+    <section>
+      <h2 class="text-xs uppercase tracking-wider text-neutral-500 mb-4">Experience</h2>
+      <div class="space-y-6">
+        {experience.map((job) => (
+          <div class="relative pl-4 border-l border-neutral-300 dark:border-neutral-800">
+            <div class="flex items-start justify-between gap-4 mb-1">
+              <div class="flex items-center gap-2">
+                <span class="text-sm text-neutral-900 dark:text-neutral-200">{job.company}</span>
+                {job.current && (
+                  <span class="flex items-center gap-1.5 text-xs text-green-600 dark:text-green-400">
+                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                    now
+                  </span>
+                )}
+              </div>
+              <span class="text-xs text-neutral-600 shrink-0">{job.period}</span>
+            </div>
+            <p class="text-xs text-neutral-500 mb-1">{job.role}</p>
+            <p class="text-xs text-neutral-600">{job.description}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Skills -->
+    <section>
+      <h2 class="text-xs uppercase tracking-wider text-neutral-500 mb-4">Skills</h2>
+      <div class="grid gap-6 sm:grid-cols-3">
+        <div>
+          <h3 class="text-xs text-neutral-600 dark:text-neutral-400 mb-2">Frontend</h3>
+          <div class="flex flex-wrap gap-1.5">
+            {skills.frontend.map((skill) => (
+              <span class="px-2 py-1 text-xs rounded bg-neutral-200 dark:bg-neutral-800/50 text-neutral-700 dark:text-neutral-400 border border-neutral-300 dark:border-neutral-800">
+                {skill}
+              </span>
+            ))}
+          </div>
+        </div>
+        <div>
+          <h3 class="text-xs text-neutral-600 dark:text-neutral-400 mb-2">Backend</h3>
+          <div class="flex flex-wrap gap-1.5">
+            {skills.backend.map((skill) => (
+              <span class="px-2 py-1 text-xs rounded bg-neutral-200 dark:bg-neutral-800/50 text-neutral-700 dark:text-neutral-400 border border-neutral-300 dark:border-neutral-800">
+                {skill}
+              </span>
+            ))}
+          </div>
+        </div>
+        <div>
+          <h3 class="text-xs text-neutral-600 dark:text-neutral-400 mb-2">Tools</h3>
+          <div class="flex flex-wrap gap-1.5">
+            {skills.tools.map((skill) => (
+              <span class="px-2 py-1 text-xs rounded bg-neutral-200 dark:bg-neutral-800/50 text-neutral-700 dark:text-neutral-400 border border-neutral-300 dark:border-neutral-800">
+                {skill}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Education -->
+    <section>
+      <h2 class="text-xs uppercase tracking-wider text-neutral-500 mb-4">Education</h2>
+      <div class="space-y-4">
+        <div>
+          <p class="text-sm text-neutral-900 dark:text-neutral-200">Universidade La Salle</p>
+          <p class="text-xs text-neutral-500">Bachelor's degree, Computer Science · 2023 - 2027</p>
+        </div>
+
+        <div>
+          <p class="text-sm text-neutral-900 dark:text-neutral-200">IFSUL - Instituto Federal Sul-rio-grandense</p>
+          <p class="text-xs text-neutral-500">Technical degree, Information Technology · 2015 - 2018</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="pt-4">
+      <div class="p-4 rounded-lg border border-neutral-300 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900/30">
+        <p class="text-neutral-800 dark:text-neutral-300 text-sm mb-3">
+          Interested in working together?
+        </p>
+        <a
+          href="/contact"
+          class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-neutral-900 bg-green-600 dark:bg-green-500 rounded-md hover:bg-green-700 dark:hover:bg-green-400 transition-colors"
+        >
+          Get in touch
+        </a>
+      </div>
+    </section>
+
+    <!-- Back -->
+    <nav class="pt-4 border-t border-neutral-300 dark:border-neutral-800">
+      <a
+        href="/"
+        class="text-sm text-neutral-600 dark:text-neutral-500 hover:text-green-600 dark:text-green-400 transition-colors"
+      >
+        ← Back to home
+      </a>
+    </nav>
+  </div>
+</BaseLayout>
+</file>
+
+<file path="src/pages/index.astro">
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import Schema from '@/components/Schema.astro'
+import Typewriter from '@/components/Typewriter.astro'
+import { getCollection } from 'astro:content'
+
+const allPosts = await getCollection('post')
+const latestPosts = allPosts
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3)
+---
+
+<BaseLayout
+  title="Guilherme Rigotti — Software Engineer"
+  description="Senior Software Engineer from Brazil. Building scalable frontend applications and exploring system design."
+>
+  <Schema type="Person" />
+
+  <style>
+    .terminal-output {
+      opacity: 0;
+      transform: translateY(8px);
+      animation: fadeInUp 0.5s ease forwards;
+    }
+
+    .delay-1 { animation-delay: 0.8s; }
+    .delay-2 { animation-delay: 1.4s; }
+    .delay-3 { animation-delay: 2s; }
+    .delay-4 { animation-delay: 2.6s; }
+    .delay-5 { animation-delay: 3.2s; }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+
+  <script>
+    function resetAnimations() {
+      document.querySelectorAll('.terminal-output').forEach((el) => {
+        el.style.animation = 'none'
+        el.offsetHeight
+        el.style.animation = ''
+      })
+    }
+
+    document.addEventListener('astro:page-load', resetAnimations)
+  </script>
+
+  <div class="space-y-8">
+    <!-- Intro Section -->
+    <section class="space-y-4">
+      <Typewriter command="whoami" />
+
+      <div class="terminal-output delay-1 pl-4 border-l-2 border-neutral-300 dark:border-neutral-800 space-y-2">
+        <h1 class="text-xl text-neutral-900 dark:text-neutral-100 font-bold">Guilherme Rigotti</h1>
+        <p class="text-neutral-700 dark:text-neutral-400 max-w-lg">
+          Senior Software Engineer from Brazil 🇧🇷. <br/>
+          Building scalable frontend applications and exploring the depths of system design.
+        </p>
+      </div>
+    </section>
+
+    <!-- Skills "Array" -->
+    <section class="space-y-2">
+      <Typewriter command="ls ./skills" />
+      <div class="terminal-output delay-2 grid grid-cols-2 sm:grid-cols-3 gap-2 pl-4 text-xs text-neutral-600 dark:text-neutral-400">
+        <span>typescript.ts</span>
+        <span>react.jsx</span>
+        <span>astro.build</span>
+        <span>go.mod</span>
+        <span>docker-compose.yml</span>
+        <span>neovim.lua</span>
+      </div>
+    </section>
+
+    <!-- Experience -->
+    <section class="space-y-4">
+      <Typewriter command="cat ./experience.json" />
+
+      <div class="terminal-output delay-3 pl-4 space-y-3">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-neutral-900 dark:text-neutral-200 text-sm">Axur</span>
+              <span class="flex items-center gap-1.5 text-xs text-green-600 dark:text-green-400">
+                <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                now
+              </span>
+            </div>
+            <span class="text-neutral-600 dark:text-neutral-500 text-xs">Senior Frontend Developer</span>
+          </div>
+          <span class="text-xs text-neutral-600 shrink-0">2023 - Present</span>
+        </div>
+
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <span class="text-neutral-900 dark:text-neutral-200 text-sm">CWI Software</span>
+            <div class="text-neutral-600 dark:text-neutral-500 text-xs">Frontend Developer</div>
+          </div>
+          <span class="text-xs text-neutral-600 shrink-0">2019 - 2023</span>
+        </div>
+
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <span class="text-neutral-900 dark:text-neutral-200 text-sm">Mave Tecnologia</span>
+            <div class="text-neutral-600 dark:text-neutral-500 text-xs">Fullstack Developer</div>
+          </div>
+          <span class="text-xs text-neutral-600 shrink-0">2018 - 2019</span>
+        </div>
+
+        <a href="/about" class="inline-block mt-2 text-sm text-green-600 dark:text-green-400 hover:text-green-300 transition-colors">
+          cat ./resume.pdf →
+        </a>
+      </div>
+    </section>
+
+    <!-- Latest Logs (Posts) -->
+    {latestPosts.length > 0 && (
+      <section class="space-y-4 pt-4">
+        <Typewriter command="tail -n 3 ./blog/logs" />
+
+        <div class="terminal-output delay-4 space-y-3 pl-4">
+          {latestPosts.map((post) => {
+            const postDate = new Date(post.data.date);
+            return (
+              <a href={`/blog/post/${post.slug}`} class="block group">
+                <div class="flex items-baseline justify-between gap-4">
+                  <span class="text-neutral-700 dark:text-neutral-300 group-hover:text-green-600 dark:group-hover:text-green-400 group-hover:underline decoration-green-500/30 underline-offset-4 transition-all">
+                    {post.data.title}
+                  </span>
+                  <span class="text-xs text-neutral-600 shrink-0 font-mono">
+                    {postDate.toISOString().split('T')[0]}
+                  </span>
+                </div>
+              </a>
+            )
+          })}
+        </div>
+
+        <a href="/blog" class="inline-block pl-4 text-sm text-green-600 dark:text-green-400 hover:text-green-300 transition-colors">
+          ls -la ./blog →
+        </a>
+      </section>
+    )}
+
+    <!-- Contact CTA -->
+    <section class="pt-4 space-y-6">
+      <Typewriter command="" delay={3000} />
+
+      <div class="terminal-output delay-5 pl-4 p-4 rounded-lg border border-neutral-300 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900/30">
+        <p class="text-neutral-800 dark:text-neutral-300 text-sm mb-3">
+          # Interested in working together?
+        </p>
+        <a
+          href="/contact"
+          class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-neutral-900 bg-green-600 dark:bg-green-500 rounded-md hover:bg-green-700 dark:hover:bg-green-400 transition-colors"
+        >
+          ./contact --send
+        </a>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+</file>
+
+<file path="src/styles/global.css">
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --terminal-bg: #0a0a0a; /* Dark mode default */
+    --terminal-fg: #e5e5e5;
+    --terminal-dim: #6b7280;
+    --terminal-accent: #22c55e; /* Green-500 */
+    --terminal-error: #ef4444;
+  }
+
+  .light {
+    --terminal-bg: #ffffff;
+    --terminal-fg: #1a1a1a;
+    --terminal-dim: #6b7280;
+    --terminal-accent: #16a34a; /* Green-600 */
+    --terminal-error: #dc2626;
+  }
+
+  html {
+    @apply scroll-smooth bg-neutral-950;
+  }
+
+  body {
+    @apply font-mono text-sm leading-relaxed antialiased;
+    @apply text-neutral-800 dark:text-neutral-300;
+    background-color: var(--terminal-bg);
+  }
+
+  ::selection {
+    @apply bg-green-500/30 text-green-200 dark:text-green-200;
+  }
+
+  /* Custom Scrollbar para parecer UI de terminal */
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-neutral-900;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-none border-2 border-neutral-900 bg-neutral-700;
+  }
+
+  /* Light mode scrollbar */
+  .light ::-webkit-scrollbar-track {
+    @apply bg-neutral-200;
+  }
+
+  .light ::-webkit-scrollbar-thumb {
+    @apply border-neutral-200 bg-neutral-400;
+  }
+
+  /* Focus styles */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-green-500;
+  }
+}
+
+/* Utilitário para o cursor piscando */
+.cursor-blink::after {
+  content: '▋';
+  animation: blink 1s step-start infinite;
+  @apply ml-1 text-green-500;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Prose styles for blog posts */
+.prose {
+  @apply max-w-none leading-relaxed text-neutral-900 dark:text-neutral-300;
+}
+
+.prose > * + * {
+  @apply mt-5;
+}
+
+.prose h2 {
+  @apply mb-4 mt-10 border-b border-neutral-300 pb-2 text-xl font-bold text-neutral-900 dark:border-neutral-800 dark:text-neutral-100;
+}
+
+.prose h3 {
+  @apply mb-3 mt-8 text-lg font-semibold text-neutral-900 dark:text-neutral-100;
+}
+
+.prose p {
+  @apply leading-relaxed;
+}
+
+.prose a {
+  @apply text-green-600 underline decoration-green-600/30 underline-offset-2 transition-colors hover:decoration-green-600/60 dark:text-green-400 dark:decoration-green-500/30 dark:hover:decoration-green-400/60;
+}
+
+.prose strong {
+  @apply font-semibold text-neutral-900 dark:text-neutral-200;
+}
+
+.prose code {
+  @apply rounded bg-neutral-200 px-1.5 py-0.5 text-sm text-green-700 dark:bg-neutral-800 dark:text-green-400;
+}
+
+.prose pre {
+  @apply my-6 overflow-x-auto rounded-lg border border-neutral-300 bg-neutral-100 p-4 dark:border-neutral-800 dark:bg-neutral-900;
+}
+
+.prose pre code {
+  @apply bg-transparent p-0 text-sm;
+}
+
+.prose ul,
+.prose ol {
+  @apply my-4 space-y-2 pl-5;
+}
+
+.prose li {
+  @apply text-neutral-900 dark:text-neutral-300;
+}
+
+.prose li::marker {
+  @apply text-green-600 dark:text-green-500;
+}
+
+.prose blockquote {
+  @apply my-6 border-l-2 border-green-600/50 pl-4 italic text-neutral-800 dark:border-green-500/50 dark:text-neutral-400;
+}
+
+.prose img {
+  @apply my-8 rounded-lg border border-neutral-300 dark:border-neutral-800;
+}
+
+.prose hr {
+  @apply my-8 border-neutral-300 dark:border-neutral-800;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</file>
+
+<file path="src/utils/date.ts">
+type DateFormat = 'short' | 'long' | 'full'
+
+export function formatDate(
+  dateValue: Date | string | number,
+  format: DateFormat = 'long'
+) {
+  const d = new Date(dateValue)
+  if (isNaN(d.getTime())) return ''
+
+  const formats: Record<DateFormat, Intl.DateTimeFormatOptions> = {
+    short: { month: 'short', day: 'numeric' },
+    long: { month: 'long', day: 'numeric', year: 'numeric' },
+    full: { year: 'numeric', month: 'long', day: 'numeric' },
+  }
+
+  return new Intl.DateTimeFormat('en-US', formats[format]).format(d)
+}
+
+export function calculateReadingTime(
+  text: string,
+  wordsPerMinute = 200
+): number {
+  const wordCount = text.split(/\s+/).filter(Boolean).length
+  return Math.max(1, Math.ceil(wordCount / wordsPerMinute))
+}
+</file>
+
+<file path="tailwind.config.mjs">
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
+  darkMode: 'class',
+  theme: {
+    extend: {
+      fontFamily: {
+        mono: [
+          'JetBrains Mono',
+          'ui-monospace',
+          'SFMono-Regular',
+          'Menlo',
+          'Monaco',
+          'Consolas',
+          'monospace',
+        ],
+      },
+    },
+  },
+  plugins: [require('@tailwindcss/typography'), require('tailwindcss-animate')],
+}
+</file>
+
+<file path="src/components/PostCard.astro">
+---
+import type { CollectionEntry } from 'astro:content'
+import { formatDate } from '@/utils/date'
+
+type Props = {
+  post: CollectionEntry<'post'>
+}
+
+const { post } = Astro.props
+const { slug, data } = post
+const { title, subtitle, date, tags } = data
+---
+
+<a
+  href={`/blog/post/${slug}`}
+  class="group block py-3 -mx-2 px-2 rounded-md hover:bg-neutral-200/50 dark:hover:bg-neutral-800/30 transition-colors"
+>
+  <div class="flex items-start justify-between gap-4">
+    <div class="min-w-0 flex-1">
+      <h3 class="text-sm text-neutral-900 dark:text-neutral-200 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">
+        {title}
+      </h3>
+      {subtitle && (
+        <p class="text-xs text-neutral-600 dark:text-neutral-500 mt-1 truncate">
+          {subtitle}
+        </p>
+      )}
+      {tags && tags.length > 0 && (
+        <div class="flex flex-wrap gap-1.5 mt-2">
+          {tags.slice(0, 3).map((tag) => (
+            <a
+              href={`/blog/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
+              class="text-xs text-neutral-700 dark:text-neutral-600 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+            >
+              #{tag}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+    <time
+      datetime={new Date(date).toISOString()}
+      class="text-xs text-neutral-700 dark:text-neutral-600 shrink-0 pt-0.5"
+    >
+      {formatDate(date, 'short')}
+    </time>
+  </div>
+</a>
+</file>
+
+<file path="src/layouts/BaseLayout.astro">
+---
+import Header from '@/components/Header.astro'
+import Footer from '@/components/Footer.astro'
+import ThemeToggle from '@/components/ThemeToggle.astro'
+import ThemeScript from '@/components/ThemeScript.astro'
+import '@/styles/global.css'
+import { ClientRouter } from 'astro:transitions'
+
+interface Props {
+  title?: string
+  description?: string
+  image?: string
+  articleDate?: string
+  type?: 'website' | 'article'
+}
+
+const {
+  title = 'Guilherme Rigotti',
+  description = 'Software Engineer. Terminal enthusiast. Problem solver.',
+  image = '/og-image.png',
+  articleDate,
+  type = 'website'
+} = Astro.props
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const socialImageURL = new URL(image, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- SEO Principal -->
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+    <meta name="theme-color" content="#0a0a0a" />
+    <meta name="color-scheme" content="dark light" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={socialImageURL} />
+    {articleDate && <meta property="article:published_time" content={articleDate} />}
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalURL} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={socialImageURL} />
+
+    <!-- Fontes (JetBrains Mono é excelente para terminais) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+
+    <!-- RSS Feed -->
+    <link rel="alternate" type="application/rss+xml" title="Guilherme Rigotti - Blog" href="/rss.xml" />
+
+    <ClientRouter />
+  </head>
+  <body class="min-h-screen flex items-center justify-center p-4 sm:p-8 bg-neutral-100 dark:bg-[#050505] transition-colors">
+
+    <!-- Terminal Container -->
+    <div class="w-full max-w-3xl shadow-2xl rounded-lg overflow-hidden border border-neutral-300 dark:border-neutral-800 bg-white dark:bg-[#0a0a0a] relative transition-colors">
+
+      <!-- Terminal Header (macOS Style) -->
+      <div class="bg-neutral-100 dark:bg-[#1a1a1a] px-4 py-3 flex items-center justify-between border-b border-neutral-300 dark:border-neutral-800 select-none transition-colors">
+        <div class="flex gap-2" aria-hidden="true">
+          <div class="w-3 h-3 rounded-full bg-[#ff5f56] hover:bg-[#ff5f56]/80 transition-colors"></div>
+          <div class="w-3 h-3 rounded-full bg-[#ffbd2e] hover:bg-[#ffbd2e]/80 transition-colors"></div>
+          <div class="w-3 h-3 rounded-full bg-[#27c93f] hover:bg-[#27c93f]/80 transition-colors"></div>
+        </div>
+        <div class="text-xs text-neutral-500 dark:text-neutral-500 font-mono flex gap-2">
+          <span class="hidden sm:inline">rigotti@dev:</span>
+          <span class="text-neutral-600 dark:text-neutral-400">{Astro.url.pathname}</span>
+        </div>
+        <ThemeToggle />
+      </div>
+
+      <!-- Content Area -->
+      <div class="p-6 sm:p-8 min-h-[600px] flex flex-col">
+        <ThemeScript />
+        <Header />
+        <main class="flex-1 py-6 animate-in fade-in duration-500">
+          <slot />
+        </main>
+        <Footer />
+      </div>
+    </div>
+
+  </body>
+</html>
+</file>
+
+<file path="src/pages/blog/post/[slug].astro">
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { getCollection } from 'astro:content'
+import { type CollectionEntry } from 'astro:content'
+import { formatDate, calculateReadingTime } from '@/utils/date'
+
+export async function getStaticPaths() {
+  const posts = await getCollection('post')
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }))
+}
+
+type Props = {
+  post: CollectionEntry<'post'>
+}
+
+const { post } = Astro.props
+const { slug, data } = post
+const { title, subtitle, date, tags } = data
+const { Content } = await post.render()
+
+const readingTime = calculateReadingTime(post.body || '')
+---
+
+<BaseLayout
+  title={`${title} | Guilherme Rigotti`}
+  description={subtitle || `Blog post: ${title}`}
+  currentPath={`/blog/post/${slug}`}
+>
+  <article class="space-y-8">
+    <!-- Back -->
+    <nav>
+      <a
+        href="/blog"
+        class="text-sm text-neutral-600 dark:text-neutral-500 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+      >
+        ← Back to blog
+      </a>
+    </nav>
+
+    <!-- Header -->
+    <header class="space-y-4">
+      <div class="flex items-center gap-3 text-xs text-neutral-600 dark:text-neutral-500">
+        <time datetime={new Date(date).toISOString()}>
+          {formatDate(date)}
+        </time>
+        <span>·</span>
+        <span>{readingTime} min read</span>
+      </div>
+
+      <h1 class="text-2xl font-bold text-neutral-900 dark:text-neutral-100 leading-tight">
+        {title}
+      </h1>
+
+      {subtitle && (
+        <p class="text-neutral-700 dark:text-neutral-400 text-sm">
+          {subtitle}
+        </p>
+      )}
+
+      {tags && tags.length > 0 && (
+        <div class="flex flex-wrap gap-2 pt-2">
+          {tags.map((tag) => (
+            <a
+              href={`/blog/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
+              class="text-xs text-neutral-700 dark:text-neutral-500 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+            >
+              #{tag}
+            </a>
+          ))}
+        </div>
+      )}
+    </header>
+
+    <!-- Divider -->
+    <hr class="border-neutral-300 dark:border-neutral-800" />
+
+    <!-- Content -->
+    <div class="prose">
+      <Content />
+    </div>
+
+    <!-- Footer -->
+    <footer class="pt-8 border-t border-neutral-300 dark:border-neutral-800">
+      <div class="flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-green-600/20 dark:bg-green-500/20 flex items-center justify-center text-green-700 dark:text-green-400 text-sm font-medium">
+            GR
+          </div>
+          <div>
+            <p class="text-sm text-neutral-900 dark:text-neutral-200">Guilherme Rigotti</p>
+            <p class="text-xs text-neutral-700 dark:text-neutral-500">Software Engineer</p>
+          </div>
+        </div>
+
+        <a
+          href="/blog"
+          class="text-sm text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 transition-colors"
+        >
+          More posts →
+        </a>
+      </div>
+    </footer>
+  </article>
+</BaseLayout>
+</file>
+
+<file path="src/pages/blog/index.astro">
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { getCollection } from 'astro:content'
+import { formatDate } from '@/utils/date'
+
+const allPosts = await getCollection('post')
+const sortedPosts = allPosts.sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+)
+---
+
+<BaseLayout
+  title="Blog | Guilherme Rigotti"
+  description="Thoughts and tutorials about software development"
+  currentPath="/blog"
+>
+  <div class="space-y-8">
+    <!-- Header -->
+    <header>
+      <h1 class="text-xl font-semibold text-neutral-900 dark:text-neutral-100 mb-2">Blog</h1>
+      <p class="text-neutral-600 dark:text-neutral-500 text-sm">
+        Thoughts and tutorials about software development.
+      </p>
+    </header>
+
+    <!-- Posts List -->
+    <section>
+      {sortedPosts.length > 0 ? (
+        <div class="space-y-1">
+          {sortedPosts.map((post) => (
+            <a
+              href={`/blog/post/${post.slug}`}
+              class="group flex items-start justify-between gap-4 py-3 -mx-2 px-2 rounded-md hover:bg-neutral-200/50 dark:hover:bg-neutral-800/30 transition-colors"
+            >
+              <div class="min-w-0 flex-1">
+                <h2 class="text-sm text-neutral-900 dark:text-neutral-200 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">
+                  {post.data.title}
+                </h2>
+                {post.data.subtitle && (
+                  <p class="text-xs text-neutral-600 dark:text-neutral-500 mt-1 truncate">
+                    {post.data.subtitle}
+                  </p>
+                )}
+                {post.data.tags && post.data.tags.length > 0 && (
+                  <div class="flex flex-wrap gap-1.5 mt-2">
+                    {post.data.tags.slice(0, 3).map((tag) => (
+                      <a
+                        href={`/blog/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
+                        class="text-xs text-neutral-700 dark:text-neutral-600 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+                        onclick="event.stopPropagation()"
+                      >
+                        #{tag}
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <time
+                datetime={new Date(post.data.date).toISOString()}
+                class="text-xs text-neutral-700 dark:text-neutral-600 shrink-0 pt-0.5"
+              >
+                {formatDate(post.data.date, 'long')}
+              </time>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-12">
+          <p class="text-neutral-600 dark:text-neutral-500 text-sm">No posts yet.</p>
+        </div>
+      )}
+    </section>
+
+    <!-- Back -->
+    <nav class="pt-4 border-t border-neutral-300 dark:border-neutral-800">
+      <a
+        href="/"
+        class="text-sm text-neutral-600 dark:text-neutral-500 hover:text-green-600 dark:text-green-400 transition-colors"
+      >
+        ← Back to home
+      </a>
+    </nav>
+  </div>
+</BaseLayout>
+</file>
+
 <file path=".gitignore">
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# Build output
+dist/
+.astro/
 
 #vscode
 .vscode
@@ -1853,163 +2131,30 @@ yarn-error.log*
 next-env.d.ts
 </file>
 
-<file path=".prettierrc.json">
+<file path="README.md">
+# rigotti.dev
+
+UNDER MAINTANCE
+</file>
+
+<file path=".eslintrc.json">
 {
-  "trailingComma": "es5",
-  "semi": false,
-  "tabWidth": 2,
-  "singleQuote": true,
-  "jsxSingleQuote": true,
-  "plugins": ["prettier-plugin-tailwindcss"]
-}
-</file>
-
-<file path="src/app/blog/post/[slug]/page.tsx">
-import path from 'path'
-import fs from 'fs'
-import matter from 'gray-matter'
-import Markdown from 'markdown-to-jsx'
-import { formatDate } from '@/utils/date'
-import { Metadata } from 'next'
-
-type PostPageProps = {
-  params: {
-    slug: string
-  }
-}
-
-function getPostContent(slug: string) {
-  const fileName = `${slug}.md`
-  const filePath = path.join(process.cwd(), 'posts', fileName)
-  const file = fs.readFileSync(filePath, 'utf-8')
-
-  return matter(file)
-}
-
-export async function generateMetadata({
-  params,
-}: PostPageProps): Promise<Metadata> {
-  const {
-    data: { title, subtitle },
-  } = getPostContent(params.slug)
-
-  return { title, description: subtitle }
-}
-
-export default function PostPage({ params }: PostPageProps) {
-  const { slug } = params
-  const {
-    data: { date, title, subtitle },
-    content,
-  } = getPostContent(slug)
-
-  return (
-    <article className="mx-auto mb-8 max-w-prose">
-      <div className="space-y-2 text-center">
-        <h1 className="text-2xl">{title}</h1>
-        <p>{subtitle}</p>
-        <p className="text-sm">{formatDate(new Date(date))}</p>
-      </div>
-
-      <div className="prose relative">
-        <Markdown>{content}</Markdown>
-      </div>
-    </article>
-  )
-}
-</file>
-
-<file path="src/app/blog/page.tsx">
-import { PostCard } from '@/components/post-card'
-import { getPostsMetadata } from '@/services/posts'
-import { Metadata } from 'next'
-
-export const metadata: Metadata = {
-  title: 'Blog | Guilherme Rigotti',
-  description: 'This is my personal blog.',
-}
-
-export default function BlogPage() {
-  const posts = getPostsMetadata()
-
-  return (
-    <main className="mx-auto mb-6 max-w-4xl">
-      <div className="mb-10 space-y-2 text-center">
-        <h1 className="text-center text-3xl font-semibold">📚 Blog </h1>
-        <span className="block">collection of all my blog posts</span>
-        <span className="block text-slate-200">
-          currently has {posts.length} posts
-        </span>
-      </div>
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {posts.map((post) => (
-          <PostCard key={post.slug} post={post} />
-        ))}
-      </div>
-    </main>
-  )
-}
-</file>
-
-<file path="src/app/contact/page.tsx">
-import { Metadata } from 'next'
-
-export const metadata: Metadata = {
-  title: 'Contact | Guilherme Rigotti',
-  description: 'My contact page, feel free to contact me.',
-}
-
-export default function ContactPage() {
-  return (
-    <main className="mb-[23rem] mt-[16rem] flex flex-col items-center justify-center space-y-4 text-center">
-      <h1 className="font-mono text-3xl font-medium">👋 Let&apos;s talk</h1>
-      <p className="font-mono text-2xl font-medium">
-        Feel free to reach out to me via email at{' '}
-      </p>
-      <a
-        href="mailto:ggrigotti@gmail.com"
-        className="font-mono text-3xl font-medium underline"
-      >
-        ✉️ ggrigotti@gmail.com
-      </a>
-    </main>
-  )
-}
-</file>
-
-<file path="next.config.js">
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'www.github.com',
-        pathname: '/*.png',
-      },
-    ],
-  },
-  experimental: {
-    appDir: true,
-  },
-}
-
-module.exports = nextConfig
-</file>
-
-<file path="tailwind.config.js">
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: ['./src/**/*.{tsx,ts}'],
-  theme: {
-    extend: {
-      fontFamily: {
-        sans: ['var(--font-open-sans)'],
-        mono: ['var(--font-montserrat)'],
-      },
-    },
-  },
-  plugins: [require('@tailwindcss/typography')],
+  "extends": [
+    "eslint:recommended",
+    "plugin:astro/recommended",
+    "prettier",
+    "plugin:tailwindcss/recommended"
+  ],
+  "plugins": ["astro"],
+  "overrides": [
+    {
+      "files": ["*.astro"],
+      "parser": "astro-eslint-parser",
+      "parserOptions": {
+        "parser": "@typescript-eslint/parser"
+      }
+    }
+  ]
 }
 </file>
 
@@ -2017,398 +2162,11 @@ module.exports = {
 {
   "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "jsxImportSource": "react",
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     }
   }
-}
-</file>
-
-<file path="posts/understanding_graphs_with_typescript.md">
----
-title: "Understading Graphs with Typescript"
-subtitle: "Exploring Graphs with TypeScript."
-date: "2023-04-13"
-tags: ["Typescript", "Data Structures", "Graph"]
----
-
-
-Graphs are a fundamental concept in computer science and mathematics. They are used to model relationships and connections between objects or data points. In this article, we will explore the basics of graphs and how to implement them in TypeScript, a popular programming language.
-
-## Graph Basics
-
-A graph is a collection of vertices (also called nodes) and edges. Vertices represent objects or data points, while edges represent the relationships or connections between them. There are two main types of graphs: directed and undirected.
-
-In a directed graph, the edges have a direction and represent a one-way relationship between two vertices. For example, in a social media graph, an edge from vertex A to vertex B could represent A following B, but not vice versa.
-
-In an undirected graph, the edges do not have a direction and represent a two-way relationship between two vertices. For example, in a road network graph, an edge between two cities represents a connection that can be traveled in both directions.
-
-## Implementing Graphs in TypeScript
-
-To implement a graph in TypeScript, we can use an adjacency list or an adjacency matrix. An adjacency list is an array of arrays, where each inner array represents a vertex and its neighbors. An adjacency matrix is a two-dimensional array that represents the edges between vertices.
-
-Here is an example of implementing an adjacency list in TypeScript:
-
-```typescript
-class Graph {
-  private vertices: number;
-  private adjList: Map<number, number[]>;
-
-  constructor(vertices: number) {
-    this.vertices = vertices;
-    this.adjList = new Map<number, number[]>();
-    for (let i = 0; i < this.vertices; i++) {
-      this.adjList.set(i, []);
-    }
-  }
-
-  addEdge(v: number, w: number) {
-    this.adjList.get(v).push(w);
-    this.adjList.get(w).push(v);
-  }
-
-  printGraph() {
-    let keys = this.adjList.keys();
-    for (let i of keys) {
-      let neighbors = this.adjList.get(i);
-      let result = "";
-      for (let j of neighbors) {
-        result += j + " ";
-      }
-      console.log(i + " -> " + result);
-    }
-  }
-}
-
-let g = new Graph(4);
-g.addEdge(0, 1);
-g.addEdge(0, 2);
-g.addEdge(1, 2);
-g.addEdge(2, 3);
-g.printGraph();
-```
-
-In this example, we create a Graph class that uses a Map to store the adjacency list. We also define methods to add edges and print the graph.
-
-## Conclusion
-
-Graphs are a powerful tool for modeling relationships and connections between objects or data points. In TypeScript, we can implement graphs using an adjacency list or an adjacency matrix. By understanding the basics of graphs and how to implement them in TypeScript, we can use them to solve complex problems in computer science and beyond.
-
-## Learn more
-1. "Introduction to Graph Theory" by Richard J. Trudeau - This book provides a comprehensive introduction to graph theory, covering both basic and advanced topics.
-
-2. "Graph Algorithms" by Shimon Even - This book focuses on algorithms for graph traversal, shortest path problems, minimum spanning trees, and network flows.
-
-3. "Data Structures and Algorithms in JavaScript" by Michael McMillan - This book provides an introduction to data structures and algorithms, including graphs, using the JavaScript programming language.
-
-4. "Graph Theory and Complex Networks: An Introduction" by Maarten van Steen - This book provides an introduction to graph theory and complex networks, covering topics such as social networks, the web graph, and the small-world phenomenon.
-</file>
-
-<file path="src/components/footer/index.tsx">
-import Link from 'next/link'
-import { ImLinkedin, ImGithub } from 'react-icons/im'
-import { SiInstagram } from 'react-icons/si'
-import { TfiEmail } from 'react-icons/tfi'
-
-export function Footer() {
-  return (
-    <footer className="sticky top-[100vh]  mb-4 flex flex-col items-center space-y-5">
-      <ul className="flex gap-5">
-        <li>
-          <Link
-            title="Linkedin"
-            aria-label="Linkedin"
-            href="https://linkedin.com/in/rigottig"
-          >
-            <ImLinkedin className="duration-200 hover:scale-110" size={22} />
-          </Link>
-        </li>
-        <li>
-          <Link
-            aria-label="Github"
-            title="Github"
-            href="https://github.com/rigottig"
-          >
-            <ImGithub className="duration-200 hover:scale-110" size={22} />
-          </Link>
-        </li>
-        <li>
-          <Link
-            title="Instagram"
-            aria-label="Instagram"
-            href="https://instagram.com/rigottig"
-          >
-            <SiInstagram className="duration-200 hover:scale-110" size={22} />
-          </Link>
-        </li>
-        <li>
-          <Link
-            title="Email"
-            aria-label="email"
-            type="email"
-            href="mailto:ggrigoti@gmail.com"
-          >
-            <TfiEmail className="duration-200 hover:scale-110" size={23} />
-          </Link>
-        </li>
-      </ul>
-      <p className="text-xs text-gray-600">
-        &copy; Guilherme Rigotti - {new Date().getFullYear()}
-      </p>
-    </footer>
-  )
-}
-</file>
-
-<file path=".eslintrc.json">
-{
-  "extends": [
-    "next",
-    "prettier",
-    "plugin:tailwindcss/recommended"
-  ]
-}
-</file>
-
-<file path="README.md">
-# rigotti.dev
-
-UNDER MAINTANCE
-</file>
-
-<file path="posts/switching_from_vscode_to_nvim.md">
----
-title: "Why I switch from Visual Studio Code to NeoVim"
-subtitle: "A Programmer's Journey from VSCode to Neovim."
-date: "2023-03-03"
-tags: ["Neovim", "VSCode", "Code Editor", "Productivity"]
----
-
-
-As a programmer, one of the most important tools in my arsenal is my code editor. I've been using Visual Studio Code (VSCode) for years and it's been a reliable editor, but recently I decided to make the switch to Neovim. In this blog post, I'll explain why I made the switch and why you might want to consider it too.
-
-First, let's talk about what Neovim is. Neovim is a fork of Vim, a highly customizable text editor that's been around since the 90s. Neovim is built to be more modern and extensible than Vim, with a focus on making it easier to develop plugins and integrate with other tools. Neovim also has a more consistent and flexible scripting language, making it easier to automate tasks and customize your workflow.
-
-![my currently neovim](/images/switching_from_vscode_to_nvim.png)
-
-
-So why did I switch from VSCode to Neovim? There were a few reasons:
-
-## Performance
-One of the main reasons I switched to Neovim was for its performance. While VSCode is a great editor, it can be a bit slow and bloated at times. Neovim, on the other hand, is incredibly lightweight and fast. It loads up almost instantly and I can open and switch between files with ease.
-
-## Customizability
-Another reason I switched to Neovim was for its customizability. Neovim has an extensive plugin ecosystem and can be customized to suit your needs. With a few tweaks to my configuration file, I was able to create a highly personalized environment that perfectly suited my workflow. VSCode is also highly customizable, but I found that I had to install a lot of extensions to get it to work the way I wanted.
-
-## Modal Editing
-Neovim uses a modal editing system, which can take a bit of getting used to, but is incredibly powerful once you get the hang of it. The modal editing system allows you to use different keystrokes to perform different actions, depending on which mode you're in. This can greatly speed up your workflow once you get used to it. VSCode, on the other hand, uses a more traditional text editor interface.
-
-## Terminal Integration
-One of the things I love about Neovim is its terminal integration. I can run shell commands and interact with my terminal directly from within Neovim, without having to switch to a separate terminal window. This has been a game-changer for my workflow and has allowed me to streamline my development process.
-
-Overall, I'm really happy with my switch to Neovim. While there was a bit of a learning curve at first, I found that the benefits outweighed the initial investment. If you're looking for a lightweight, customizable, and powerful code editor, I would definitely recommend giving Neovim a try.
-</file>
-
-<file path="src/app/about/page.tsx">
-import {
-  SiNextdotjs,
-  SiReact,
-  SiTypescript,
-  SiNeovim,
-  SiTailwindcss,
-  SiGo,
-  SiJest,
-  SiRust,
-} from 'react-icons/si'
-import { Metadata } from 'next'
-
-export const metadata: Metadata = {
-  title: 'About | Guilherme Rigotti',
-  description: 'About me, my skills and experience.',
-}
-
-export default function AboutPage() {
-  return (
-    <main className="mx-auto mb-[18rem] mt-4 max-w-prose">
-      <p className="mb-2 text-sm leading-6">
-        My name is <strong>Guilherme Rigotti</strong>, 24. I&apos;m a{' '}
-        <strong>software engineer</strong> from Brazil 🇧🇷, currently living in
-        Rio Grande do Sul. I specialize in frontend technologies and have about
-        7 years of experience in software development.
-      </p>
-      <p className="mb-2 text-sm leading-6">
-        As a software engineer, I&apos;m passionate about technology and
-        software development. I&apos;ve been interested in this field since I
-        was young, and I&apos;ve honed my skills over the years.
-      </p>
-      <p className="mb-8 text-sm leading-6">
-        I&apos;ve worked on various software projects and have a strong track
-        record of delivering high-quality work that meets the needs and
-        expectations of clients. I&apos;m always looking for new challenges and
-        opportunities to learn and grow in my field. For me, software
-        development is not just a job, but a passion. I enjoy working with
-        cutting-edge technologies and developing innovative solutions to complex
-        problems.
-      </p>
-
-      <div className="mb-8">
-        <h3 className="font-semibold">I&apos;m enthusiastic about:</h3>
-        <ul className="mt-4 flex space-x-6 ">
-          <li>
-            <SiReact size={22} />
-          </li>
-          <li>
-            <SiTypescript size={22} />
-          </li>
-          <li>
-            <SiNextdotjs size={22} />
-          </li>
-          <li>
-            <SiTailwindcss size={22} />
-          </li>
-          <li>
-            <SiNeovim size={22} />
-          </li>
-          <li>
-            <SiGo size={24} />
-          </li>
-          <li>
-            <SiJest size={22} />
-          </li>
-          <li>
-            <SiRust size={22} />
-          </li>
-        </ul>
-      </div>
-
-      <div>
-        <h3 className="text-xl font-semibold">Work history</h3>
-        <ul className="mt-4 space-y-1">
-          <li className="text-sm leading-6">
-            <a
-              href="https://www.axur.com"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <span className="">
-                <strong className="text-blue-600 underline duration-200 visited:text-purple-600 hover:text-blue-800">
-                  Axur
-                </strong>{' '}
-                Senior Frontend developer, 2023 - present
-              </span>
-            </a>
-          </li>
-          
-          <li className="text-sm leading-6">
-            <a
-              href="https://www.cwi.com.br"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <span className="">
-                <strong className="text-blue-600 underline duration-200 visited:text-purple-600 hover:text-blue-800">
-                  CWI Software
-                </strong>{' '}
-                Frontend developer, 2019 - 2023
-              </span>
-            </a>
-          </li>
-
-          <li className="text-sm leading-6">
-            <a
-              href="https://www.mavetecnologia.com.br"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <span className="">
-                <strong className="text-blue-600 underline duration-200 visited:text-purple-600 hover:text-blue-800">
-                  Mave Tecnologia
-                </strong>{' '}
-                Fullstack developer, 2018 - 2019
-              </span>
-            </a>
-          </li>
-        </ul>
-      </div>
-    </main>
-  )
-}
-</file>
-
-<file path="src/components/post-card/index.tsx">
-import { formatDate } from '@/utils/date'
-import Link from 'next/link'
-
-export type Post = {
-  slug: string
-  frontmatter: {
-    title: string
-    tags: string[]
-    date: string
-    subtitle: string
-  }
-}
-
-type PostCardProps = {
-  post: Post
-}
-
-export function PostCard({ post }: PostCardProps) {
-  const {
-    frontmatter: { title, tags, date, subtitle },
-    slug,
-  } = post
-
-  return (
-    <Link
-      href={`/blog/post/${slug}`}
-      className="flex w-full flex-col items-center gap-y-2 rounded-md border-2 border-black p-2 text-center shadow-[3px_3px_0px_#000] duration-200 hover:shadow-[0px_5px_0px_#000]"
-    >
-      <h4 className="font-semibold">{title}</h4>
-      <p className="text-sm">{subtitle}</p>
-      <span className="inline-block text-sm">
-        Published on {formatDate(new Date(date))}
-      </span>
-      <div className="inline-block space-x-2">
-        {tags?.map((tag) => (
-          <span className="text-xs text-blue-600" key={tag}>
-            #{tag}
-          </span>
-        ))}
-      </div>
-    </Link>
-  )
-}
-</file>
-
-<file path="src/components/header/index.tsx">
-import Link from 'next/link'
-
-export function Header() {
-  return (
-    <header className="mx-auto flex flex-col items-center pb-8 pt-4">
-      <nav className="space-x-3">
-        <Link className="duration-200 hover:text-gray-700" href="/">
-          Home
-        </Link>
-        <span>|</span>
-        <Link className="duration-200 hover:text-gray-700" href="/blog">
-          Blog
-        </Link>
-        <span>|</span>
-        <Link className="duration-200 hover:text-gray-700" href="/about">
-          About
-        </Link>
-        <span>|</span>
-        <Link className="duration-200 hover:text-gray-700" href="/contact">
-          Contact
-        </Link>
-      </nav>
-    </header>
-  )
 }
 </file>
 
@@ -2423,151 +2181,33 @@ export function Header() {
     "preview": "astro preview",
     "lint": "astro lint"
   },
-  "dependencies": {
-    "@types/node": "18.15.11",
-    "@types/react": "18.0.35",
-    "@types/react-dom": "18.0.11",
-    "@vercel/analytics": "^0.1.11",
-    "eslint-config-next": "13.3.0",
-    "gray-matter": "^4.0.3",
-    "markdown-to-jsx": "^7.2.0",
-    "next": "13.3.0",
-    "react": "18.2.0",
-    "react-dom": "18.2.0"
-  },
   "devDependencies": {
+    "@astrojs/check": "^0.9.6",
     "@astrojs/mdx": "^4.3.13",
     "@astrojs/sitemap": "^3.7.0",
     "@astrojs/tailwind": "^6.0.2",
     "@astrojs/vercel": "^9.0.4",
-    "@fontsource/jetbrains-mono": "^5.2.8",
-    "@fontsource/montserrat": "^5.2.8",
-    "@fontsource/open-sans": "^5.2.7",
     "@tailwindcss/typography": "^0.5.9",
+    "@types/node": "18.15.11",
     "@typescript-eslint/parser": "^5.58.0",
     "astro": "^5.17.1",
     "autoprefixer": "^10.4.14",
     "eslint": "8.38.0",
     "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-astro": "^1.6.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-tailwindcss": "^3.11.0",
     "postcss": "^8.4.21",
     "prettier": "^2.8.7",
+    "prettier-plugin-astro": "^0.14.0",
     "prettier-plugin-tailwindcss": "^0.2.7",
-    "react-icons": "^4.8.0",
     "tailwindcss": "^3.3.1",
+    "tailwindcss-animate": "^1.0.7",
     "typescript": "5.0.4"
+  },
+  "dependencies": {
+    "@astrojs/rss": "^4.0.15"
   }
-}
-</file>
-
-<file path="src/app/layout.tsx">
-import { Footer } from '@/components/footer'
-import { Header } from '@/components/header'
-import { Montserrat, Open_Sans } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/react'
-
-import '@/styles/global.css'
-
-export const metadata = {
-  title: 'Guilherme Rigotti',
-  description: 'My personal website',
-}
-
-const open_sans = Open_Sans({
-  variable: '--font-open-sans',
-  display: 'swap',
-  subsets: ['latin', 'latin-ext'],
-})
-
-const montserrat = Montserrat({
-  variable: '--font-montserrat',
-  display: 'swap',
-  subsets: ['latin', 'latin-ext'],
-})
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  return (
-    <html lang="en" className={`${montserrat.variable} ${open_sans.variable}`}>
-      <body>
-        <div className="container mx-auto min-h-screen gap-10 px-4 md:gap-20">
-          <Header />
-          {children}
-          <Footer />
-        </div>
-        <Analytics />
-      </body>
-    </html>
-  )
-}
-</file>
-
-<file path="src/app/page.tsx">
-import { PostCard } from '@/components/post-card'
-import { getPostsMetadata } from '@/services/posts'
-import Image from 'next/image'
-
-import { Metadata } from 'next'
-
-export const metadata: Metadata = {
-  title: 'Home | Guilherme Rigotti',
-  description:
-    "It's me, Guilherme Rigotti! I'm a software developer living in Brazil",
-}
-
-const posts = getPostsMetadata()
-
-const sortedPosts = posts.sort((a, b) => {
-  return (
-    new Date(b.frontmatter.date).valueOf() -
-    new Date(a.frontmatter.date).valueOf()
-  )
-})
-
-const latestPosts = sortedPosts.slice(0, 3)
-
-export default async function Home() {
-  return (
-    <main className="mx-auto mb-8 w-full max-w-4xl font-mono">
-      <div className="grid grid-cols-1 place-content-center items-center gap-8 border-b pb-4 md:grid-cols-2 md:border-none md:pb-0">
-        <Image
-          src="https://www.github.com/rigottig.png"
-          width={280}
-          height={280}
-          alt="My profile photo from GitHub"
-          className="place-self-center object-cover md:place-self-auto rounded-full"
-          placeholder="blur"
-        />
-        <div className="space-y-4">
-          <h1 className="mx-auto max-w-sm text-center text-2xl font-semibold leading-9 md:max-w-md">
-            <span className="hidden md:inline-block">👋</span> Hey, I&apos;m
-            Guilherme Rigotti <br /> also known as{' '}
-            <a
-              className="text-blue-600 underline visited:text-purple-600 hover:text-blue-800"
-              href="https://www.github.com/rigottig"
-            >
-              @rigottig
-            </a>
-          </h1>
-          <p className="text-center text-lg font-medium">
-            I&apos;m a <strong>Software Engineer</strong> from{' '}
-            <strong>Brazil</strong> 🇧🇷
-          </p>
-        </div>
-      </div>
-
-      <div className="mt-4 space-y-6 md:mt-14 md:pl-10">
-        <h3 className="mb-4 text-2xl font-semibold md:mb-8">✨ Latest posts</h3>
-        {latestPosts.map((post) => (
-          <PostCard key={post.slug} post={post} />
-        ))}
-      </div>
-    </main>
-  )
 }
 </file>
 

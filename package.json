@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro check && astro build",
     "preview": "astro preview",
     "lint": "astro lint"
   },
@@ -33,6 +33,7 @@
     "typescript": "5.0.4"
   },
   "dependencies": {
-    "@astrojs/rss": "^4.0.15"
+    "@astrojs/rss": "^4.0.15",
+    "sharp": "^0.34.5"
   }
 }
