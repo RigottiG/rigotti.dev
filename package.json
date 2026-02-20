@@ -8,17 +8,12 @@
     "preview": "astro preview",
     "lint": "astro lint"
   },
-  "dependencies": {
-    "gray-matter": "^4.0.3"
-  },
   "devDependencies": {
+    "@astrojs/check": "^0.9.6",
     "@astrojs/mdx": "^4.3.13",
     "@astrojs/sitemap": "^3.7.0",
     "@astrojs/tailwind": "^6.0.2",
     "@astrojs/vercel": "^9.0.4",
-    "@fontsource/jetbrains-mono": "^5.2.8",
-    "@fontsource/montserrat": "^5.2.8",
-    "@fontsource/open-sans": "^5.2.7",
     "@tailwindcss/typography": "^0.5.9",
     "@types/node": "18.15.11",
     "@typescript-eslint/parser": "^5.58.0",
@@ -26,6 +21,7 @@
     "autoprefixer": "^10.4.14",
     "eslint": "8.38.0",
     "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-astro": "^1.6.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-tailwindcss": "^3.11.0",
     "postcss": "^8.4.21",

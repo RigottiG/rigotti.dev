@@ -2,6 +2,7 @@
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import { getCollection } from 'astro:content'
 import { type CollectionEntry } from 'astro:content'
+import { formatDate } from '@/utils/date'
 
 export async function getStaticPaths() {
   const posts = await getCollection('post')
@@ -20,17 +21,6 @@ const { slug, data } = post
 const { title, subtitle, date, tags } = data
 const { Content } = await post.render()
 
-const formatDate = (dateValue: Date | string | number) => {
-  const d = new Date(dateValue)
-  if (isNaN(d.getTime())) return ''
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  }).format(d)
-}
-
-// Estimate reading time
 const wordsPerMinute = 200
 const textContent = post.body || ''
 const wordCount = textContent.split(/\s+/).length

@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content'
+import { formatDate } from '@/utils/date'
 
 type Props = {
   post: CollectionEntry<'post'>
@@ -8,15 +9,6 @@ type Props = {
 const { post } = Astro.props
 const { slug, data } = post
 const { title, subtitle, date, tags } = data
-
-const formatDate = (dateValue: Date | string | number) => {
-  const d = new Date(dateValue)
-  if (isNaN(d.getTime())) return ''
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'short',
-    day: 'numeric',
-  }).format(d)
-}
 ---
 
 <a
@@ -47,7 +39,7 @@ const formatDate = (dateValue: Date | string | number) => {
       datetime={new Date(date).toISOString()}
       class="text-xs text-neutral-700 dark:text-neutral-600 shrink-0 pt-0.5"
     >
-      {formatDate(date)}
+      {formatDate(date, 'short')}
     </time>
   </div>
 </a>

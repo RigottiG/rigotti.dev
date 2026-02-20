@@ -1,19 +1,12 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import { getCollection } from 'astro:content'
+import { formatDate } from '@/utils/date'
 
 const allPosts = await getCollection('post')
 const sortedPosts = allPosts.sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 )
-
-const formatDate = (date: Date) => {
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  }).format(date)
-}
 ---
 
 <BaseLayout
@@ -62,7 +55,7 @@ const formatDate = (date: Date) => {
                 datetime={new Date(post.data.date).toISOString()}
                 class="text-xs text-neutral-700 dark:text-neutral-600 shrink-0 pt-0.5"
               >
-                {formatDate(new Date(post.data.date))}
+                {formatDate(post.data.date, 'long')}
               </time>
             </a>
           ))}

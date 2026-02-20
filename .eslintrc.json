@@ -1,7 +1,18 @@
 {
   "extends": [
-    "next",
+    "eslint:recommended",
+    "plugin:astro/recommended",
     "prettier",
     "plugin:tailwindcss/recommended"
+  ],
+  "plugins": ["astro"],
+  "overrides": [
+    {
+      "files": ["*.astro"],
+      "parser": "astro-eslint-parser",
+      "parserOptions": {
+        "parser": "@typescript-eslint/parser"
+      }
+    }
   ]
 }
