@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import Schema from '@/components/Schema.astro'
+import Typewriter from '@/components/Typewriter.astro'
 import { getCollection } from 'astro:content'
 
 const allPosts = await getCollection('post')
@@ -15,16 +16,45 @@ const latestPosts = allPosts
 >
   <Schema type="Person" />
 
+  <style>
+    .terminal-output {
+      opacity: 0;
+      transform: translateY(8px);
+      animation: fadeInUp 0.5s ease forwards;
+    }
+
+    .delay-1 { animation-delay: 0.8s; }
+    .delay-2 { animation-delay: 1.4s; }
+    .delay-3 { animation-delay: 2s; }
+    .delay-4 { animation-delay: 2.6s; }
+    .delay-5 { animation-delay: 3.2s; }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+
+  <script>
+    function resetAnimations() {
+      document.querySelectorAll('.terminal-output').forEach((el) => {
+        el.style.animation = 'none'
+        el.offsetHeight
+        el.style.animation = ''
+      })
+    }
+
+    document.addEventListener('astro:page-load', resetAnimations)
+  </script>
+
   <div class="space-y-8">
     <!-- Intro Section -->
     <section class="space-y-4">
-      <div class="flex items-center gap-2 text-green-600 dark:text-green-500">
-        <span>➜</span>
-        <span class="text-blue-400">~</span>
-        <span class="text-neutral-700 dark:text-neutral-300">whoami</span>
-      </div>
+      <Typewriter command="whoami" />
 
-      <div class="pl-4 border-l-2 border-neutral-300 dark:border-neutral-800 space-y-2">
+      <div class="terminal-output delay-1 pl-4 border-l-2 border-neutral-300 dark:border-neutral-800 space-y-2">
         <h1 class="text-xl text-neutral-900 dark:text-neutral-100 font-bold">Guilherme Rigotti</h1>
         <p class="text-neutral-700 dark:text-neutral-400 max-w-lg">
           Senior Software Engineer from Brazil 🇧🇷. <br/>
@@ -35,12 +65,8 @@ const latestPosts = allPosts
 
     <!-- Skills "Array" -->
     <section class="space-y-2">
-      <div class="flex items-center gap-2 text-green-600 dark:text-green-500">
-        <span>➜</span>
-        <span class="text-blue-400">~</span>
-        <span class="text-neutral-700 dark:text-neutral-300">ls ./skills</span>
-      </div>
-      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 pl-4 text-xs text-neutral-600 dark:text-neutral-400">
+      <Typewriter command="ls ./skills" />
+      <div class="terminal-output delay-2 grid grid-cols-2 sm:grid-cols-3 gap-2 pl-4 text-xs text-neutral-600 dark:text-neutral-400">
         <span>typescript.ts</span>
         <span>react.jsx</span>
         <span>astro.build</span>
@@ -52,13 +78,9 @@ const latestPosts = allPosts
 
     <!-- Experience -->
     <section class="space-y-4">
-      <div class="flex items-center gap-2 text-green-600 dark:text-green-500">
-        <span>➜</span>
-        <span class="text-blue-400">~</span>
-        <span class="text-neutral-700 dark:text-neutral-300">cat ./experience.json</span>
-      </div>
+      <Typewriter command="cat ./experience.json" />
 
-      <div class="pl-4 space-y-3">
+      <div class="terminal-output delay-3 pl-4 space-y-3">
         <div class="flex items-start justify-between gap-4">
           <div>
             <div class="flex items-center gap-2">
@@ -98,19 +120,15 @@ const latestPosts = allPosts
     <!-- Latest Logs (Posts) -->
     {latestPosts.length > 0 && (
       <section class="space-y-4 pt-4">
-        <div class="flex items-center gap-2 text-green-600 dark:text-green-500">
-          <span>➜</span>
-          <span class="text-blue-400">~</span>
-          <span class="text-neutral-700 dark:text-neutral-300">tail -n 3 ./blog/logs</span>
-        </div>
+        <Typewriter command="tail -n 3 ./blog/logs" />
 
-        <div class="space-y-3 pl-4">
+        <div class="terminal-output delay-4 space-y-3 pl-4">
           {latestPosts.map((post) => {
             const postDate = new Date(post.data.date);
             return (
               <a href={`/blog/post/${post.slug}`} class="block group">
                 <div class="flex items-baseline justify-between gap-4">
-                  <span class="text-neutral-700 dark:text-neutral-300 group-hover:text-green-600 dark:text-green-400 group-hover:underline decoration-green-500/30 underline-offset-4 transition-all">
+                  <span class="text-neutral-700 dark:text-neutral-300 group-hover:text-green-600 dark:group-hover:text-green-400 group-hover:underline decoration-green-500/30 underline-offset-4 transition-all">
                     {post.data.title}
                   </span>
                   <span class="text-xs text-neutral-600 shrink-0 font-mono">
@@ -129,14 +147,10 @@ const latestPosts = allPosts
     )}
 
     <!-- Contact CTA -->
-    <section class="pt-4">
-      <div class="flex items-center gap-2 text-green-600 dark:text-green-500 mb-4">
-        <span>➜</span>
-        <span class="text-blue-400">~</span>
-        <span class="text-neutral-700 dark:text-neutral-300 cursor-blink">_</span>
-      </div>
+    <section class="pt-4 space-y-6">
+      <Typewriter command="" delay={3000} />
 
-      <div class="pl-4 p-4 rounded-lg border border-neutral-300 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900/30">
+      <div class="terminal-output delay-5 pl-4 p-4 rounded-lg border border-neutral-300 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900/30">
         <p class="text-neutral-800 dark:text-neutral-300 text-sm mb-3">
           # Interested in working together?
         </p>

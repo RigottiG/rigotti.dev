@@ -2,7 +2,7 @@
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import { getCollection } from 'astro:content'
 import { type CollectionEntry } from 'astro:content'
-import { formatDate } from '@/utils/date'
+import { formatDate, calculateReadingTime } from '@/utils/date'
 
 export async function getStaticPaths() {
   const posts = await getCollection('post')
@@ -21,10 +21,7 @@ const { slug, data } = post
 const { title, subtitle, date, tags } = data
 const { Content } = await post.render()
 
-const wordsPerMinute = 200
-const textContent = post.body || ''
-const wordCount = textContent.split(/\s+/).length
-const readingTime = Math.max(1, Math.ceil(wordCount / wordsPerMinute))
+const readingTime = calculateReadingTime(post.body || '')
 ---
 
 <BaseLayout
@@ -66,9 +63,12 @@ const readingTime = Math.max(1, Math.ceil(wordCount / wordsPerMinute))
       {tags && tags.length > 0 && (
         <div class="flex flex-wrap gap-2 pt-2">
           {tags.map((tag) => (
-            <span class="text-xs text-neutral-700 dark:text-neutral-500">
+            <a
+              href={`/blog/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
+              class="text-xs text-neutral-700 dark:text-neutral-500 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+            >
               #{tag}
-            </span>
+            </a>
           ))}
         </div>
       )}

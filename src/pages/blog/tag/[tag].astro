@@ -1,0 +1,105 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { getCollection } from 'astro:content'
+import { formatDate } from '@/utils/date'
+
+export async function getStaticPaths() {
+  const posts = await getCollection('post')
+  const allTags = new Set<string>()
+
+  posts.forEach((post) => {
+    post.data.tags?.forEach((tag) => allTags.add(tag))
+  })
+
+  return Array.from(allTags).map((tag) => ({
+    params: { tag: tag.toLowerCase().replace(/\s+/g, '-') },
+    props: {
+      tag,
+      posts: posts.filter((post) =>
+        post.data.tags?.map((t) => t.toLowerCase()).includes(tag.toLowerCase())
+      ),
+    },
+  }))
+}
+
+interface Props {
+  tag: string
+  posts: Awaited<ReturnType<typeof getCollection<'post'>>>
+}
+
+const { tag, posts } = Astro.props
+const sortedPosts = posts.sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+)
+---
+
+<BaseLayout
+  title={`${tag} | Guilherme Rigotti`}
+  description={`Posts tagged with ${tag}`}
+  currentPath={`/blog/tag/${tag}`}
+>
+  <div class="space-y-8">
+    <header>
+      <div class="flex items-center gap-2 text-green-600 dark:text-green-500 mb-2">
+        <span>➜</span>
+        <span class="text-blue-400">~</span>
+        <span class="text-neutral-700 dark:text-neutral-300">grep "#{tag}" ./posts</span>
+      </div>
+      <h1 class="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
+        Posts tagged with <span class="text-green-600 dark:text-green-400">#{tag}</span>
+      </h1>
+      <p class="text-neutral-600 dark:text-neutral-500 text-sm mt-1">
+        {sortedPosts.length} post{sortedPosts.length !== 1 ? 's' : ''} found
+      </p>
+    </header>
+
+    <section>
+      {sortedPosts.length > 0 ? (
+        <div class="space-y-1">
+          {sortedPosts.map((post) => (
+            <a
+              href={`/blog/post/${post.slug}`}
+              class="group flex items-start justify-between gap-4 py-3 -mx-2 px-2 rounded-md hover:bg-neutral-200/50 dark:hover:bg-neutral-800/30 transition-colors"
+            >
+              <div class="min-w-0 flex-1">
+                <h2 class="text-sm text-neutral-900 dark:text-neutral-200 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">
+                  {post.data.title}
+                </h2>
+                {post.data.subtitle && (
+                  <p class="text-xs text-neutral-600 dark:text-neutral-500 mt-1 truncate">
+                    {post.data.subtitle}
+                  </p>
+                )}
+              </div>
+              <time
+                datetime={new Date(post.data.date).toISOString()}
+                class="text-xs text-neutral-700 dark:text-neutral-600 shrink-0 pt-0.5"
+              >
+                {formatDate(post.data.date, 'short')}
+              </time>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-12">
+          <p class="text-neutral-600 dark:text-neutral-500 text-sm">No posts found.</p>
+        </div>
+      )}
+    </section>
+
+    <nav class="pt-4 border-t border-neutral-300 dark:border-neutral-800 flex gap-4">
+      <a
+        href="/blog"
+        class="text-sm text-neutral-600 dark:text-neutral-500 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+      >
+        ← All posts
+      </a>
+      <a
+        href="/"
+        class="text-sm text-neutral-600 dark:text-neutral-500 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+      >
+        ~/home
+      </a>
+    </nav>
+  </div>
+</BaseLayout>

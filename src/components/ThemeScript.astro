@@ -2,7 +2,6 @@
 ---
 
 <script define:vars={{}}>
-  // Only run in browser
   if (typeof window !== 'undefined') {
     const getTheme = () => {
       const stored = localStorage.getItem('theme')
@@ -43,10 +42,8 @@
       }
     }
 
-    // Initialize theme immediately
     setTheme(getTheme())
 
-    // Setup toggle button
     const setupToggleButton = () => {
       const toggleBtn = document.getElementById('theme-toggle')
       if (toggleBtn && !toggleBtn.hasAttribute('data-listener')) {
@@ -57,26 +54,20 @@
         })
         toggleBtn.setAttribute('data-listener', 'true')
       }
-      // Always update icons when setup runs
       updateIcons()
     }
 
-    // Setup on page load
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', setupToggleButton)
     } else {
       setupToggleButton()
     }
 
-    // Re-setup after page navigation (Astro View Transitions)
     document.addEventListener('astro:page-load', () => {
-      // Apply theme immediately
       setTheme(getTheme())
-      // Then setup button
       setupToggleButton()
     })
 
-    // Also observe DOM changes for the button
     const observer = new MutationObserver(() => {
       setupToggleButton()
     })

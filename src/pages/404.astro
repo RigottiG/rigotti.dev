@@ -1,0 +1,75 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+---
+
+<BaseLayout title="404 - Not Found | Guilherme Rigotti">
+  <div class="space-y-8">
+    <section class="space-y-4">
+      <div class="flex items-center gap-2 text-green-600 dark:text-green-500">
+        <span>➜</span>
+        <span class="text-blue-400">~</span>
+        <span class="text-neutral-700 dark:text-neutral-300">{Astro.url.pathname}</span>
+      </div>
+
+      <div class="pl-4 border-l-2 border-red-500/50 space-y-4">
+        <div class="space-y-2">
+          <p class="text-red-500 dark:text-red-400 font-mono text-sm">
+            bash: {Astro.url.pathname}: No such file or directory
+          </p>
+          <p class="text-neutral-600 dark:text-neutral-400 text-sm">
+            Error 404: The page you're looking for doesn't exist or has been moved.
+          </p>
+        </div>
+
+        <div class="text-xs text-neutral-500 dark:text-neutral-600 font-mono">
+          <p>Command failed with exit code: 404</p>
+          <p class="mt-1">Tip: Check the path and try again.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="space-y-2">
+      <div class="flex items-center gap-2 text-green-600 dark:text-green-500">
+        <span>➜</span>
+        <span class="text-blue-400">~</span>
+        <span class="text-neutral-700 dark:text-neutral-300">ls ./available-routes</span>
+      </div>
+
+      <div class="pl-4 grid gap-2 text-sm">
+        <a
+          href="/"
+          class="text-neutral-600 dark:text-neutral-400 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+        >
+          ~/home
+        </a>
+        <a
+          href="/blog"
+          class="text-neutral-600 dark:text-neutral-400 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+        >
+          ~/blog
+        </a>
+        <a
+          href="/about"
+          class="text-neutral-600 dark:text-neutral-400 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+        >
+          ~/about
+        </a>
+        <a
+          href="/contact"
+          class="text-neutral-600 dark:text-neutral-400 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+        >
+          ~/contact
+        </a>
+      </div>
+    </section>
+
+    <section class="pt-4">
+      <a
+        href="/"
+        class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-neutral-900 bg-green-600 dark:bg-green-500 rounded-md hover:bg-green-700 dark:hover:bg-green-400 transition-colors"
+      >
+        cd ~
+      </a>
+    </section>
+  </div>
+</BaseLayout>

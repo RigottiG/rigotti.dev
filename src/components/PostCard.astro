@@ -28,9 +28,12 @@ const { title, subtitle, date, tags } = data
       {tags && tags.length > 0 && (
         <div class="flex flex-wrap gap-1.5 mt-2">
           {tags.slice(0, 3).map((tag) => (
-            <span class="text-xs text-neutral-700 dark:text-neutral-600">
+            <a
+              href={`/blog/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
+              class="text-xs text-neutral-700 dark:text-neutral-600 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+            >
               #{tag}
-            </span>
+            </a>
           ))}
         </div>
       )}

@@ -15,3 +15,11 @@ export function formatDate(
 
   return new Intl.DateTimeFormat('en-US', formats[format]).format(d)
 }
+
+export function calculateReadingTime(
+  text: string,
+  wordsPerMinute = 200
+): number {
+  const wordCount = text.split(/\s+/).filter(Boolean).length
+  return Math.max(1, Math.ceil(wordCount / wordsPerMinute))
+}

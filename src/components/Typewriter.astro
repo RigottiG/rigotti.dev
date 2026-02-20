@@ -1,0 +1,70 @@
+---
+interface Props {
+  command: string
+  prompt?: string
+  delay?: number
+}
+
+const { command, prompt = '~', delay = 0 } = Astro.props
+---
+
+<div class="typewriter-command flex items-center gap-2 text-green-600 dark:text-green-500" data-command={command} data-delay={delay}>
+  <span>➜</span>
+  <span class="text-blue-400">{prompt}</span>
+  <span class="command-text text-neutral-700 dark:text-neutral-300"></span>
+  <span class="cursor text-neutral-700 dark:text-neutral-300">▋</span>
+</div>
+
+<style>
+  .typewriter-command .cursor {
+    animation: blink 1s step-end infinite;
+  }
+  
+  .typewriter-command.typed .cursor {
+    display: none;
+  }
+  
+  @keyframes blink {
+    from, to { opacity: 1; }
+    50% { opacity: 0; }
+  }
+</style>
+
+<script>
+  function runTypewriter() {
+    const commands = document.querySelectorAll('.typewriter-command:not(.initialized)')
+    
+    commands.forEach((el, index) => {
+      el.classList.add('initialized')
+      
+      const command = el.getAttribute('data-command') || ''
+      const delay = parseInt(el.getAttribute('data-delay') || '0')
+      const textEl = el.querySelector('.command-text') as HTMLElement
+      
+      if (!textEl) return
+      
+      textEl.textContent = ''
+      el.classList.remove('typed')
+      
+      const baseDelay = index * 600 + delay
+      const charDelay = 50
+      let charIndex = 0
+      
+      setTimeout(() => {
+        const typeChar = () => {
+          if (charIndex < command.length) {
+            textEl.textContent += command[charIndex]
+            charIndex++
+            setTimeout(typeChar, charDelay)
+          } else {
+            el.classList.add('typed')
+          }
+        }
+        typeChar()
+      }, baseDelay)
+    })
+  }
+
+  document.addEventListener('astro:page-load', runTypewriter)
+  runTypewriter()
+</script>
