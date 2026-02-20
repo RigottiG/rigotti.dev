@@ -1,13 +1,18 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@plugin "@tailwindcss/typography";
+@plugin "tailwindcss-animate";
+
+@theme {
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, monospace;
+}
 
 @layer base {
   :root {
-    --terminal-bg: #0a0a0a; /* Dark mode default */
+    --terminal-bg: #0a0a0a;
     --terminal-fg: #e5e5e5;
     --terminal-dim: #6b7280;
-    --terminal-accent: #22c55e; /* Green-500 */
+    --terminal-accent: #22c55e;
     --terminal-error: #ef4444;
   }
 
@@ -15,7 +20,7 @@
     --terminal-bg: #ffffff;
     --terminal-fg: #1a1a1a;
     --terminal-dim: #6b7280;
-    --terminal-accent: #16a34a; /* Green-600 */
+    --terminal-accent: #16a34a;
     --terminal-error: #dc2626;
   }
 
@@ -33,7 +38,6 @@
     @apply bg-green-500/30 text-green-200 dark:text-green-200;
   }
 
-  /* Custom Scrollbar para parecer UI de terminal */
   ::-webkit-scrollbar {
     @apply w-2;
   }
@@ -46,7 +50,6 @@
     @apply rounded-none border-2 border-neutral-900 bg-neutral-700;
   }
 
-  /* Light mode scrollbar */
   .light ::-webkit-scrollbar-track {
     @apply bg-neutral-200;
   }
@@ -55,13 +58,11 @@
     @apply border-neutral-200 bg-neutral-400;
   }
 
-  /* Focus styles */
   :focus-visible {
     @apply outline-2 outline-offset-2 outline-green-500;
   }
 }
 
-/* Utilitário para o cursor piscando */
 .cursor-blink::after {
   content: '▋';
   animation: blink 1s step-start infinite;
@@ -74,7 +75,6 @@
   }
 }
 
-/* Prose styles for blog posts */
 .prose {
   @apply max-w-none leading-relaxed text-neutral-900 dark:text-neutral-300;
 }
@@ -140,7 +140,6 @@
   @apply my-8 border-neutral-300 dark:border-neutral-800;
 }
 
-/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;

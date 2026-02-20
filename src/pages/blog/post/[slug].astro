@@ -7,7 +7,7 @@ import { formatDate, calculateReadingTime } from '@/utils/date'
 export async function getStaticPaths() {
   const posts = await getCollection('post')
   return posts.map((post) => ({
-    params: { slug: post.slug },
+    params: { slug: post.id.replace(/\.md$/, '') },
     props: { post },
   }))
 }
@@ -17,9 +17,9 @@ type Props = {
 }
 
 const { post } = Astro.props
-const { slug, data } = post
+const { id, data, rendered } = post
+const slug = id.replace(/\.md$/, '')
 const { title, subtitle, date, tags } = data
-const { Content } = await post.render()
 
 const readingTime = calculateReadingTime(post.body || '')
 ---
@@ -78,9 +78,7 @@ const readingTime = calculateReadingTime(post.body || '')
     <hr class="border-neutral-300 dark:border-neutral-800" />
 
     <!-- Content -->
-    <div class="prose">
-      <Content />
-    </div>
+    <div class="prose" set:html={rendered?.html} />
 
     <!-- Footer -->
     <footer class="pt-8 border-t border-neutral-300 dark:border-neutral-800">

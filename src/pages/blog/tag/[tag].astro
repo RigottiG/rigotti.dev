@@ -31,6 +31,10 @@ const { tag, posts } = Astro.props
 const sortedPosts = posts.sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 )
+
+function getSlug(id: string) {
+  return id.replace(/\.md$/, '')
+}
 ---
 
 <BaseLayout
@@ -58,7 +62,7 @@ const sortedPosts = posts.sort(
         <div class="space-y-1">
           {sortedPosts.map((post) => (
             <a
-              href={`/blog/post/${post.slug}`}
+              href={`/blog/post/${getSlug(post.id)}`}
               class="group flex items-start justify-between gap-4 py-3 -mx-2 px-2 rounded-md hover:bg-neutral-200/50 dark:hover:bg-neutral-800/30 transition-colors"
             >
               <div class="min-w-0 flex-1">

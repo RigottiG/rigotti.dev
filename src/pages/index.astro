@@ -8,6 +8,10 @@ const allPosts = await getCollection('post')
 const latestPosts = allPosts
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 3)
+
+function getSlug(id: string) {
+  return id.replace(/\.md$/, '')
+}
 ---
 
 <BaseLayout
@@ -126,7 +130,7 @@ const latestPosts = allPosts
           {latestPosts.map((post) => {
             const postDate = new Date(post.data.date);
             return (
-              <a href={`/blog/post/${post.slug}`} class="block group">
+              <a href={`/blog/post/${getSlug(post.id)}`} class="block group">
                 <div class="flex items-baseline justify-between gap-4">
                   <span class="text-neutral-700 dark:text-neutral-300 group-hover:text-green-600 dark:group-hover:text-green-400 group-hover:underline decoration-green-500/30 underline-offset-4 transition-all">
                     {post.data.title}
