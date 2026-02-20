@@ -65,6 +65,7 @@ const socialImageURL = new URL(image, Astro.site);
     <link rel="alternate" type="application/rss+xml" title="Guilherme Rigotti - Blog" href="/rss.xml" />
 
     <ClientRouter />
+    <ThemeScript />
   </head>
   <body class="min-h-screen flex items-center justify-center p-4 sm:p-8 bg-neutral-100 dark:bg-[#050505] transition-colors">
 
@@ -87,7 +88,6 @@ const socialImageURL = new URL(image, Astro.site);
 
       <!-- Content Area -->
       <div class="p-6 sm:p-8 min-h-[600px] flex flex-col">
-        <ThemeScript />
         <Header />
         <main class="flex-1 py-6 animate-in fade-in duration-500">
           <slot />
