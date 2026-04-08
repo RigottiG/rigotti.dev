@@ -1,146 +1,75 @@
 # AGENTS.md
 
-This file provides guidance for AI agents working in this repository.
-
-## Development Commands
+## Commands
 
 ```bash
-pnpm dev          # Start development server (Astro)
-pnpm build        # Build for production (static site)
-pnpm preview      # Preview production build locally
-pnpm lint         # Run ESLint
+pnpm dev          # Astro dev server
+pnpm build        # astro check && astro build — typecheck is built-in, no separate step needed
+pnpm preview      # Preview production build
+pnpm lint         # ESLint
+npx prettier --write .  # Format (no pnpm script defined)
 ```
 
-**Note:** This project does not have tests. No test commands are available.
+No tests exist in this project. No test runner is configured.
 
-## Project Overview
+## Stack & Build
 
-This is an Astro personal portfolio/blog with a macOS Terminal design theme. Uses 100% static site generation (SSG) with Content Collections for blog posts.
+- **Astro 5** with `output: 'static'` (SSG), deployed to Vercel
+- **Tailwind v4** via `@tailwindcss/vite` plugin in `astro.config.mjs` (not `@astrojs/tailwind`)
+- **Node 24** (`.nvmrc`)
+- MDX support enabled alongside Markdown
+- RSS feed at `/rss.xml` via `@astrojs/rss`
+- `ClientRouter` from `astro:transitions` enabled globally (View Transitions API)
 
-## Code Style Guidelines
+## Content Collections
 
-### Formatting
+Blog posts use the **Astro 5 `content.config.ts`** pattern (at `src/content.config.ts`, not the old `src/content/config.ts`):
 
-- **No semicolons** (`semi: false` in Prettier config)
-- **Single quotes** for strings and JSX attributes
-- **2 spaces** indentation
-- **Trailing commas** (ES5 style)
+```ts
+// src/content.config.ts
+import { defineCollection, z } from 'astro:content'
+import { glob } from 'astro/loaders'
 
-### Imports
-
-- Use `@/*` path alias for imports from `src/` directory:
-  ```astro
-  import BaseLayout from '@/layouts/BaseLayout.astro'
-  import Header from '@/components/Header.astro'
-  import type { CollectionEntry } from 'astro:content'
-  ```
-
-### Astro Components
-
-- Frontmatter script block with `---` delimiters
-- Define Props interface for type safety:
-
-  ```astro
-  ---
-  interface Props {
-    title?: string
-    description?: string
-  }
-
-  const { title, description } = Astro.props
-  ---
-  ```
-
-- Destructure `Astro.props` directly, not from variable
-- Use `class:list` for conditional classes
-- Client-side scripts use `<script define:vars={{}}>` pattern
-
-### TypeScript
-
-- Strict mode enabled (`extends: "astro/tsconfigs/strict"`)
-- Use type exports for reusable types
-- Arrow function syntax preferred
-- No explicit return types for simple functions (inference)
-
-### Naming Conventions
-
-- **Components**: PascalCase (`Header.astro`, `BaseLayout.astro`)
-- **Functions/Variables**: camelCase (`formatDate`, `navItems`)
-- **Types/Interfaces**: PascalCase (`Props`, `CollectionEntry`)
-
-### Styling
-
-- Tailwind CSS with Tailwind Typography plugin
-- Dark mode using `dark:` prefix (automatic class-based)
-- **Terminal theme colors**:
-  - Green accent: `#22c55e` (dark), `#16a34a` (light)
-  - Background: `#0a0a0a` (dark), `#ffffff` (light)
-  - Text: Neutral grays (neutral-100 to neutral-900)
-- Monospace font (`font-mono`) for UI elements
-- JetBrains Mono font for code/terminal aesthetics
-- Transition classes on hover states
-
-### Content Collections
-
-Blog posts are Markdown files in `src/content/post/` with frontmatter:
-
-```yaml
----
-title: 'Post Title'
-subtitle: 'Brief description'
-date: 'YYYY-MM-DD'
-tags: ['tag1', 'tag2']
----
+const post = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/post' }),
+  schema: z.object({
+    title: z.string(),
+    subtitle: z.string(),
+    date: z.coerce.date(),
+    tags: z.array(z.string()),
+  }),
+})
 ```
 
-Use `getCollection('post')` to fetch all posts. Routes use `getStaticPaths()` for dynamic pages.
+Posts live in `src/content/post/*.md`. Only `.md` is globbed (not `.mdx`).
 
-### Error Handling
+## Styling Gotchas
 
-- Use `isNaN(d.getTime())` for date validation
-- No explicit try-catch in current codebase
-- Default values in Props destructuring for safety
+- **Dark mode is class-based**, not media query: `@custom-variant dark (&:where(.dark, .dark *))` in `src/styles/global.css`
+- **Theme toggle** uses `ThemeScript` (inline `<head>` script to prevent flash of wrong theme) + `ThemeToggle` (UI button). Don't replace with `prefers-color-scheme` — the toggle stores preference in `localStorage`
+- Terminal theme colors are CSS custom properties (`--terminal-bg`, `--terminal-accent`, etc.) in `global.css`, not Tailwind config
+- `prettier-plugin-tailwindcss` auto-sorts Tailwind classes on format
+- Prose/blog styling is hand-written in `global.css` (`.prose` class), not relying on `@tailwindcss/typography` defaults
 
-### Astro Patterns
+## Code Style
 
-- Current path: `Astro.url.pathname`
-- Site URL: `Astro.site`
-- Content rendering: `const { Content } = await post.render()`
-- Date formatting: `Intl.DateTimeFormat('en-US', {...})`
-- URL construction: `new URL(path, Astro.site)` for absolute URLs
+- No semicolons, single quotes, 2-space indent (Prettier enforced)
+- `@/*` path alias maps to `./src/*`
+- **Markdown frontmatter uses double quotes** for string values (differs from JS/TS single-quote rule — don't "fix" these)
+- ESLint extends `eslint:recommended` + `plugin:astro/recommended` + `plugin:tailwindcss/recommended`
 
-### Blog Post Specifics
+## Architecture
 
-- Reading time: 200 words per minute calculation
-- Date formats use `en-US` locale consistently
-- Post slug: `post.slug` from CollectionEntry
-- Frontmatter access: `post.data.title`, `post.data.date`, etc.
-- Body content: `post.body` for reading time calculation
+All pages share `BaseLayout.astro` which wraps content in a macOS terminal UI (traffic-light dots, path bar in header, `JetBrains Mono` font). Key directories:
 
-### Content Collection Types
+- `src/pages/` - routes including `blog/post/[slug].astro` and `blog/tag/[tag].astro`
+- `src/pages/404.astro` - custom error page
+- `src/components/` - `Header`, `Footer`, `ThemeToggle`, `ThemeScript`, `Typewriter`, `Schema`
+- `src/utils/date.ts` - `formatDate()` and `calculateReadingTime()` utilities
+- `src/styles/global.css` - all custom CSS (Tailwind base, terminal theme, prose styles)
+- `public/` - static assets, favicons, OG image
 
-- Blog posts are of type `CollectionEntry<'post'>`
-- Import: `import type { CollectionEntry } from 'astro:content'`
-- Access typed data via `post.data` with inferred types
+## Dev Workflow Notes
 
-### ESLint
-
-- Extends: `next`, `prettier`, `plugin:tailwindcss/recommended`
-- Run `pnpm lint` to check code
-
-## File Structure
-
-- `src/pages/` - Astro pages (index.astro, about.astro, blog/index.astro, blog/post/[slug].astro)
-- `src/components/` - Reusable UI components
-- `src/layouts/` - Layout components (BaseLayout.astro)
-- `src/content/post/` - Markdown blog posts
-- `src/styles/` - Global CSS with Tailwind
-- `src/utils/` - Utility functions
-- `public/` - Static assets
-
-## Deployment
-
-- **Static site**: Built as static HTML/CSS/JS
-- **Adapter**: Vercel adapter configured
-- **Build output**: `dist/` directory
-- **Sitemap**: Auto-generated via @astrojs/sitemap integration
+- Dynamic blog routes (`[slug].astro`) use `getStaticPaths()` — new posts require a dev server restart or rebuild to appear in dynamic routes
+- `sharp` is available as a dependency for image optimization via Astro's `<Image>` component

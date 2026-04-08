@@ -29,21 +29,23 @@ const readingTime = calculateReadingTime(post.body || '')
   title={`${title} | Guilherme Rigotti`}
   description={subtitle || `Blog post: ${title}`}
 >
-  <article class="space-y-8">
-    <Schema type="BlogPosting" data={data} slug={slug} />
+  <article class='space-y-8'>
+    <Schema type='BlogPosting' data={data} slug={slug} />
     <!-- Back -->
     <nav>
       <a
-        href="/blog"
-        class="text-sm text-neutral-600 dark:text-neutral-500 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+        href='/blog'
+        class='text-sm text-neutral-600 transition-colors hover:text-green-600 dark:text-neutral-500 dark:hover:text-green-400'
       >
         ← Back to blog
       </a>
     </nav>
 
     <!-- Header -->
-    <header class="space-y-4">
-      <div class="flex items-center gap-3 text-xs text-neutral-600 dark:text-neutral-500">
+    <header class='space-y-4'>
+      <div
+        class='flex items-center gap-3 text-xs text-neutral-600 dark:text-neutral-500'
+      >
         <time datetime={new Date(date).toISOString()}>
           {formatDate(date)}
         </time>
@@ -51,52 +53,64 @@ const readingTime = calculateReadingTime(post.body || '')
         <span>{readingTime} min read</span>
       </div>
 
-      <h1 class="text-2xl font-bold text-neutral-900 dark:text-neutral-100 leading-tight">
+      <h1
+        class='text-2xl leading-tight font-bold text-neutral-900 dark:text-neutral-100'
+      >
         {title}
       </h1>
 
-      {subtitle && (
-        <p class="text-neutral-700 dark:text-neutral-400 text-sm">
-          {subtitle}
-        </p>
-      )}
+      {
+        subtitle && (
+          <p class='text-sm text-neutral-700 dark:text-neutral-400'>
+            {subtitle}
+          </p>
+        )
+      }
 
-      {tags && tags.length > 0 && (
-        <div class="flex flex-wrap gap-2 pt-2">
-          {tags.map((tag) => (
-            <a
-              href={`/blog/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
-              class="text-xs text-neutral-700 dark:text-neutral-500 hover:text-green-600 dark:hover:text-green-400 transition-colors"
-            >
-              #{tag}
-            </a>
-          ))}
-        </div>
-      )}
+      {
+        tags && tags.length > 0 && (
+          <div class='flex flex-wrap gap-2 pt-2'>
+            {tags.map((tag) => (
+              <a
+                href={`/blog/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
+                class='text-xs text-neutral-700 transition-colors hover:text-green-600 dark:text-neutral-500 dark:hover:text-green-400'
+              >
+                #{tag}
+              </a>
+            ))}
+          </div>
+        )
+      }
     </header>
 
     <!-- Divider -->
-    <hr class="border-neutral-300 dark:border-neutral-800" />
+    <hr class='border-neutral-300 dark:border-neutral-800' />
 
     <!-- Content -->
-    <div class="prose" set:html={rendered?.html} />
+    <div class='prose' set:html={rendered?.html} />
 
     <!-- Footer -->
-    <footer class="pt-8 border-t border-neutral-300 dark:border-neutral-800">
-      <div class="flex items-center justify-between gap-4">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full bg-green-600/20 dark:bg-green-500/20 flex items-center justify-center text-green-700 dark:text-green-400 text-sm font-medium">
+    <footer class='border-t border-neutral-300 pt-8 dark:border-neutral-800'>
+      <div class='flex items-center justify-between gap-4'>
+        <div class='flex items-center gap-3'>
+          <div
+            class='flex h-10 w-10 items-center justify-center rounded-full bg-green-600/20 text-sm font-medium text-green-700 dark:bg-green-500/20 dark:text-green-400'
+          >
             GR
           </div>
           <div>
-            <p class="text-sm text-neutral-900 dark:text-neutral-200">Guilherme Rigotti</p>
-            <p class="text-xs text-neutral-700 dark:text-neutral-500">Software Engineer</p>
+            <p class='text-sm text-neutral-900 dark:text-neutral-200'>
+              Guilherme Rigotti
+            </p>
+            <p class='text-xs text-neutral-700 dark:text-neutral-500'>
+              Software Engineer
+            </p>
           </div>
         </div>
 
         <a
-          href="/blog"
-          class="text-sm text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 transition-colors"
+          href='/blog'
+          class='text-sm text-green-600 transition-colors hover:text-green-700 dark:text-green-400 dark:hover:text-green-300'
         >
           More posts →
         </a>

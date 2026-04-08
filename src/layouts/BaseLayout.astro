@@ -19,86 +19,128 @@ const {
   description = 'Software Engineer. Terminal enthusiast. Problem solver.',
   image = '/og-image.png',
   articleDate,
-  type = 'website'
+  type = 'website',
 } = Astro.props
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-const socialImageURL = new URL(image, Astro.site);
+const canonicalURL = new URL(Astro.url.pathname, Astro.site)
+const socialImageURL = new URL(image, Astro.site)
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang='en'>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="/favicon/favicon.ico" sizes="any" />
-    <link rel="icon" href="/favicon/favicon-32x32.png" sizes="32x32" type="image/png" />
-    <link rel="icon" href="/favicon/favicon-16x16.png" sizes="16x16" type="image/png" />
-    <link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png" sizes="180x180" />
-    <link rel="manifest" href="/favicon/site.webmanifest" />
-    <meta name="generator" content={Astro.generator} />
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <link rel='icon' href='/favicon/favicon.ico' sizes='any' />
+    <link
+      rel='icon'
+      href='/favicon/favicon-32x32.png'
+      sizes='32x32'
+      type='image/png'
+    />
+    <link
+      rel='icon'
+      href='/favicon/favicon-16x16.png'
+      sizes='16x16'
+      type='image/png'
+    />
+    <link
+      rel='apple-touch-icon'
+      href='/favicon/apple-touch-icon.png'
+      sizes='180x180'
+    />
+    <link rel='manifest' href='/favicon/site.webmanifest' />
+    <meta name='generator' content={Astro.generator} />
 
     <!-- SEO Principal -->
     <title>{title}</title>
-    <meta name="description" content={description} />
-    <link rel="canonical" href={canonicalURL} />
-    <meta name="theme-color" content="#0a0a0a" />
-    <meta name="color-scheme" content="dark light" />
+    <meta name='description' content={description} />
+    <link rel='canonical' href={canonicalURL} />
+    <meta name='theme-color' content='#0a0a0a' />
+    <meta name='color-scheme' content='dark light' />
 
     <!-- Open Graph / Facebook -->
-    <meta property="og:type" content={type} />
-    <meta property="og:url" content={canonicalURL} />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:image" content={socialImageURL} />
-    {articleDate && <meta property="article:published_time" content={articleDate} />}
+    <meta property='og:type' content={type} />
+    <meta property='og:url' content={canonicalURL} />
+    <meta property='og:title' content={title} />
+    <meta property='og:description' content={description} />
+    <meta property='og:image' content={socialImageURL} />
+    {
+      articleDate && (
+        <meta property='article:published_time' content={articleDate} />
+      )
+    }
 
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content={canonicalURL} />
-    <meta property="twitter:title" content={title} />
-    <meta property="twitter:description" content={description} />
-    <meta property="twitter:image" content={socialImageURL} />
+    <meta property='twitter:card' content='summary_large_image' />
+    <meta property='twitter:url' content={canonicalURL} />
+    <meta property='twitter:title' content={title} />
+    <meta property='twitter:description' content={description} />
+    <meta property='twitter:image' content={socialImageURL} />
 
     <!-- Fontes (JetBrains Mono é excelente para terminais) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link rel='preconnect' href='https://fonts.googleapis.com' />
+    <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin />
+    <link
+      href='https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap'
+      rel='stylesheet'
+    />
 
     <!-- RSS Feed -->
-    <link rel="alternate" type="application/rss+xml" title="Guilherme Rigotti - Blog" href="/rss.xml" />
+    <link
+      rel='alternate'
+      type='application/rss+xml'
+      title='Guilherme Rigotti - Blog'
+      href='/rss.xml'
+    />
 
     <ClientRouter />
     <ThemeScript />
   </head>
-  <body class="min-h-screen flex items-center justify-center p-4 sm:p-8 bg-neutral-100 dark:bg-[#050505] transition-colors">
-
+  <body
+    class='flex min-h-screen items-center justify-center bg-neutral-100 p-4 transition-colors sm:p-8 dark:bg-[#050505]'
+  >
     <!-- Terminal Container -->
-    <div class="w-full max-w-3xl shadow-2xl rounded-lg overflow-hidden border border-neutral-300 dark:border-neutral-800 bg-white dark:bg-[#0a0a0a] relative transition-colors">
-
+    <div
+      class='relative w-full max-w-3xl overflow-hidden rounded-lg border border-neutral-300 bg-white shadow-2xl transition-colors dark:border-neutral-800 dark:bg-[#0a0a0a]'
+    >
       <!-- Terminal Header (macOS Style) -->
-      <div class="bg-neutral-100 dark:bg-[#1a1a1a] px-4 py-3 flex items-center justify-between border-b border-neutral-300 dark:border-neutral-800 select-none transition-colors">
-        <div class="flex gap-2" aria-hidden="true">
-          <div class="w-3 h-3 rounded-full bg-[#ff5f56] hover:bg-[#ff5f56]/80 transition-colors"></div>
-          <div class="w-3 h-3 rounded-full bg-[#ffbd2e] hover:bg-[#ffbd2e]/80 transition-colors"></div>
-          <div class="w-3 h-3 rounded-full bg-[#27c93f] hover:bg-[#27c93f]/80 transition-colors"></div>
+      <div
+        class='flex items-center justify-between border-b border-neutral-300 bg-neutral-100 px-4 py-3 transition-colors select-none dark:border-neutral-800 dark:bg-[#1a1a1a]'
+      >
+        <div class='flex gap-2' aria-hidden='true'>
+          <div
+            class='h-3 w-3 rounded-full bg-[#ff5f56] transition-colors hover:bg-[#ff5f56]/80'
+          >
+          </div>
+          <div
+            class='h-3 w-3 rounded-full bg-[#ffbd2e] transition-colors hover:bg-[#ffbd2e]/80'
+          >
+          </div>
+          <div
+            class='h-3 w-3 rounded-full bg-[#27c93f] transition-colors hover:bg-[#27c93f]/80'
+          >
+          </div>
         </div>
-        <div class="text-xs text-neutral-500 dark:text-neutral-500 font-mono flex gap-2">
-          <span class="hidden sm:inline">rigotti@dev:</span>
-          <span class="text-neutral-600 dark:text-neutral-400">{Astro.url.pathname}</span>
+        <div
+          class='flex gap-2 font-mono text-xs text-neutral-500 dark:text-neutral-500'
+        >
+          <span class='hidden sm:inline'>rigotti@dev:</span>
+          <span class='text-neutral-600 dark:text-neutral-400'
+            >{Astro.url.pathname}</span
+          >
         </div>
         <ThemeToggle />
       </div>
 
       <!-- Content Area -->
-      <div class="p-6 sm:p-8 min-h-[600px] flex flex-col">
+      <div class='flex min-h-[600px] flex-col p-6 sm:p-8'>
         <Header />
-        <main class="flex-1 py-6 animate-in fade-in duration-500">
+        <main class='animate-in fade-in flex-1 py-6 duration-500'>
           <slot />
         </main>
         <Footer />
       </div>
     </div>
-
   </body>
 </html>

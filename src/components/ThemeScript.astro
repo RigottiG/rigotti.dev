@@ -1,9 +1,13 @@
 ---
+
 ---
 
 <script is:inline>
-  const theme = localStorage.getItem('theme') || 
-    (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+  const theme =
+    localStorage.getItem('theme') ||
+    (window.matchMedia('(prefers-color-scheme: light)').matches
+      ? 'light'
+      : 'dark')
   document.documentElement.classList.add(theme)
 </script>
 
@@ -11,10 +15,12 @@
   const getTheme = () => {
     const stored = localStorage.getItem('theme')
     if (stored === 'light' || stored === 'dark') return stored
-    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
+    return window.matchMedia('(prefers-color-scheme: light)').matches
+      ? 'light'
+      : 'dark'
   }
 
-  const setTheme = (theme) => {
+  const setTheme = (theme: string) => {
     const html = document.documentElement
     const iconLight = document.getElementById('theme-icon-light')
     const iconDark = document.getElementById('theme-icon-dark')

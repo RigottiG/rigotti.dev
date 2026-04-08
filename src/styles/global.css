@@ -1,12 +1,13 @@
 @import 'tailwindcss';
-@plugin "@tailwindcss/typography";
-@plugin "tailwindcss-animate";
+@plugin '@tailwindcss/typography';
+@plugin 'tailwindcss-animate';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco,
-    Consolas, monospace;
+  --font-mono:
+    'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    monospace;
 }
 
 @layer base {
@@ -91,11 +92,11 @@
 }
 
 .prose h2 {
-  @apply mb-4 mt-10 border-b border-neutral-300 pb-2 text-xl font-bold text-neutral-900 dark:border-neutral-800 dark:text-neutral-100;
+  @apply mt-10 mb-4 border-b border-neutral-300 pb-2 text-xl font-bold text-neutral-900 dark:border-neutral-800 dark:text-neutral-100;
 }
 
 .prose h3 {
-  @apply mb-3 mt-8 text-lg font-semibold text-neutral-900 dark:text-neutral-100;
+  @apply mt-8 mb-3 text-lg font-semibold text-neutral-900 dark:text-neutral-100;
 }
 
 .prose p {
@@ -136,7 +137,7 @@
 }
 
 .prose blockquote {
-  @apply my-6 border-l-2 border-green-600/50 pl-4 italic text-neutral-800 dark:border-green-500/50 dark:text-neutral-400;
+  @apply my-6 border-l-2 border-green-600/50 pl-4 text-neutral-800 italic dark:border-green-500/50 dark:text-neutral-400;
 }
 
 .prose img {

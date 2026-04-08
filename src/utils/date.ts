@@ -7,7 +7,7 @@ export function formatDate(
   const d = new Date(dateValue)
   if (isNaN(d.getTime())) return ''
 
-  const formats: Record = {
+  const formats: Record<DateFormat, Intl.DateTimeFormatOptions> = {
     short: { month: 'short', day: 'numeric' },
     long: { month: 'long', day: 'numeric', year: 'numeric' },
   }
