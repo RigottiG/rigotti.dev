@@ -1,3 +1,3 @@
 # rigotti.dev
 
-UNDER MAINTANCE
+Personal website and blog. Built with Astro, Tailwind CSS, and TypeScript.

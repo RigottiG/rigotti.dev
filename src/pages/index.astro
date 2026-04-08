@@ -3,15 +3,13 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 import Schema from '@/components/Schema.astro'
 import Typewriter from '@/components/Typewriter.astro'
 import { getCollection } from 'astro:content'
+import { getSlug } from '@/utils/date'
 
 const allPosts = await getCollection('post')
 const latestPosts = allPosts
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 3)
 
-function getSlug(id: string) {
-  return id.replace(/\.md$/, '')
-}
 ---
 
 <BaseLayout

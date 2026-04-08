@@ -1,4 +1,4 @@
-type DateFormat = 'short' | 'long' | 'full'
+type DateFormat = 'short' | 'long'
 
 export function formatDate(
   dateValue: Date | string | number,
@@ -7,13 +7,16 @@ export function formatDate(
   const d = new Date(dateValue)
   if (isNaN(d.getTime())) return ''
 
-  const formats: Record<DateFormat, Intl.DateTimeFormatOptions> = {
+  const formats: Record = {
     short: { month: 'short', day: 'numeric' },
     long: { month: 'long', day: 'numeric', year: 'numeric' },
-    full: { year: 'numeric', month: 'long', day: 'numeric' },
   }
 
   return new Intl.DateTimeFormat('en-US', formats[format]).format(d)
+}
+
+export function getSlug(id: string): string {
+  return id.replace(/\.md$/, '')
 }
 
 export function calculateReadingTime(

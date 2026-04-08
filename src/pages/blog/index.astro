@@ -1,22 +1,18 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import { getCollection } from 'astro:content'
-import { formatDate } from '@/utils/date'
+import { formatDate, getSlug } from '@/utils/date'
 
 const allPosts = await getCollection('post')
 const sortedPosts = allPosts.sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 )
 
-function getSlug(id: string) {
-  return id.replace(/\.md$/, '')
-}
 ---
 
 <BaseLayout
   title="Blog | Guilherme Rigotti"
   description="Thoughts and tutorials about software development"
-  currentPath="/blog"
 >
   <div class="space-y-8">
     <!-- Header -->

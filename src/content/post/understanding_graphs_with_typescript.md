@@ -24,11 +24,11 @@ Here is an example of implementing an adjacency list in TypeScript:
 ```typescript
 class Graph {
   private vertices: number
-  private adjList: Map<number, number[]>
+  private adjList: Map
 
   constructor(vertices: number) {
     this.vertices = vertices
-    this.adjList = new Map<number, number[]>()
+    this.adjList = new Map()
     for (let i = 0; i < this.vertices; i++) {
       this.adjList.set(i, [])
     }

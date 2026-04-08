@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import { getCollection } from 'astro:content'
-import { formatDate } from '@/utils/date'
+import { formatDate, getSlug } from '@/utils/date'
 
 export async function getStaticPaths() {
   const posts = await getCollection('post')
@@ -32,15 +32,11 @@ const sortedPosts = posts.sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 )
 
-function getSlug(id: string) {
-  return id.replace(/\.md$/, '')
-}
 ---
 
 <BaseLayout
   title={`${tag} | Guilherme Rigotti`}
   description={`Posts tagged with ${tag}`}
-  currentPath={`/blog/tag/${tag}`}
 >
   <div class="space-y-8">
     <header>

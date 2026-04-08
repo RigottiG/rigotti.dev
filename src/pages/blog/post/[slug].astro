@@ -3,6 +3,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 import { getCollection } from 'astro:content'
 import { type CollectionEntry } from 'astro:content'
 import { formatDate, calculateReadingTime } from '@/utils/date'
+import Schema from '@/components/Schema.astro'
 
 export async function getStaticPaths() {
   const posts = await getCollection('post')
@@ -27,9 +28,9 @@ const readingTime = calculateReadingTime(post.body || '')
 <BaseLayout
   title={`${title} | Guilherme Rigotti`}
   description={subtitle || `Blog post: ${title}`}
-  currentPath={`/blog/post/${slug}`}
 >
   <article class="space-y-8">
+    <Schema type="BlogPosting" data={data} slug={slug} />
     <!-- Back -->
     <nav>
       <a
