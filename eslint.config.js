@@ -1,17 +1,19 @@
 import js from '@eslint/js'
-import tseslint from 'typescript-eslint'
 import astroPlugin from 'eslint-plugin-astro'
+import perfectionist from 'eslint-plugin-perfectionist'
+import tseslint from 'typescript-eslint'
 
 export default [
   js.configs.recommended,
   ...tseslint.configs.recommended,
   ...astroPlugin.configs.recommended,
+  perfectionist.configs['recommended-natural'],
   {
     files: ['**/*.astro'],
     languageOptions: {
       parserOptions: {
-        parser: tseslint.parser,
         extraFileExtensions: ['.astro'],
+        parser: tseslint.parser,
       },
     },
   },

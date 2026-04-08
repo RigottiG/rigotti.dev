@@ -1,9 +1,14 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro'
 import { getCollection } from 'astro:content'
 import { type CollectionEntry } from 'astro:content'
-import { formatDate, calculateReadingTime } from '@/utils/date'
+
 import Schema from '@/components/Schema.astro'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { calculateReadingTime, formatDate } from '@/utils/date'
+
+type Props = {
+  post: CollectionEntry<'post'>
+}
 
 export async function getStaticPaths() {
   const posts = await getCollection('post')
@@ -13,29 +18,25 @@ export async function getStaticPaths() {
   }))
 }
 
-type Props = {
-  post: CollectionEntry<'post'>
-}
-
 const { post } = Astro.props
-const { id, data, rendered } = post
+const { data, id, rendered } = post
 const slug = id.replace(/\.md$/, '')
-const { title, subtitle, date, tags } = data
+const { date, subtitle, tags, title } = data
 
 const readingTime = calculateReadingTime(post.body || '')
 ---
 
 <BaseLayout
-  title={`${title} | Guilherme Rigotti`}
   description={subtitle || `Blog post: ${title}`}
+  title={`${title} | Guilherme Rigotti`}
 >
   <article class='space-y-8'>
-    <Schema type='BlogPosting' data={data} slug={slug} />
+    <Schema data={data} slug={slug} type='BlogPosting' />
     <!-- Back -->
     <nav>
       <a
-        href='/blog'
         class='text-sm text-neutral-600 transition-colors hover:text-green-600 dark:text-neutral-500 dark:hover:text-green-400'
+        href='/blog'
       >
         ← Back to blog
       </a>
@@ -72,8 +73,8 @@ const readingTime = calculateReadingTime(post.body || '')
           <div class='flex flex-wrap gap-2 pt-2'>
             {tags.map((tag) => (
               <a
-                href={`/blog/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
                 class='text-xs text-neutral-700 transition-colors hover:text-green-600 dark:text-neutral-500 dark:hover:text-green-400'
+                href={`/blog/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
               >
                 #{tag}
               </a>
@@ -109,8 +110,8 @@ const readingTime = calculateReadingTime(post.body || '')
         </div>
 
         <a
-          href='/blog'
           class='text-sm text-green-600 transition-colors hover:text-green-700 dark:text-green-400 dark:hover:text-green-300'
+          href='/blog'
         >
           More posts →
         </a>

@@ -1,8 +1,9 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro'
+import { getCollection } from 'astro:content'
+
 import Schema from '@/components/Schema.astro'
 import Typewriter from '@/components/Typewriter.astro'
-import { getCollection } from 'astro:content'
+import BaseLayout from '@/layouts/BaseLayout.astro'
 import { getSlug } from '@/utils/date'
 
 const allPosts = await getCollection('post')
@@ -12,8 +13,8 @@ const latestPosts = allPosts
 ---
 
 <BaseLayout
-  title='Guilherme Rigotti — Software Engineer'
   description='Senior Software Engineer from Brazil. Building scalable frontend applications and exploring system design.'
+  title='Guilherme Rigotti — Software Engineer'
 >
   <Schema type='Person' />
 
@@ -147,8 +148,8 @@ const latestPosts = allPosts
         </div>
 
         <a
-          href='/about'
           class='mt-2 inline-block text-sm text-green-600 transition-colors hover:text-green-300 dark:text-green-400'
+          href='/about'
         >
           cat ./resume.pdf →
         </a>
@@ -165,7 +166,7 @@ const latestPosts = allPosts
             {latestPosts.map((post) => {
               const postDate = new Date(post.data.date)
               return (
-                <a href={`/blog/post/${getSlug(post.id)}`} class='group block'>
+                <a class='group block' href={`/blog/post/${getSlug(post.id)}`}>
                   <div class='flex items-baseline justify-between gap-4'>
                     <span class='text-neutral-700 decoration-green-500/30 underline-offset-4 transition-all group-hover:text-green-600 group-hover:underline dark:text-neutral-300 dark:group-hover:text-green-400'>
                       {post.data.title}
@@ -180,8 +181,8 @@ const latestPosts = allPosts
           </div>
 
           <a
-            href='/blog'
             class='inline-block pl-4 text-sm text-green-600 transition-colors hover:text-green-300 dark:text-green-400'
+            href='/blog'
           >
             ls -la ./blog →
           </a>
@@ -200,8 +201,8 @@ const latestPosts = allPosts
           # Interested in working together?
         </p>
         <a
-          href='/contact'
           class='inline-flex items-center gap-2 rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-neutral-900 transition-colors hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-400'
+          href='/contact'
         >
           ./contact --send
         </a>

@@ -4,29 +4,30 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 const experience = [
   {
     company: 'Axur',
-    role: 'Senior Software Engineer',
-    period: '2023 - Present',
+    current: true,
     description:
       'Leading UI architecture and contributing across the stack (APIs, tooling, CI/CD) for cybersecurity products.',
-    current: true,
+    period: '2023 - Present',
+    role: 'Senior Software Engineer',
   },
   {
     company: 'CWI Software',
-    role: 'Software Engineer',
-    period: '2019 - 2023',
     description:
       'Delivered client projects with React/Vue and collaborated closely with backend teams to ship end-to-end features.',
+    period: '2019 - 2023',
+    role: 'Software Engineer',
   },
   {
     company: 'Mave Tecnologia',
-    role: 'Software Engineer',
-    period: '2018 - 2019',
     description:
       'Built full-stack web applications with PHP/Laravel and JavaScript, from API design to UI delivery.',
+    period: '2018 - 2019',
+    role: 'Software Engineer',
   },
 ]
 
 const skills = {
+  backend: ['Node.js', 'Go', 'REST APIs', 'GraphQL', 'System Design'],
   frontend: [
     'React',
     'TypeScript',
@@ -35,14 +36,13 @@ const skills = {
     'Tailwind CSS',
     'UI Architecture',
   ],
-  backend: ['Node.js', 'Go', 'REST APIs', 'GraphQL', 'System Design'],
   tools: ['Git', 'Neovim', 'Docker', 'Linux', 'CI/CD'],
 }
 ---
 
 <BaseLayout
-  title='About | Guilherme Rigotti'
   description='Learn more about Guilherme Rigotti — Software Engineer with 8+ years of experience across frontend and backend.'
+  title='About | Guilherme Rigotti'
 >
   <div class='space-y-10'>
     <!-- Intro -->
@@ -189,8 +189,8 @@ const skills = {
           Interested in working together?
         </p>
         <a
-          href='/contact'
           class='inline-flex items-center gap-2 rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-neutral-900 transition-colors hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-400'
+          href='/contact'
         >
           Get in touch
         </a>
@@ -200,8 +200,8 @@ const skills = {
     <!-- Back -->
     <nav class='border-t border-neutral-300 pt-4 dark:border-neutral-800'>
       <a
-        href='/'
         class='text-sm text-neutral-600 transition-colors hover:text-green-600 dark:text-green-400 dark:text-neutral-500'
+        href='/'
       >
         ← Back to home
       </a>

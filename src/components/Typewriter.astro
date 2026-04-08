@@ -1,11 +1,11 @@
 ---
 interface Props {
   command: string
-  prompt?: string
   delay?: number
+  prompt?: string
 }
 
-const { command, prompt = '~', delay = 0 } = Astro.props
+const { command, delay = 0, prompt = '~' } = Astro.props
 ---
 
 <div

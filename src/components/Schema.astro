@@ -2,12 +2,12 @@
 import { type CollectionEntry } from 'astro:content'
 
 interface Props {
-  type: 'Person' | 'BlogPosting'
   data?: CollectionEntry<'post'>['data']
   slug?: string
+  type: 'BlogPosting' | 'Person'
 }
 
-const { type, data, slug } = Astro.props
+const { data, slug, type } = Astro.props
 
 let schema = {}
 
@@ -15,29 +15,29 @@ if (type === 'Person') {
   schema = {
     '@context': 'https://schema.org',
     '@type': 'Person',
-    name: 'Guilherme Rigotti',
-    url: 'https://rigotti.dev',
     jobTitle: 'Senior Software Engineer',
+    name: 'Guilherme Rigotti',
     sameAs: ['https://github.com/rigottig', 'https://linkedin.com/in/rigottig'],
+    url: 'https://rigotti.dev',
   }
 } else if (type === 'BlogPosting' && data && slug) {
   schema = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
-    headline: data.title,
-    description: data.subtitle,
-    datePublished: data.date.toISOString(),
     author: {
       '@type': 'Person',
       name: 'Guilherme Rigotti',
     },
+    datePublished: data.date.toISOString(),
+    description: data.subtitle,
+    headline: data.title,
     url: `https://rigotti.dev/blog/post/${slug}`,
   }
 }
 ---
 
 <script
-  type='application/ld+json'
   is:inline
   set:html={JSON.stringify(schema)}
+  type='application/ld+json'
 />

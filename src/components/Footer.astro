@@ -2,10 +2,10 @@
 const currentYear = new Date().getFullYear()
 
 const links = [
-  { name: 'GitHub', href: 'https://github.com/rigottig' },
-  { name: 'LinkedIn', href: 'https://linkedin.com/in/rigottig' },
-  { name: 'RSS', href: '/rss.xml' },
-  { name: 'Email', href: 'mailto:ggrigoti@gmail.com' },
+  { href: 'https://github.com/rigottig', name: 'GitHub' },
+  { href: 'https://linkedin.com/in/rigottig', name: 'LinkedIn' },
+  { href: '/rss.xml', name: 'RSS' },
+  { href: 'mailto:ggrigoti@gmail.com', name: 'Email' },
 ]
 ---
 
@@ -20,12 +20,12 @@ const links = [
       {
         links.map((link) => (
           <a
+            class='text-sm text-neutral-600 transition-colors hover:text-green-600 dark:text-neutral-500 dark:hover:text-green-400'
             href={link.href}
-            target={link.href.startsWith('mailto') ? undefined : '_blank'}
             rel={
               link.href.startsWith('mailto') ? undefined : 'noopener noreferrer'
             }
-            class='text-sm text-neutral-600 transition-colors hover:text-green-600 dark:text-neutral-500 dark:hover:text-green-400'
+            target={link.href.startsWith('mailto') ? undefined : '_blank'}
           >
             {link.name}
           </a>

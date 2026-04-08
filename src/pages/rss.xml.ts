@@ -1,6 +1,7 @@
+import type { APIContext } from 'astro'
+
 import rss from '@astrojs/rss'
 import { getCollection } from 'astro:content'
-import type { APIContext } from 'astro'
 
 export async function GET(context: APIContext) {
   const posts = await getCollection('post')
@@ -9,16 +10,16 @@ export async function GET(context: APIContext) {
   )
 
   return rss({
-    title: 'Guilherme Rigotti - Blog',
+    customData: `<language>en-us</language>`,
     description:
       'Thoughts and tutorials about software development, frontend engineering, and system design.',
-    site: context.site ?? 'https://rigotti.dev',
     items: sortedPosts.map((post) => ({
-      title: post.data.title,
-      pubDate: new Date(post.data.date),
       description: post.data.subtitle ?? '',
       link: `/blog/post/${post.id.replace(/\.md$/, '')}/`,
+      pubDate: new Date(post.data.date),
+      title: post.data.title,
     })),
-    customData: `<language>en-us</language>`,
+    site: context.site ?? 'https://rigotti.dev',
+    title: 'Guilherme Rigotti - Blog',
   })
 }

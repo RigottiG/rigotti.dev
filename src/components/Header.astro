@@ -1,9 +1,9 @@
 ---
 const navItems = [
-  { href: '/', label: '~/home', cmd: 'cd ~' },
-  { href: '/blog', label: '~/blog', cmd: 'cd blog' },
-  { href: '/about', label: '~/about', cmd: 'cat about' },
-  { href: '/contact', label: '~/contact', cmd: 'mail' },
+  { cmd: 'cd ~', href: '/', label: '~/home' },
+  { cmd: 'cd blog', href: '/blog', label: '~/blog' },
+  { cmd: 'cat about', href: '/about', label: '~/about' },
+  { cmd: 'mail', href: '/contact', label: '~/contact' },
 ]
 
 const currentPath = Astro.url.pathname
@@ -18,7 +18,6 @@ const currentPath = Astro.url.pathname
           (item.href !== '/' && currentPath.startsWith(item.href))
         return (
           <a
-            href={item.href}
             aria-current={isActive ? 'page' : undefined}
             class:list={[
               'group relative transition-colors',
@@ -26,6 +25,7 @@ const currentPath = Astro.url.pathname
                 ? 'font-bold text-green-600 dark:text-green-400'
                 : 'text-neutral-600 hover:text-neutral-900 dark:text-neutral-500 dark:hover:text-neutral-300',
             ]}
+            href={item.href}
           >
             <span class='absolute -left-3 text-green-600 opacity-0 transition-opacity group-hover:opacity-100 dark:text-green-500'>
               &gt;
