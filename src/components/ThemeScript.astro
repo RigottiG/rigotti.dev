@@ -37,6 +37,11 @@
     }
 
     localStorage.setItem('theme', theme)
+
+    const meta = document.getElementById(
+      'theme-color-meta'
+    ) as HTMLMetaElement | null
+    if (meta) meta.content = theme === 'light' ? '#ffffff' : '#0a0a0a'
   }
 
   const setupToggleButton = () => {

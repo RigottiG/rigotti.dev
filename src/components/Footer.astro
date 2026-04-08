@@ -2,10 +2,14 @@
 const currentYear = new Date().getFullYear()
 
 const links = [
-  { href: 'https://github.com/rigottig', name: 'GitHub' },
-  { href: 'https://linkedin.com/in/rigottig', name: 'LinkedIn' },
-  { href: '/rss.xml', name: 'RSS' },
-  { href: 'mailto:ggrigoti@gmail.com', name: 'Email' },
+  { external: false, href: 'https://github.com/rigottig', name: 'GitHub' },
+  {
+    external: false,
+    href: 'https://linkedin.com/in/rigottig',
+    name: 'LinkedIn',
+  },
+  { external: false, href: '/rss.xml', name: 'RSS' },
+  { external: false, href: 'mailto:ggrigoti@gmail.com', name: 'Email' },
 ]
 ---
 
@@ -20,14 +24,36 @@ const links = [
       {
         links.map((link) => (
           <a
-            class='text-sm text-neutral-600 transition-colors hover:text-green-600 dark:text-neutral-500 dark:hover:text-green-400'
+            class='inline-flex items-center gap-1 text-sm text-neutral-600 transition-colors hover:text-green-600 dark:text-neutral-500 dark:hover:text-green-400'
             href={link.href}
             rel={
-              link.href.startsWith('mailto') ? undefined : 'noopener noreferrer'
+              link.href.startsWith('mailto') || link.href.startsWith('/')
+                ? undefined
+                : 'noopener noreferrer'
             }
-            target={link.href.startsWith('mailto') ? undefined : '_blank'}
+            target={
+              link.href.startsWith('mailto') || link.href.startsWith('/')
+                ? undefined
+                : '_blank'
+            }
           >
             {link.name}
+            {!link.href.startsWith('mailto') && !link.href.startsWith('/') && (
+              <svg
+                aria-hidden='true'
+                class='h-3 w-3'
+                fill='none'
+                stroke='currentColor'
+                viewBox='0 0 24 24'
+              >
+                <path
+                  d='M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3'
+                  stroke-linecap='round'
+                  stroke-linejoin='round'
+                  stroke-width='2'
+                />
+              </svg>
+            )}
           </a>
         ))
       }

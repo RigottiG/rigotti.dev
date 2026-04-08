@@ -66,8 +66,26 @@
     @apply border-neutral-200 bg-neutral-400;
   }
 
+  * {
+    scrollbar-width: thin;
+  }
+
+  .dark {
+    scrollbar-color: #404040 #0a0a0a;
+  }
+
+  .light {
+    scrollbar-color: #a3a3a3 #e5e5e5;
+  }
+
   :focus-visible {
     @apply outline-2 outline-offset-2 outline-green-500;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
   }
 }
 

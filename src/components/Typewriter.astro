@@ -41,6 +41,7 @@ const { command, delay = 0, prompt = '~' } = Astro.props
 
 <script>
   function runTypewriter() {
+    const visited = sessionStorage.getItem('homepage-visited')
     const commands = document.querySelectorAll(
       '.typewriter-command:not(.initialized)'
     )
@@ -56,6 +57,12 @@ const { command, delay = 0, prompt = '~' } = Astro.props
 
       textEl.textContent = ''
       el.classList.remove('typed')
+
+      if (visited) {
+        textEl.textContent = command
+        el.classList.add('typed')
+        return
+      }
 
       const baseDelay = index * 600 + delay
       const charDelay = 50
@@ -74,6 +81,10 @@ const { command, delay = 0, prompt = '~' } = Astro.props
         typeChar()
       }, baseDelay)
     })
+
+    if (!visited && commands.length > 0) {
+      sessionStorage.setItem('homepage-visited', 'true')
+    }
   }
 
   document.addEventListener('astro:page-load', runTypewriter)

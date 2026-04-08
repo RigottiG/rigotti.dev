@@ -1,8 +1,8 @@
 ---
-title: "Git Bisect for bugfinding"
-subtitle: "Efficiently Debugging Your Codebase with Git Bisect: A Step-by-Step Guide."
-date: "2023-04-18"
-tags: ["Git", "Git Bisect"]
+title: 'Git Bisect for bugfinding'
+subtitle: 'Efficiently Debugging Your Codebase with Git Bisect: A Step-by-Step Guide.'
+date: '2023-04-18'
+tags: ['Git', 'Git Bisect']
 ---
 
 Git is a powerful tool that helps software developers manage their codebase efficiently. One of the most useful features of Git is Git Bisect. Git Bisect allows you to find the exact commit that introduced a bug by performing a binary search on the commit history. I personally discovered this feature just over a year ago, and it has become an invaluable tool in my workflow.

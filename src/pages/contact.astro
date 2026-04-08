@@ -3,16 +3,19 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 
 const contacts = [
   {
+    external: false,
     href: 'mailto:ggrigoti@gmail.com',
     name: 'Email',
     value: 'ggrigoti@gmail.com',
   },
   {
+    external: true,
     href: 'https://github.com/rigottig',
     name: 'GitHub',
     value: 'github.com/rigottig',
   },
   {
+    external: true,
     href: 'https://linkedin.com/in/rigottig',
     name: 'LinkedIn',
     value: 'linkedin.com/in/rigottig',
@@ -51,24 +54,38 @@ const contacts = [
             <a
               class='group -mx-2 flex items-center justify-between gap-4 rounded-md px-2 py-3 transition-colors hover:bg-neutral-200/50 dark:hover:bg-neutral-800/30'
               href={contact.href}
-              rel={
-                contact.href.startsWith('mailto')
-                  ? undefined
-                  : 'noopener noreferrer'
-              }
-              target={contact.href.startsWith('mailto') ? undefined : '_blank'}
+              rel={contact.external ? 'noopener noreferrer' : undefined}
+              target={contact.external ? '_blank' : undefined}
             >
-              <div>
+              <div class='flex items-center gap-2'>
                 <span class='text-sm text-neutral-900 transition-colors group-hover:text-green-600 dark:text-neutral-200 dark:group-hover:text-green-400'>
                   {contact.name}
                 </span>
-                <p class='text-xs text-neutral-600 dark:text-neutral-500'>
-                  {contact.value}
-                </p>
+                {contact.external && (
+                  <svg
+                    aria-hidden='true'
+                    class='h-3 w-3 text-neutral-400'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      d='M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3'
+                      stroke-linecap='round'
+                      stroke-linejoin='round'
+                      stroke-width='2'
+                    />
+                  </svg>
+                )}
               </div>
-              <span class='text-neutral-600 transition-colors group-hover:text-green-600 dark:text-green-400'>
-                →
-              </span>
+              <div class='flex items-center gap-2'>
+                <span class='text-xs text-neutral-600 dark:text-neutral-500'>
+                  {contact.value}
+                </span>
+                <span class='text-neutral-600 transition-colors group-hover:text-green-600 dark:text-green-400'>
+                  →
+                </span>
+              </div>
             </a>
           ))
         }
@@ -107,23 +124,6 @@ const contacts = [
             </p>
           </div>
         </div>
-      </div>
-    </section>
-
-    <!-- Email CTA -->
-    <section class='pt-2'>
-      <div
-        class='rounded-lg border border-neutral-300 bg-neutral-100 p-4 dark:border-neutral-800 dark:bg-neutral-900/30'
-      >
-        <p class='mb-3 text-sm text-neutral-800 dark:text-neutral-300'>
-          Let's work together!
-        </p>
-        <a
-          class='inline-flex items-center gap-2 rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-neutral-900 transition-colors hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-400'
-          href='mailto:ggrigoti@gmail.com'
-        >
-          Send email
-        </a>
       </div>
     </section>
 

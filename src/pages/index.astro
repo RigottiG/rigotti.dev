@@ -4,7 +4,7 @@ import { getCollection } from 'astro:content'
 import Schema from '@/components/Schema.astro'
 import Typewriter from '@/components/Typewriter.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
-import { getSlug } from '@/utils/date'
+import { formatDate, getSlug } from '@/utils/date'
 
 const allPosts = await getCollection('post')
 const latestPosts = allPosts
@@ -51,8 +51,15 @@ const latestPosts = allPosts
 
   <script>
     function resetAnimations() {
+      const visited = sessionStorage.getItem('homepage-visited')
       document.querySelectorAll('.terminal-output').forEach((el) => {
         const htmlEl = el as HTMLElement
+        if (visited) {
+          htmlEl.style.animation = 'none'
+          htmlEl.style.opacity = '1'
+          htmlEl.style.transform = 'none'
+          return
+        }
         htmlEl.style.animation = 'none'
         void htmlEl.offsetHeight
         htmlEl.style.animation = ''
@@ -171,9 +178,12 @@ const latestPosts = allPosts
                     <span class='text-neutral-700 decoration-green-500/30 underline-offset-4 transition-all group-hover:text-green-600 group-hover:underline dark:text-neutral-300 dark:group-hover:text-green-400'>
                       {post.data.title}
                     </span>
-                    <span class='shrink-0 font-mono text-xs text-neutral-600'>
-                      {postDate.toISOString().split('T')[0]}
-                    </span>
+                    <time
+                      class='shrink-0 font-mono text-xs text-neutral-600'
+                      datetime={postDate.toISOString()}
+                    >
+                      {formatDate(postDate, 'short')}
+                    </time>
                   </div>
                 </a>
               )
@@ -201,7 +211,7 @@ const latestPosts = allPosts
           # Interested in working together?
         </p>
         <a
-          class='inline-flex items-center gap-2 rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-neutral-900 transition-colors hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-400'
+          class='inline-flex items-center gap-2 rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-neutral-900 transition-colors hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500 dark:bg-green-500 dark:hover:bg-green-400'
           href='/contact'
         >
           ./contact --send

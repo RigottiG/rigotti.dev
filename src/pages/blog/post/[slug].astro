@@ -4,21 +4,30 @@ import { type CollectionEntry } from 'astro:content'
 
 import Schema from '@/components/Schema.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
-import { calculateReadingTime, formatDate } from '@/utils/date'
+import { calculateReadingTime, formatDate, getSlug } from '@/utils/date'
 
 type Props = {
+  next: CollectionEntry<'post'> | null
   post: CollectionEntry<'post'>
+  prev: CollectionEntry<'post'> | null
 }
 
 export async function getStaticPaths() {
   const posts = await getCollection('post')
-  return posts.map((post) => ({
+  const sorted = posts.sort(
+    (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+  )
+  return sorted.map((post, index) => ({
     params: { slug: post.id.replace(/\.md$/, '') },
-    props: { post },
+    props: {
+      next: index > 0 ? sorted[index - 1] : null,
+      post,
+      prev: index < sorted.length - 1 ? sorted[index + 1] : null,
+    },
   }))
 }
 
-const { post } = Astro.props
+const { next, post, prev } = Astro.props
 const { data, id, rendered } = post
 const slug = id.replace(/\.md$/, '')
 const { date, subtitle, tags, title } = data
@@ -116,6 +125,40 @@ const readingTime = calculateReadingTime(post.body || '')
           More posts →
         </a>
       </div>
+
+      <!-- Prev / Next Navigation -->
+      {
+        (prev || next) && (
+          <div class='mt-6 flex flex-col gap-3 border-t border-neutral-300 pt-6 sm:flex-row sm:justify-between dark:border-neutral-800'>
+            {prev ? (
+              <a
+                class='group flex flex-col gap-1 rounded-md px-2 py-1.5 transition-colors hover:bg-neutral-200/50 dark:hover:bg-neutral-800/30'
+                href={`/blog/post/${getSlug(prev.id)}`}
+              >
+                <span class='text-xs text-neutral-500'>← Previous</span>
+                <span class='text-sm text-neutral-700 transition-colors group-hover:text-green-600 dark:text-neutral-300 dark:group-hover:text-green-400'>
+                  {prev.data.title}
+                </span>
+              </a>
+            ) : (
+              <div />
+            )}
+            {next ? (
+              <a
+                class='group flex flex-col items-end gap-1 rounded-md px-2 py-1.5 text-right transition-colors hover:bg-neutral-200/50 dark:hover:bg-neutral-800/30'
+                href={`/blog/post/${getSlug(next.id)}`}
+              >
+                <span class='text-xs text-neutral-500'>Next →</span>
+                <span class='text-sm text-neutral-700 transition-colors group-hover:text-green-600 dark:text-neutral-300 dark:group-hover:text-green-400'>
+                  {next.data.title}
+                </span>
+              </a>
+            ) : (
+              <div />
+            )}
+          </div>
+        )
+      }
     </footer>
   </article>
 </BaseLayout>

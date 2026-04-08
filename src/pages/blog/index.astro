@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content'
 
 import BaseLayout from '@/layouts/BaseLayout.astro'
-import { formatDate, getSlug } from '@/utils/date'
+import { calculateReadingTime, formatDate, getSlug } from '@/utils/date'
 
 const allPosts = await getCollection('post')
 const sortedPosts = allPosts.sort(
@@ -48,6 +48,11 @@ const sortedPosts = allPosts.sort(
                       {post.data.subtitle}
                     </p>
                   )}
+                  <div class='mt-1 flex items-center gap-2 text-xs text-neutral-500 dark:text-neutral-600'>
+                    <span>
+                      {calculateReadingTime(post.body || '')} min read
+                    </span>
+                  </div>
                   {post.data.tags && post.data.tags.length > 0 && (
                     <div class='relative z-10 mt-2 flex flex-wrap gap-1.5'>
                       {post.data.tags.slice(0, 3).map((tag) => (
