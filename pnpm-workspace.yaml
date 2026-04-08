@@ -1,1 +1,5 @@
-approveBuildsFor: sharp esbuild
+packages:
+  - '.'
+onlyBuiltDependencies:
+  - sharp
+  - esbuild
