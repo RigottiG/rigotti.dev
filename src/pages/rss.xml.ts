@@ -12,7 +12,7 @@ export async function GET(context: APIContext) {
   return rss({
     customData: `<language>en-us</language>`,
     description:
-      'Thoughts and tutorials about software development, frontend engineering, and system design.',
+      'Thoughts and tutorials about software development, architecture, and system design.',
     items: sortedPosts.map((post) => ({
       description: post.data.subtitle ?? '',
       link: `/blog/post/${post.id.replace(/\.md$/, '')}/`,

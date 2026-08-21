@@ -1,11 +1,11 @@
 ---
 title: 'Understanding Graphs with Typescript'
-subtitle: 'Exploring Graphs with TypeScript.'
+subtitle: 'The basics of graphs, implemented in TypeScript.'
 date: '2023-04-13'
 tags: ['Typescript', 'Data Structures', 'Graph']
 ---
 
-Graphs are a fundamental concept in computer science and mathematics. They are used to model relationships and connections between objects or data points. In this article, we will explore the basics of graphs and how to implement them in TypeScript, a popular programming language.
+Graphs are a fundamental concept in computer science and mathematics: they model relationships and connections between objects or data points. This article covers the basics of graphs and how to implement them in TypeScript.
 
 ## Graph Basics
 
@@ -64,7 +64,7 @@ In this example, we create a Graph class that uses a Map to store the adjacency 
 
 ## Conclusion
 
-Graphs are a powerful tool for modeling relationships and connections between objects or data points. In TypeScript, we can implement graphs using an adjacency list or an adjacency matrix. By understanding the basics of graphs and how to implement them in TypeScript, we can use them to solve complex problems in computer science and beyond.
+In TypeScript, you can implement graphs using an adjacency list or an adjacency matrix, as shown above.
 
 ## Learn more
 

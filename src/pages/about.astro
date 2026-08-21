@@ -49,7 +49,7 @@ const skills = {
 ---
 
 <BaseLayout
-  description='Learn more about Guilherme Rigotti — Software Engineer with 8+ years of experience across frontend and backend.'
+  description='Learn more about Guilherme Rigotti — Software Engineer with 8+ years of experience, focused on architecture and system design.'
   title='About | Guilherme Rigotti'
 >
   <div class='space-y-10'>
@@ -71,9 +71,9 @@ const skills = {
           > of experience building web applications.
         </p>
         <p>
-          I’m strongest on the frontend (React, TypeScript, UI architecture),
-          but I’m also comfortable on the backend (Node.js/Go, APIs, system
-          design) — I like owning problems end-to-end.
+          I work across the stack (React and TypeScript on the frontend,
+          Node.js/Go and APIs on the backend), but what I care about most is
+          architecture and system design — how the pieces fit together.
         </p>
       </div>
     </section>
@@ -119,11 +119,11 @@ const skills = {
       <div class='grid gap-6 sm:grid-cols-3'>
         <div>
           <h3 class='mb-2 text-xs text-neutral-600 dark:text-neutral-400'>
-            Frontend
+            Backend
           </h3>
           <div class='flex flex-wrap gap-1.5'>
             {
-              skills.frontend.map((skill) => (
+              skills.backend.map((skill) => (
                 <span class='rounded border border-neutral-300 bg-neutral-200 px-2 py-1 text-xs text-neutral-700 dark:border-neutral-800 dark:bg-neutral-800/50 dark:text-neutral-400'>
                   {skill}
                 </span>
@@ -133,11 +133,11 @@ const skills = {
         </div>
         <div>
           <h3 class='mb-2 text-xs text-neutral-600 dark:text-neutral-400'>
-            Backend
+            Frontend
           </h3>
           <div class='flex flex-wrap gap-1.5'>
             {
-              skills.backend.map((skill) => (
+              skills.frontend.map((skill) => (
                 <span class='rounded border border-neutral-300 bg-neutral-200 px-2 py-1 text-xs text-neutral-700 dark:border-neutral-800 dark:bg-neutral-800/50 dark:text-neutral-400'>
                   {skill}
                 </span>
